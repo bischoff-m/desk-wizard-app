@@ -1,7 +1,10 @@
 import Victor from "victor";
 import { CanvasProvider } from "./CanvasProvider";
+import { TriangleGradientCanvas } from "./TriangleGradientCanvas";
+import { CanvasController } from "./CanvasController";
 
 export type CanvasControllerName =
+  | "TriangleGradientCanvas"
   | "GridPattern"
   | "GradientPattern"
   | "RandomBalls"
@@ -13,6 +16,8 @@ export function createCanvasController(
   canvas: CanvasProvider
 ) {
   switch (name) {
+    case "TriangleGradientCanvas":
+      return new TriangleGradientCanvas(canvas);
     case "GridPattern":
       return new GridPattern(canvas);
     case "GradientPattern":
@@ -27,37 +32,6 @@ export function createCanvasController(
       return new WideImage(canvas, image);
     default:
       throw new Error(`Unknown canvas controller: ${name}`);
-  }
-}
-
-export abstract class CanvasController {
-  protected animationFrame: number | null = null;
-
-  constructor(public canvas: CanvasProvider) {}
-
-  abstract update(): void;
-  abstract draw(ctx: CanvasRenderingContext2D): void;
-
-  runOnce(): void {
-    this.update();
-    this.canvas.apply((ctx) => this.draw(ctx));
-  }
-
-  runLoop(): void {
-    if (this.animationFrame !== null) {
-      cancelAnimationFrame(this.animationFrame);
-    }
-    const updateLoop = () => {
-      this.runOnce();
-      this.animationFrame = requestAnimationFrame(updateLoop);
-    };
-    updateLoop();
-  }
-
-  stopLoop(): void {
-    if (this.animationFrame !== null) {
-      cancelAnimationFrame(this.animationFrame);
-    }
   }
 }
 

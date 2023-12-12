@@ -18,9 +18,9 @@ export class CanvasContent {
 }
 
 export abstract class CanvasProvider {
-  abstract apply(drawMethod: (ctx: CanvasRenderingContext2D) => void): void;
+  public size: Dimensions = { w: 0, h: 0 };
 
-  abstract size(): Dimensions;
+  abstract apply(drawMethod: (ctx: CanvasRenderingContext2D) => void): void;
 
   // All corner points in clockwise order (not normalized)
   abstract boundingPolygon(): Victor[];
@@ -29,18 +29,15 @@ export abstract class CanvasProvider {
 export class SingleCanvasProvider extends CanvasProvider {
   constructor(public canvas: HTMLCanvasElement) {
     super();
+    this.size = {
+      w: canvas.width,
+      h: canvas.height,
+    };
   }
 
   apply(drawMethod: (ctx: CanvasRenderingContext2D) => void) {
     const ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     drawMethod(ctx);
-  }
-
-  size() {
-    return {
-      w: this.canvas.width,
-      h: this.canvas.height,
-    };
   }
 
   boundingPolygon() {
@@ -55,14 +52,13 @@ export class SingleCanvasProvider extends CanvasProvider {
 
 export class MultiCanvasProvider extends CanvasProvider {
   coordinates: (Dimensions & { x: number; y: number })[] = [];
-  emulatedCanvasSize: Dimensions;
 
   constructor(
     public screens: Screen[],
     public canvasRefs: React.MutableRefObject<HTMLCanvasElement[]>
   ) {
     super();
-    this.emulatedCanvasSize = {
+    this.size = {
       w: screens.reduce((acc, screen) => {
         return (
           acc +
@@ -91,8 +87,7 @@ export class MultiCanvasProvider extends CanvasProvider {
       this.coordinates.push({
         x: currentX + screen.canvasOffset.x,
         y:
-          (this.emulatedCanvasSize.h - screen.screenSize.h * screenToCanvas) /
-            2 +
+          (this.size.h - screen.screenSize.h * screenToCanvas) / 2 +
           screen.canvasOffset.y,
         w: screen.screenSize.w * screenToCanvas,
         h: screen.screenSize.h * screenToCanvas,
@@ -116,10 +111,6 @@ export class MultiCanvasProvider extends CanvasProvider {
 
       ctx.restore();
     }
-  }
-
-  size() {
-    return this.emulatedCanvasSize;
   }
 
   boundingPolygon() {
