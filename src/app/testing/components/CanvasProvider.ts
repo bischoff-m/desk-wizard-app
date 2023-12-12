@@ -11,12 +11,6 @@ function getScreenScale(screen: Screen) {
   return highestDpiScale / dpi;
 }
 
-export class CanvasContent {
-  constructor() {}
-  draw(ctx: CanvasRenderingContext2D) {}
-  update() {}
-}
-
 export abstract class CanvasProvider {
   public size: Dimensions = { w: 0, h: 0 };
 
@@ -51,13 +45,17 @@ export class SingleCanvasProvider extends CanvasProvider {
 }
 
 export class MultiCanvasProvider extends CanvasProvider {
+  size: Dimensions;
   coordinates: (Dimensions & { x: number; y: number })[] = [];
+  contexts: CanvasRenderingContext2D[] = [];
 
   constructor(
     public screens: Screen[],
     public canvasRefs: React.MutableRefObject<HTMLCanvasElement[]>
   ) {
     super();
+
+    // Calculate size
     this.size = {
       w: screens.reduce((acc, screen) => {
         return (
@@ -74,6 +72,7 @@ export class MultiCanvasProvider extends CanvasProvider {
       }, 0),
     };
 
+    // Calculate coordinates
     this.coordinates = [];
     let currentX = 0;
     for (let idx = 0; idx < screens.length; idx++) {
@@ -95,14 +94,18 @@ export class MultiCanvasProvider extends CanvasProvider {
 
       currentX += screen.screenSize.w * screenToCanvas + screen.canvasOffset.x;
     }
+
+    // Set up contexts
+    for (const canvas of canvasRefs.current) {
+      this.contexts.push(canvas.getContext("2d") as CanvasRenderingContext2D);
+    }
   }
 
   apply(drawMethod: (ctx: CanvasRenderingContext2D) => void) {
     for (let idx = 0; idx < this.canvasRefs.current.length; idx++) {
-      const canvas = this.canvasRefs.current[idx];
+      const ctx = this.contexts[idx];
       const coord = this.coordinates[idx];
       const screenScale = getScreenScale(screens[idx]);
-      const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
       ctx.save();
       ctx.scale(1 / screenScale, 1 / screenScale);
       ctx.translate(-coord.x, -coord.y);
