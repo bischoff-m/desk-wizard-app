@@ -1,5 +1,11 @@
-import { Dimensions, Screen, screens } from "../types";
 import Victor from "victor";
+import { Dimensions, Screen, screens } from "../types";
+import { CanvasControl, ScreenTransform } from "./CanvasControl";
+
+export type ControlFactory = (
+  canvas: HTMLCanvasElement,
+  requestUpdate: () => void
+) => CanvasControl;
 
 const highestDpiScale = screens.reduce((acc, screen) => {
   const dpi = screen.screenSize.w / screen.physicalSize.w;
@@ -12,48 +18,60 @@ function getScreenScale(screen: Screen) {
 }
 
 export abstract class CanvasProvider {
-  public size: Dimensions = { w: 0, h: 0 };
+  abstract size: Dimensions;
 
-  abstract apply(drawMethod: (ctx: CanvasRenderingContext2D) => void): void;
-
-  // All corner points in clockwise order (not normalized)
-  abstract boundingPolygon(): Victor[];
+  constructor(public createControl: ControlFactory) {}
 }
 
 export class SingleCanvasProvider extends CanvasProvider {
-  constructor(public canvas: HTMLCanvasElement) {
-    super();
+  size: Dimensions;
+  control: CanvasControl | null = null;
+
+  constructor(
+    public createControl: ControlFactory,
+    public canvas: HTMLCanvasElement
+  ) {
+    super(createControl);
     this.size = {
       w: canvas.width,
       h: canvas.height,
     };
-  }
+    const requestUpdate = () => {
+      requestAnimationFrame((time) => {
+        if (!this.control) return;
+        this.control.fullUpdate(time);
+      });
+    };
+    this.control = createControl(canvas, requestUpdate);
+    this.control.setTransform({
+      translate: new Victor(0, 0),
+      scale: new Victor(1, 1),
+      size: this.size,
+      coordinates: [
+        {
+          x: 0,
+          y: 0,
+          w: this.size.w,
+          h: this.size.h,
+        },
+      ],
+    });
 
-  apply(drawMethod: (ctx: CanvasRenderingContext2D) => void) {
-    const ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-    drawMethod(ctx);
-  }
-
-  boundingPolygon() {
-    return [
-      new Victor(0, 0),
-      new Victor(this.canvas.width, 0),
-      new Victor(this.canvas.width, this.canvas.height),
-      new Victor(0, this.canvas.height),
-    ];
+    requestUpdate();
   }
 }
 
 export class MultiCanvasProvider extends CanvasProvider {
+  controls: CanvasControl[] = [];
   size: Dimensions;
   coordinates: (Dimensions & { x: number; y: number })[] = [];
-  contexts: CanvasRenderingContext2D[] = [];
 
   constructor(
+    public createControl: ControlFactory,
     public screens: Screen[],
     public canvasRefs: React.MutableRefObject<HTMLCanvasElement[]>
   ) {
-    super();
+    super(createControl);
 
     // Calculate size
     this.size = {
@@ -79,10 +97,6 @@ export class MultiCanvasProvider extends CanvasProvider {
       const screen = screens[idx];
       const screenToCanvas = getScreenScale(screen);
 
-      // const pageToScreenScale = screen.screenSize.w / screen.pageSize.w;
-      // const pageOriginY = screen.pageSize.topLeft[1] + screen.pageSize.h / 2;
-      // const screenOriginY = pageOriginY * pageToScreenScale;
-
       this.coordinates.push({
         x: currentX + screen.canvasOffset.x,
         y:
@@ -95,37 +109,45 @@ export class MultiCanvasProvider extends CanvasProvider {
       currentX += screen.screenSize.w * screenToCanvas + screen.canvasOffset.x;
     }
 
-    // Set up contexts
-    for (const canvas of canvasRefs.current) {
-      this.contexts.push(canvas.getContext("2d") as CanvasRenderingContext2D);
-    }
-  }
-
-  apply(drawMethod: (ctx: CanvasRenderingContext2D) => void) {
+    // Initialize controls
     for (let idx = 0; idx < this.canvasRefs.current.length; idx++) {
-      const ctx = this.contexts[idx];
-      const coord = this.coordinates[idx];
+      const canvas = this.canvasRefs.current[idx];
       const screenScale = getScreenScale(screens[idx]);
-      ctx.save();
-      ctx.scale(1 / screenScale, 1 / screenScale);
-      ctx.translate(-coord.x, -coord.y);
 
-      drawMethod(ctx);
+      const control = createControl(canvas, () => {
+        // Trigger update only on the current control
+        requestAnimationFrame((time) => {
+          if (!this.controls[idx]) return;
+          this.controls[idx].fullUpdate(time);
+        });
+        // TODO
+        // Trigger update on all controls
+        // How do I synchronize the different controls?
+        // If there is shared state, all controls should be updated
+        //
+        // for (const control of this.controls) {
+        //   requestAnimationFrame((time) => {
+        //     if (!control) return;
+        //     control.fullUpdate(time, {
+        //       size: this.size,
+        //       coordinates: this.coordinates,
+        //     });
+        //   });
+        // }
+      });
+      control.setTransform({
+        translate: new Victor(
+          -this.coordinates[idx].x,
+          -this.coordinates[idx].y
+        ),
+        scale: new Victor(1 / screenScale, 1 / screenScale),
+        size: this.size,
+        coordinates: this.coordinates,
+      });
 
-      ctx.restore();
+      this.controls.push(control);
     }
-  }
-
-  boundingPolygon() {
-    const polygon: Victor[] = [];
-    for (const screen of this.coordinates) {
-      polygon.push(new Victor(screen.x, screen.y));
-      polygon.push(new Victor(screen.x + screen.w, screen.y));
-    }
-    for (const screen of this.coordinates.toReversed()) {
-      polygon.push(new Victor(screen.x + screen.w, screen.y + screen.h));
-      polygon.push(new Victor(screen.x, screen.y + screen.h));
-    }
-    return polygon;
+    // Trigger update on all controls
+    for (const control of this.controls) control.requestUpdate();
   }
 }

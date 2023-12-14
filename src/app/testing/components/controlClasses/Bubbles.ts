@@ -1,9 +1,15 @@
 import Victor from "victor";
-import { CanvasController } from "../CanvasController";
+import {
+  CanvasControl,
+  CanvasControl2D,
+  ScreenTransform,
+} from "../CanvasControl";
 import { CanvasProvider } from "../CanvasProvider";
 
-export class Bubbles extends CanvasController {
-  boundingPolygon: Victor[];
+export class Bubbles extends CanvasControl2D {
+  animationSettings: { fps: number } = { fps: 60 };
+  // All corner points in clockwise order (not normalized)
+  boundingPolygon: Victor[] | null = null;
   balls: {
     x: number;
     y: number;
@@ -13,15 +19,11 @@ export class Bubbles extends CanvasController {
     hue: number;
   }[];
 
-  constructor(public canvas: CanvasProvider) {
-    super(canvas);
-
-    this.boundingPolygon = canvas.boundingPolygon();
-    const size = this.canvas.size;
-    for (const point of this.boundingPolygon) {
-      point.x /= size.w;
-      point.y /= size.h;
-    }
+  constructor(
+    public canvas: HTMLCanvasElement,
+    public requestUpdate: () => void
+  ) {
+    super(canvas, requestUpdate);
 
     this.balls = Array.from({ length: 600 }, () => ({
       x: Math.random(),
@@ -33,12 +35,28 @@ export class Bubbles extends CanvasController {
     }));
   }
 
-  run(): void {
-    super.run();
-    this.animationFrame = requestAnimationFrame(this.run.bind(this));
+  setTransform(transform: ScreenTransform): void {
+    super.setTransform(transform);
+
+    this.boundingPolygon = [];
+    for (const screen of transform.coordinates) {
+      this.boundingPolygon.push(new Victor(screen.x, screen.y));
+      this.boundingPolygon.push(new Victor(screen.x + screen.w, screen.y));
+    }
+    for (const screen of transform.coordinates.toReversed()) {
+      this.boundingPolygon.push(
+        new Victor(screen.x + screen.w, screen.y + screen.h)
+      );
+      this.boundingPolygon.push(new Victor(screen.x, screen.y + screen.h));
+    }
+    for (const point of this.boundingPolygon) {
+      point.x /= transform.size.w;
+      point.y /= transform.size.h;
+    }
   }
 
-  update(): void {
+  updateState(): void {
+    if (!this.boundingPolygon) return;
     // Update the balls
     for (const ball of this.balls) {
       ball.x += ball.vx;
@@ -92,25 +110,27 @@ export class Bubbles extends CanvasController {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
-    const size = this.canvas.size;
+  update(time: number): void {
+    if (!this.ctx || !this.transform) return;
+    const size = this.transform.size;
+    this.updateState();
     // Clear the canvas
-    ctx.clearRect(0, 0, size.w, size.h);
+    this.ctx.clearRect(0, 0, size.w, size.h);
 
     // Draw the balls
     for (const ball of this.balls) {
       // Fill with a random color
-      ctx.beginPath();
-      ctx.arc(
+      this.ctx.beginPath();
+      this.ctx.arc(
         ball.x * size.w,
         ball.y * size.h,
         ball.r * size.w,
         0,
         2 * Math.PI
       );
-      ctx.fillStyle = `hsl(${ball.hue}, 60%, 60%)`;
-      ctx.fill();
-      ctx.stroke();
+      this.ctx.fillStyle = `hsl(${ball.hue}, 60%, 60%)`;
+      this.ctx.fill();
+      this.ctx.stroke();
     }
   }
 }

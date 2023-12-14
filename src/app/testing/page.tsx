@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import ControllerProvider from "./components/ControllerProvider";
+import ControlProvider from "./components/ControlProvider";
 import ScreenWrapper from "./components/Screen";
 import ScreenCanvas from "./components/ScreenCanvas";
 import { screens } from "./types";
@@ -12,9 +12,9 @@ export default function Page() {
   return (
     <>
       <div className="flex w-full h-full absolute overflow-hidden">
-        <ControllerProvider
-          // controller={controller.current}
-          // controllerClass={Controller.PictureFrame}
+        <ControlProvider
+          // control={control.current}
+          // controlClass={Control.PictureFrame}
           canvasRefs={canvasRefs}
         >
           <ScreenWrapper screen={screens[0]}>
@@ -38,7 +38,7 @@ export default function Page() {
               ref={(el) => el && (canvasRefs.current[2] = el)}
             />
           </ScreenWrapper>
-        </ControllerProvider>
+        </ControlProvider>
       </div>
     </>
   );

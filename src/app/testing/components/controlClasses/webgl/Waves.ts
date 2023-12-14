@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { CanvasController } from "../../CanvasController";
+import { CanvasControl, WebGLControl } from "../../CanvasControl";
 import { CanvasProvider } from "../../CanvasProvider";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Adding_2D_content_to_a_WebGL_context
@@ -189,7 +189,7 @@ function setPositionAttribute(
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-export class Waves extends CanvasController {
+export class Waves extends WebGLControl {
   constructor(public canvas: CanvasProvider) {
     super(canvas);
 
@@ -219,8 +219,8 @@ export class Waves extends CanvasController {
     this.buffers = initBuffers(gl);
   }
 
-  run(): void {
-    super.run();
+  updateAndDraw(): void {
+    super.updateAndDraw();
   }
 
   update(): void {}
