@@ -1,6 +1,12 @@
 import Victor from "victor";
 import { Dimensions } from "../types";
 
+// TODO: Implement proper handling of animation frames
+// - Remember which control has called requestUpdate
+// - Constantly call requestAnimationFrame
+// - Update the control such that it matches the specified fps as closely as possible
+// - It should not matter how often requestUpdate is called, if the updateis still pending
+
 export type AnimationSettings = {
   fps: number;
 };
@@ -15,8 +21,8 @@ export type ScreenTransform = {
 export abstract class CanvasControl {
   protected abstract ctx: RenderingContext;
   protected abstract transform: ScreenTransform | null;
-  // TODO: Implement animation
   public readonly animationSettings: AnimationSettings | null = null;
+  private animationId: NodeJS.Timeout | null = null;
 
   // NOTE: requestUpdate should not be called recursively, it is only intended for event
   // based updates. To do interval based updates, override the animationSettings property.
@@ -34,6 +40,21 @@ export abstract class CanvasControl {
     this.beforeUpdate();
     this.update(time);
     this.afterUpdate();
+  }
+  start(): void {
+    if (this.animationSettings) {
+      const { fps } = this.animationSettings;
+      this.animationId = setInterval(() => {
+        this.requestUpdate();
+      }, 1000 / fps);
+    } else {
+      this.requestUpdate();
+    }
+  }
+  stop(): void {
+    if (this.animationId) {
+      clearInterval(this.animationId);
+    }
   }
 }
 

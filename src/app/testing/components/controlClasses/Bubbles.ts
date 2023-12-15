@@ -1,10 +1,6 @@
 import Victor from "victor";
-import {
-  CanvasControl,
-  CanvasControl2D,
-  ScreenTransform,
-} from "../CanvasControl";
-import { CanvasProvider } from "../CanvasProvider";
+import { CanvasControl2D, ScreenTransform } from "../CanvasControl";
+import seedrandom from "seedrandom";
 
 export class Bubbles extends CanvasControl2D {
   animationSettings: { fps: number } = { fps: 60 };
@@ -18,6 +14,7 @@ export class Bubbles extends CanvasControl2D {
     vy: number;
     hue: number;
   }[];
+  currentTime: number = 0;
 
   constructor(
     public canvas: HTMLCanvasElement,
@@ -25,13 +22,15 @@ export class Bubbles extends CanvasControl2D {
   ) {
     super(canvas, requestUpdate);
 
+    const random = seedrandom("bubbles");
+
     this.balls = Array.from({ length: 600 }, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: Math.random() * 0.005 + 0.005,
-      vx: ((2 * Math.random() - 1) * 0.001) / 4,
-      vy: ((2 * Math.random() - 1) * 0.001) / 4,
-      hue: Math.random() * 360,
+      x: random(),
+      y: random(),
+      r: random() * 0.005 + 0.005,
+      vx: ((2 * random() - 1) * 0.001) / 20,
+      vy: ((2 * random() - 1) * 0.001) / 20,
+      hue: random() * 360,
     }));
   }
 
@@ -55,12 +54,13 @@ export class Bubbles extends CanvasControl2D {
     }
   }
 
-  updateState(): void {
+  updateState(timeDelta: number): void {
     if (!this.boundingPolygon) return;
     // Update the balls
+    // console.log(timeDelta);
     for (const ball of this.balls) {
-      ball.x += ball.vx;
-      ball.y += ball.vy;
+      ball.x += ball.vx * timeDelta;
+      ball.y += ball.vy * timeDelta;
       // Check for collisions with walls of bounding box
       for (let i = 0; i < this.boundingPolygon.length; i++) {
         // First connection point of current line
@@ -95,6 +95,7 @@ export class Bubbles extends CanvasControl2D {
         };
         const ortho = { x: ball.x - projection.x, y: ball.y - projection.y };
         const dist = Math.sqrt(ortho.x ** 2 + ortho.y ** 2);
+        // Check if ball is inside the wall
         if (dist > ball.r) continue;
 
         const normal = { x: ortho.x / dist, y: ortho.y / dist };
@@ -113,7 +114,12 @@ export class Bubbles extends CanvasControl2D {
   update(time: number): void {
     if (!this.ctx || !this.transform) return;
     const size = this.transform.size;
-    this.updateState();
+
+    // Update state
+    const timeDelta = time - this.currentTime;
+    this.currentTime = time;
+    this.updateState(timeDelta);
+
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);
 

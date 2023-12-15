@@ -17,14 +17,17 @@ export default function ControlProvider({
   const multiCanvasRef = useRef<MultiCanvasProvider | null>(null);
 
   function initControl() {
+    if (multiCanvasRef.current) {
+      multiCanvasRef.current.destroy();
+    }
     multiCanvasRef.current = new MultiCanvasProvider(
       (canvas, requestUpdate) => {
-        // return new Control.PictureFrame(
-        //   canvas,
-        //   requestUpdate,
-        //   "/Panorama Skiurlaub.png"
-        // );
-        return new Control.Bubbles(canvas, requestUpdate);
+        return new Control.PictureFrame(
+          canvas,
+          requestUpdate,
+          "/Panorama Skiurlaub.png"
+        );
+        // return new Control.Bubbles(canvas, requestUpdate);
       },
       screens,
       props.canvasRefs
@@ -48,6 +51,11 @@ export default function ControlProvider({
 
   useEffect(() => {
     initControl();
+    return () => {
+      if (multiCanvasRef.current) {
+        multiCanvasRef.current.destroy();
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

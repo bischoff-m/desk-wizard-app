@@ -21,6 +21,8 @@ export abstract class CanvasProvider {
   abstract size: Dimensions;
 
   constructor(public createControl: ControlFactory) {}
+
+  public abstract destroy(): void;
 }
 
 export class SingleCanvasProvider extends CanvasProvider {
@@ -57,7 +59,12 @@ export class SingleCanvasProvider extends CanvasProvider {
       ],
     });
 
-    requestUpdate();
+    this.control.start();
+  }
+
+  destroy(): void {
+    if (!this.control) return;
+    this.control.stop();
   }
 }
 
@@ -148,6 +155,10 @@ export class MultiCanvasProvider extends CanvasProvider {
       this.controls.push(control);
     }
     // Trigger update on all controls
-    for (const control of this.controls) control.requestUpdate();
+    for (const control of this.controls) control.start();
+  }
+
+  destroy(): void {
+    for (const control of this.controls) control.stop();
   }
 }
