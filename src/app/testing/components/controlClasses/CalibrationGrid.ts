@@ -1,20 +1,24 @@
-import { CanvasControl2D } from "../CanvasControl";
+import {
+  ProgramControl2D,
+  ScreenTransform,
+  createDefaultProgram,
+} from "../ProgramControl";
+import { ProgramState } from "../ProgramState";
 
 const margin = 50;
 
-export class CalibrationGrid extends CanvasControl2D {
-  // boundingPolygon: Victor[] | null = null;
-
+class CalibrationGridControl extends ProgramControl2D {
   constructor(
-    public canvas: HTMLCanvasElement,
-    public requestUpdate: () => void
+    protected canvas: HTMLCanvasElement,
+    protected sharedState: ProgramState,
+    protected transform: ScreenTransform
   ) {
-    super(canvas, requestUpdate);
+    super(canvas, sharedState, transform);
   }
 
-  update(time: DOMHighResTimeStamp): void {
-    if (!this.ctx || !this.transform) return;
-    const { size, coordinates } = this.transform;
+  draw(): void {
+    const size = this.sharedState.sizeInPixel;
+    const coordinates = this.sharedState.screenLayout;
 
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);
@@ -53,3 +57,8 @@ export class CalibrationGrid extends CanvasControl2D {
     }
   }
 }
+
+const handle = {
+  create: () => createDefaultProgram(CalibrationGridControl),
+};
+export default handle;

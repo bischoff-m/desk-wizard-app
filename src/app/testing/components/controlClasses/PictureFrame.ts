@@ -1,42 +1,75 @@
-import { CanvasControl2D } from "../CanvasControl";
+import { Dimensions } from "../../types";
+import {
+  CanvasProgram,
+  ProgramControl2D,
+  ScreenTransform,
+} from "../ProgramControl";
+import { ProgramState } from "../ProgramState";
 
-export class PictureFrame extends CanvasControl2D {
+const basePath = "/";
+
+class PictureFrameState extends ProgramState {
   image: HTMLImageElement;
 
   constructor(
-    public canvas: HTMLCanvasElement,
-    public requestUpdate: () => void,
-    public imageSrc: string
+    public sizeInPixel: Dimensions,
+    public screenLayout: (Dimensions & { x: number; y: number })[],
+    protected imageSrc: string
   ) {
-    super(canvas, requestUpdate);
+    super(sizeInPixel, screenLayout);
+
     this.image = new Image();
-    this.image.src = imageSrc;
-    if (this.image.complete) requestUpdate();
-    else this.image.onload = () => requestUpdate();
+    this.image.src = basePath + imageSrc;
+
+    if (this.image.complete) this.requestUpdate();
+    else this.image.onload = () => this.requestUpdate();
+  }
+}
+
+class PictureFrameControl extends ProgramControl2D {
+  constructor(
+    protected canvas: HTMLCanvasElement,
+    protected sharedState: PictureFrameState,
+    protected transform: ScreenTransform
+  ) {
+    super(canvas, sharedState, transform);
   }
 
-  update(time: DOMHighResTimeStamp): void {
-    if (!this.ctx || !this.transform) return;
-    if (!this.image.complete) return;
+  draw(): void {
+    const { image } = this.sharedState;
+    if (!image.complete) return;
 
-    const size = this.transform.size;
+    const { w, h } = this.sharedState.sizeInPixel;
     // Clear the canvas
-    this.ctx.clearRect(0, 0, size.w, size.h);
+    this.ctx.clearRect(0, 0, w, h);
 
     // Scale to fit screen without changing aspect ratio
-    const scale = Math.max(
-      size.w / this.image.width,
-      size.h / this.image.height
-    );
-    const scaledWidth = this.image.width * scale;
-    const scaledHeight = this.image.height * scale;
+    const scale = Math.max(w / image.width, h / image.height);
+    const scaledWidth = image.width * scale;
+    const scaledHeight = image.height * scale;
 
     this.ctx.drawImage(
-      this.image,
-      (size.w - scaledWidth) / 2,
-      (size.h - scaledHeight) / 2,
+      image,
+      (w - scaledWidth) / 2,
+      (h - scaledHeight) / 2,
       scaledWidth,
       scaledHeight
     );
   }
 }
+
+const handle = {
+  create: (imageSrc: string): CanvasProgram => ({
+    createState: (sizeInPixel, screenLayout) => {
+      return new PictureFrameState(sizeInPixel, screenLayout, imageSrc);
+    },
+    createControl: (canvas, sharedState, transform) => {
+      return new PictureFrameControl(
+        canvas,
+        sharedState as PictureFrameState,
+        transform
+      );
+    },
+  }),
+};
+export default handle;

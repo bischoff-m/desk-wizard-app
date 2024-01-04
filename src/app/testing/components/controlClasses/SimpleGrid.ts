@@ -1,16 +1,16 @@
-import { CanvasControl2D } from "../CanvasControl";
+import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
 
-export class SimpleGrid extends CanvasControl2D {
+class SimpleGridControl extends ProgramControl2D {
   constructor(
     public canvas: HTMLCanvasElement,
-    public requestUpdate: () => void
+    public sharedState: any,
+    public transform: any
   ) {
-    super(canvas, requestUpdate);
+    super(canvas, sharedState, transform);
   }
 
-  update(time: DOMHighResTimeStamp): void {
-    if (!this.ctx || !this.transform) return;
-    const size = this.transform.size;
+  draw(): void {
+    const size = this.sharedState.sizeInPixel;
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);
 
@@ -71,3 +71,8 @@ export class SimpleGrid extends CanvasControl2D {
     this.ctx.stroke();
   }
 }
+
+const handle = {
+  create: () => createDefaultProgram(SimpleGridControl),
+};
+export default handle;

@@ -1,16 +1,21 @@
-import { CanvasControl2D } from "../CanvasControl";
+import {
+  ProgramControl2D,
+  ScreenTransform,
+  createDefaultProgram,
+} from "../ProgramControl";
+import { ProgramState } from "../ProgramState";
 
-export class SimpleGradient extends CanvasControl2D {
+class SimpleGradientControl extends ProgramControl2D {
   constructor(
     public canvas: HTMLCanvasElement,
-    public requestUpdate: () => void
+    public sharedState: ProgramState,
+    public transform: ScreenTransform
   ) {
-    super(canvas, requestUpdate);
+    super(canvas, sharedState, transform);
   }
 
-  update(time: DOMHighResTimeStamp): void {
-    if (!this.ctx || !this.transform) return;
-    const size = this.transform.size;
+  draw(): void {
+    const size = this.sharedState.sizeInPixel;
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);
 
@@ -28,3 +33,8 @@ export class SimpleGradient extends CanvasControl2D {
     this.ctx.fillRect(0, 0, size.w, size.h);
   }
 }
+
+const handle = {
+  create: () => createDefaultProgram(SimpleGradientControl),
+};
+export default handle;

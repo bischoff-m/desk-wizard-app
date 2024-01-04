@@ -21,36 +21,19 @@ export default function ControlProvider({
       multiCanvasRef.current.destroy();
     }
     multiCanvasRef.current = new MultiCanvasProvider(
-      (canvas, requestUpdate) => {
-        return new Control.PictureFrame(
-          canvas,
-          requestUpdate,
-          "/Panorama Skiurlaub.png"
-        );
-        // return new Control.Bubbles(canvas, requestUpdate);
-      },
+      Control.Bubbles.create(),
       screens,
       props.canvasRefs
     );
-    // screens, props.canvasRefs);
-    // ##########################################
-
-    // controlRef.current = new Control.PictureFrame(
-    //   multiCanvasRef.current,
-    //   "/Panorama Skiurlaub.png"
-    // );
-    // controlRef.current = new Control.Bubbles(multiCanvasRef.current);
-    // controlRef.current = new Control.CalibrationGrid(
-    //   multiCanvasRef.current
-    // );
-
-    // ##########################################
   }
 
-  initControl();
+  // TODO: Fix hot reloading
+  // initControl();
 
   useEffect(() => {
-    initControl();
+    requestAnimationFrame(() => {
+      initControl();
+    });
     return () => {
       if (multiCanvasRef.current) {
         multiCanvasRef.current.destroy();

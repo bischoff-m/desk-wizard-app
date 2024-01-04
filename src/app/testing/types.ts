@@ -1,4 +1,5 @@
 import Victor from "victor";
+import { ProgramControl } from "./components/ProgramControl";
 
 export type Dimensions = {
   w: number;

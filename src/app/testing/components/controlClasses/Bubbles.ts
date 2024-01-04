@@ -1,11 +1,14 @@
-import Victor from "victor";
-import { CanvasControl2D, ScreenTransform } from "../CanvasControl";
 import seedrandom from "seedrandom";
+import Victor from "victor";
+import { Dimensions } from "../../types";
+import {
+  ProgramControl2D,
+  ScreenTransform,
+  createDefaultProgram,
+} from "../ProgramControl";
+import { ProgramState } from "../ProgramState";
 
-export class Bubbles extends CanvasControl2D {
-  animationSettings: { fps: number } = { fps: 60 };
-  // All corner points in clockwise order (not normalized)
-  boundingPolygon: Victor[] | null = null;
+class BubblesState extends ProgramState {
   balls: {
     x: number;
     y: number;
@@ -14,16 +17,34 @@ export class Bubbles extends CanvasControl2D {
     vy: number;
     hue: number;
   }[];
-  currentTime: number = 0;
+  // All corner points in clockwise order (not normalized)
+  boundingPolygon: Victor[];
 
   constructor(
-    public canvas: HTMLCanvasElement,
-    public requestUpdate: () => void
+    public sizeInPixel: Dimensions,
+    public screenLayout: (Dimensions & { x: number; y: number })[]
   ) {
-    super(canvas, requestUpdate);
+    super(sizeInPixel, screenLayout, { fps: 60 });
 
+    // Intialize the bounding polygon
+    this.boundingPolygon = [];
+    for (const screen of screenLayout) {
+      this.boundingPolygon.push(new Victor(screen.x, screen.y));
+      this.boundingPolygon.push(new Victor(screen.x + screen.w, screen.y));
+    }
+    for (const screen of screenLayout.toReversed()) {
+      this.boundingPolygon.push(
+        new Victor(screen.x + screen.w, screen.y + screen.h)
+      );
+      this.boundingPolygon.push(new Victor(screen.x, screen.y + screen.h));
+    }
+    for (const point of this.boundingPolygon) {
+      point.x /= sizeInPixel.w;
+      point.y /= sizeInPixel.h;
+    }
+
+    // Initialize the balls
     const random = seedrandom("bubbles");
-
     this.balls = Array.from({ length: 600 }, () => ({
       x: random(),
       y: random(),
@@ -34,33 +55,11 @@ export class Bubbles extends CanvasControl2D {
     }));
   }
 
-  setTransform(transform: ScreenTransform): void {
-    super.setTransform(transform);
-
-    this.boundingPolygon = [];
-    for (const screen of transform.coordinates) {
-      this.boundingPolygon.push(new Victor(screen.x, screen.y));
-      this.boundingPolygon.push(new Victor(screen.x + screen.w, screen.y));
-    }
-    for (const screen of transform.coordinates.toReversed()) {
-      this.boundingPolygon.push(
-        new Victor(screen.x + screen.w, screen.y + screen.h)
-      );
-      this.boundingPolygon.push(new Victor(screen.x, screen.y + screen.h));
-    }
-    for (const point of this.boundingPolygon) {
-      point.x /= transform.size.w;
-      point.y /= transform.size.h;
-    }
-  }
-
-  updateState(timeDelta: number): void {
-    if (!this.boundingPolygon) return;
+  updateShared(): void {
     // Update the balls
-    // console.log(timeDelta);
     for (const ball of this.balls) {
-      ball.x += ball.vx * timeDelta;
-      ball.y += ball.vy * timeDelta;
+      ball.x += ball.vx * this.timeDelta;
+      ball.y += ball.vy * this.timeDelta;
       // Check for collisions with walls of bounding box
       for (let i = 0; i < this.boundingPolygon.length; i++) {
         // First connection point of current line
@@ -110,21 +109,27 @@ export class Bubbles extends CanvasControl2D {
       }
     }
   }
+}
 
-  update(time: number): void {
-    if (!this.ctx || !this.transform) return;
-    const size = this.transform.size;
+class BubblesControl extends ProgramControl2D {
+  constructor(
+    protected canvas: HTMLCanvasElement,
+    protected sharedState: BubblesState,
+    protected transform: ScreenTransform
+  ) {
+    super(canvas, sharedState, transform);
+  }
 
-    // Update state
-    const timeDelta = time - this.currentTime;
-    this.currentTime = time;
-    this.updateState(timeDelta);
-
+  beforeDraw(): void {
     // Clear the canvas
-    this.ctx.clearRect(0, 0, size.w, size.h);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    super.beforeDraw();
+  }
 
+  draw(): void {
     // Draw the balls
-    for (const ball of this.balls) {
+    const size = this.sharedState.sizeInPixel;
+    for (const ball of this.sharedState.balls) {
       // Fill with a random color
       this.ctx.beginPath();
       this.ctx.arc(
@@ -140,3 +145,8 @@ export class Bubbles extends CanvasControl2D {
     }
   }
 }
+
+const handle = {
+  create: () => createDefaultProgram(BubblesControl, BubblesState),
+};
+export default handle;

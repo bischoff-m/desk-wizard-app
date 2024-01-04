@@ -2,10 +2,15 @@ import { Matrix, matrix } from "mathjs";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
 import Victor from "victor";
-import { CanvasControl, CanvasControl2D } from "../CanvasControl";
+import {
+  ProgramControl2D,
+  ScreenTransform,
+  createDefaultProgram,
+} from "../ProgramControl";
+import { ProgramState } from "../ProgramState";
+import { Dimensions } from "../../types";
 
-export class TriangleGradientCanvas extends CanvasControl2D {
-  animationSettings: { fps: number } = { fps: 60 };
+class NoiseParticlesState extends ProgramState {
   gap: number = 30;
   nodeSize: number = 10;
   noiseScale: number = 5;
@@ -13,21 +18,22 @@ export class TriangleGradientCanvas extends CanvasControl2D {
   noiseFunction: (x: number, y: number, z: number) => number = (x, y, z) => 0;
 
   constructor(
-    public canvas: HTMLCanvasElement,
-    public requestUpdate: () => void
+    public sizeInPixel: Dimensions,
+    public screenLayout: (Dimensions & { x: number; y: number })[]
   ) {
-    super(canvas, requestUpdate);
+    super(sizeInPixel, screenLayout, { fps: 60 });
+
     const prng = seedrandom("my seed");
     this.noiseFunction = createNoise3D(prng);
   }
 
-  update(time: DOMHighResTimeStamp): void {
-    if (!this.ctx || !this.transform) return;
-    const { w, h } = this.transform.size;
+  protected updateShared(): void {
+    const { w, h } = this.sizeInPixel;
     const numberX = Math.ceil(w / this.gap);
     const numberY = Math.ceil((h / this.gap) * 2);
     const timeScale = 0.0001;
     const timeOffset = 0;
+
     for (let i = 0; i < numberX; i++) {
       for (let j = 0; j < numberY; j++) {
         this.noise.set(
@@ -35,23 +41,38 @@ export class TriangleGradientCanvas extends CanvasControl2D {
           this.noiseFunction(
             (i / numberX) * this.noiseScale,
             (j / 2 / numberY) * this.noiseScale,
-            time * timeScale + timeOffset
+            this.time * timeScale + timeOffset
           )
         );
       }
     }
+  }
+}
+
+class NoiseParticlesControl extends ProgramControl2D {
+  constructor(
+    protected canvas: HTMLCanvasElement,
+    protected sharedState: NoiseParticlesState,
+    protected transform: ScreenTransform
+  ) {
+    super(canvas, sharedState, transform);
+  }
+
+  draw(): void {
+    const { w, h } = this.sharedState.sizeInPixel;
+    const { noise, gap, nodeSize } = this.sharedState;
     // Clear the canvas
     this.ctx.clearRect(0, 0, w, h);
-    this.ctx.fillStyle = "#2f2f2f";
+    this.ctx.fillStyle = "#222230";
     this.ctx.fillRect(0, 0, w, h);
 
     // Draw triangle for each node
-    for (let i = 0; i < this.noise.size()[0]; i++) {
-      for (let j = 0; j < this.noise.size()[1]; j++) {
-        const noiseValue = this.noise.get([i, j]);
-        let node = new Victor(i * this.gap, j * (this.gap / 2));
-        const cornerVector = new Victor(0, this.nodeSize * noiseValue);
-        if (j % 2 === 0) node.addScalarX(this.gap / 2);
+    for (let i = 0; i < noise.size()[0]; i++) {
+      for (let j = 0; j < noise.size()[1]; j++) {
+        const noiseValue = noise.get([i, j]);
+        let node = new Victor(i * gap, j * (gap / 2));
+        const cornerVector = new Victor(0, nodeSize * noiseValue);
+        if (j % 2 === 0) node.addScalarX(gap / 2);
 
         this.ctx.fillStyle = `rgba(200, 100, 100, 1)`;
         // this.ctx.strokeStyle = "black";
@@ -69,8 +90,13 @@ export class TriangleGradientCanvas extends CanvasControl2D {
         this.ctx.lineTo(corner4.x, corner4.y);
         this.ctx.closePath();
         this.ctx.fill();
-        // ctx.stroke();
       }
     }
   }
 }
+
+const handle = {
+  create: () =>
+    createDefaultProgram(NoiseParticlesControl, NoiseParticlesState),
+};
+export default handle;
