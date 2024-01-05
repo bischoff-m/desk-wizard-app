@@ -3,6 +3,8 @@ import { screens } from "../types";
 import { MultiCanvasProvider } from "./CanvasProvider";
 import { Control } from "./controlClasses";
 
+const PROGRAM = Control.Waves.create();
+
 /**
  * This component is used to make the page reload when editing the control in
  * development mode. I think React needs a component for that, but there is likely a
@@ -16,24 +18,16 @@ export default function ControlProvider({
 }) {
   const multiCanvasRef = useRef<MultiCanvasProvider | null>(null);
 
-  function initControl() {
+  useEffect(() => {
     if (multiCanvasRef.current) {
       multiCanvasRef.current.destroy();
     }
     multiCanvasRef.current = new MultiCanvasProvider(
-      Control.Bubbles.create(),
+      PROGRAM,
       screens,
       props.canvasRefs
     );
-  }
 
-  // TODO: Fix hot reloading
-  // initControl();
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      initControl();
-    });
     return () => {
       if (multiCanvasRef.current) {
         multiCanvasRef.current.destroy();

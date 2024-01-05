@@ -1,10 +1,10 @@
 import Victor from "victor";
-import { Screen, screens } from "../types";
-import { ProgramControl, CanvasProgram } from "./ProgramControl";
+import { Screen } from "../types";
+import { CanvasProgram, ProgramControl } from "./ProgramControl";
 import { ProgramState } from "./ProgramState";
 
 export abstract class CanvasProvider {
-  protected abstract sharedState: ProgramState;
+  public abstract sharedState: ProgramState;
 
   constructor(public program: CanvasProgram) {}
 
@@ -15,7 +15,7 @@ export abstract class CanvasProvider {
 
 export class SingleCanvasProvider extends CanvasProvider {
   public control: ProgramControl;
-  protected sharedState: ProgramState;
+  public sharedState: ProgramState;
 
   constructor(public program: CanvasProgram, public canvas: HTMLCanvasElement) {
     super(program);
@@ -49,7 +49,7 @@ export class SingleCanvasProvider extends CanvasProvider {
 
 export class MultiCanvasProvider extends CanvasProvider {
   public controls: ProgramControl[];
-  protected sharedState: ProgramState;
+  public sharedState: ProgramState;
 
   constructor(
     public program: CanvasProgram,

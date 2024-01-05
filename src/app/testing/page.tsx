@@ -12,11 +12,7 @@ export default function Page() {
   return (
     <>
       <div className="flex w-full h-full absolute overflow-hidden">
-        <ControlProvider
-          // control={control.current}
-          // controlClass={Control.PictureFrame}
-          canvasRefs={canvasRefs}
-        >
+        <ControlProvider canvasRefs={canvasRefs}>
           <ScreenWrapper screen={screens[0]}>
             <div className="bg-slate-300">{/* Placeholer */}</div>
             <ScreenCanvas
