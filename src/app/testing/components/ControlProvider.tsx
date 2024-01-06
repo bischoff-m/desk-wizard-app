@@ -3,7 +3,7 @@ import { screens } from "../types";
 import { MultiCanvasProvider } from "./CanvasProvider";
 import { Control } from "./controlClasses";
 
-const PROGRAM = Control.Waves.create();
+const PROGRAM = Control.CalibrationWebGL.create();
 
 /**
  * This component is used to make the page reload when editing the control in

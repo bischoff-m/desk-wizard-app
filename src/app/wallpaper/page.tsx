@@ -16,7 +16,7 @@ export default function Page() {
           backgroundSize: "cover",
         }}
       >
-        <div className="bg-red-300 rounded-lg p-10">
+        <div className="bg-slate-200 rounded-lg p-10">
           <FullCalendar
             plugins={[dayGridPlugin, iCalendarPlugin]}
             events={{
