@@ -33,3 +33,14 @@ export const screens: Screen[] = [
     pageSize: { w: 960, h: 1536, topLeft: new Victor(3584, 0) },
   },
 ];
+
+export type AnimationSettings = {
+  fps: number;
+};
+
+export type ScreenTransform = {
+  translate: Victor;
+  scale: Victor;
+};
+
+export type ScreenLayout = (Dimensions & { x: number; y: number })[];

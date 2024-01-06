@@ -1,5 +1,4 @@
-import { Dimensions } from "../types";
-import { AnimationSettings } from "./ProgramControl";
+import { Dimensions, AnimationSettings, ScreenLayout } from "../types";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;
@@ -12,7 +11,7 @@ export class ProgramState {
 
   constructor(
     public sizeInPixel: Dimensions,
-    public screenLayout: (Dimensions & { x: number; y: number })[],
+    public screenLayout: ScreenLayout,
     protected animationSettings?: AnimationSettings
   ) {
     this.onEveryFrame();

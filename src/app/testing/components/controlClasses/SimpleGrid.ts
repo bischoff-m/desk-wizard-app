@@ -1,10 +1,12 @@
+import { ScreenTransform } from "../../types";
 import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
+import { ProgramState } from "../ProgramState";
 
 class SimpleGridControl extends ProgramControl2D {
   constructor(
-    public canvas: HTMLCanvasElement,
-    public sharedState: any,
-    public transform: any
+    protected canvas: HTMLCanvasElement,
+    protected sharedState: ProgramState,
+    protected transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
@@ -72,7 +74,6 @@ class SimpleGridControl extends ProgramControl2D {
   }
 }
 
-const handle = {
-  create: () => createDefaultProgram(SimpleGridControl),
+export const SimpleGrid = {
+  create: createDefaultProgram(SimpleGridControl),
 };
-export default handle;

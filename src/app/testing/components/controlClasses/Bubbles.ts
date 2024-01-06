@@ -1,11 +1,7 @@
 import seedrandom from "seedrandom";
 import Victor from "victor";
-import { Dimensions } from "../../types";
-import {
-  ProgramControl2D,
-  ScreenTransform,
-  createDefaultProgram,
-} from "../ProgramControl";
+import { Dimensions, ScreenLayout, ScreenTransform } from "../../types";
+import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
 import { ProgramState } from "../ProgramState";
 
 class BubblesState extends ProgramState {
@@ -22,7 +18,7 @@ class BubblesState extends ProgramState {
 
   constructor(
     public sizeInPixel: Dimensions,
-    public screenLayout: (Dimensions & { x: number; y: number })[]
+    public screenLayout: ScreenLayout
   ) {
     super(sizeInPixel, screenLayout, { fps: 60 });
 
@@ -146,7 +142,6 @@ class BubblesControl extends ProgramControl2D {
   }
 }
 
-const handle = {
-  create: () => createDefaultProgram(BubblesControl, BubblesState),
+export const Bubbles = {
+  create: createDefaultProgram(BubblesControl, BubblesState),
 };
-export default handle;

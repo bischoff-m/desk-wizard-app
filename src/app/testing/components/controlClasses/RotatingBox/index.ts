@@ -1,15 +1,9 @@
+import { Dimensions, ScreenLayout, ScreenTransform } from "@/app/testing/types";
 import { mat4 } from "gl-matrix";
-import {
-  ProgramControl,
-  ScreenTransform,
-  WebGLControl,
-  createDefaultProgram,
-} from "../../ProgramControl";
-import { CanvasProvider } from "../../CanvasProvider";
+import { WebGLControl, createDefaultProgram } from "../../ProgramControl";
 import { ProgramState } from "../../ProgramState";
-import { Dimensions } from "@/app/testing/types";
-import vsSource from "./vertex.glsl";
 import fsSource from "./fragment.glsl";
+import vsSource from "./vertex.glsl";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Adding_2D_content_to_a_WebGL_context
 
@@ -89,22 +83,22 @@ function initPositionBuffer(gl: WebGLRenderingContext) {
 
   const positions = [
     // Front face
-    -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+    -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1,
 
     // Back face
-    -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0,
+    -1, -1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1,
 
     // Top face
-    -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,
+    -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1,
 
     // Bottom face
-    -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
+    -1, -1, -1, 1, -1, -1, 1, -1, 1, -1, -1, 1,
 
     // Right face
-    1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0,
+    1, -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1,
 
     // Left face
-    -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0,
+    -1, -1, -1, -1, -1, 1, -1, 1, 1, -1, 1, -1,
   ];
 
   // Now pass the list of positions into WebGL to build the
@@ -117,12 +111,12 @@ function initPositionBuffer(gl: WebGLRenderingContext) {
 
 function initColorBuffer(gl: WebGLRenderingContext) {
   const faceColors = [
-    [1.0, 1.0, 1.0, 1.0], // Front face: white
-    [1.0, 0.0, 0.0, 1.0], // Back face: red
-    [0.0, 1.0, 0.0, 1.0], // Top face: green
-    [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
-    [1.0, 1.0, 0.0, 1.0], // Right face: yellow
-    [1.0, 0.0, 1.0, 1.0], // Left face: purple
+    [1, 1, 1, 1], // Front face: white
+    [1, 0, 0, 1], // Back face: red
+    [0, 1, 0, 1], // Top face: green
+    [0, 0, 1, 1], // Bottom face: blue
+    [1, 1, 0, 1], // Right face: yellow
+    [1, 0, 1, 1], // Left face: purple
   ];
 
   // Convert the array of colors into a table for all the vertices.
@@ -338,7 +332,7 @@ function setColorAttribute(
 class RotatingBoxState extends ProgramState {
   constructor(
     public sizeInPixel: Dimensions,
-    public screenLayout: (Dimensions & { x: number; y: number })[]
+    public screenLayout: ScreenLayout
   ) {
     super(sizeInPixel, screenLayout, { fps: 60 });
   }
@@ -403,11 +397,9 @@ class RotatingBoxControl extends WebGLControl {
   draw(): void {
     drawScene(this.ctx, this.programInfo, this.buffers, this.cubeRotation);
     this.cubeRotation += this.sharedState.timeDelta * 0.001;
-    // console.log(this.cubeRotation);
   }
 }
 
-const handle = {
-  create: () => createDefaultProgram(RotatingBoxControl, RotatingBoxState),
+export const RotatingBox = {
+  create: createDefaultProgram(RotatingBoxControl, RotatingBoxState),
 };
-export default handle;

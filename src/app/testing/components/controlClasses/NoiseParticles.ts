@@ -2,24 +2,20 @@ import { Matrix, matrix } from "mathjs";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
 import Victor from "victor";
-import {
-  ProgramControl2D,
-  ScreenTransform,
-  createDefaultProgram,
-} from "../ProgramControl";
+import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
 import { ProgramState } from "../ProgramState";
-import { Dimensions } from "../../types";
+import { Dimensions, ScreenLayout, ScreenTransform } from "../../types";
 
 class NoiseParticlesState extends ProgramState {
   gap: number = 30;
   nodeSize: number = 10;
   noiseScale: number = 5;
   noise: Matrix = matrix();
-  noiseFunction: (x: number, y: number, z: number) => number = (x, y, z) => 0;
+  noiseFunction: (x: number, y: number, z: number) => number;
 
   constructor(
     public sizeInPixel: Dimensions,
-    public screenLayout: (Dimensions & { x: number; y: number })[]
+    public screenLayout: ScreenLayout
   ) {
     super(sizeInPixel, screenLayout, { fps: 60 });
 
@@ -75,7 +71,6 @@ class NoiseParticlesControl extends ProgramControl2D {
         if (j % 2 === 0) node.addScalarX(gap / 2);
 
         this.ctx.fillStyle = `rgba(200, 100, 100, 1)`;
-        // this.ctx.strokeStyle = "black";
         this.ctx.beginPath();
         const corner1 = node.clone().add(cornerVector);
         this.ctx.moveTo(corner1.x, corner1.y);
@@ -95,8 +90,6 @@ class NoiseParticlesControl extends ProgramControl2D {
   }
 }
 
-const handle = {
-  create: () =>
-    createDefaultProgram(NoiseParticlesControl, NoiseParticlesState),
+export const NoiseParticles = {
+  create: createDefaultProgram(NoiseParticlesControl, NoiseParticlesState),
 };
-export default handle;

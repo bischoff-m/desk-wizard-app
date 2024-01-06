@@ -1,8 +1,5 @@
-import {
-  ProgramControl2D,
-  ScreenTransform,
-  createDefaultProgram,
-} from "../ProgramControl";
+import { ScreenTransform } from "../../types";
+import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
 import { ProgramState } from "../ProgramState";
 
 const margin = 50;
@@ -58,7 +55,6 @@ class CalibrationGridControl extends ProgramControl2D {
   }
 }
 
-const handle = {
-  create: () => createDefaultProgram(CalibrationGridControl),
+export const CalibrationGrid = {
+  create: createDefaultProgram(CalibrationGridControl),
 };
-export default handle;

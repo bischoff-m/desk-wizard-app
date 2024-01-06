@@ -1,15 +1,12 @@
-import {
-  ProgramControl2D,
-  ScreenTransform,
-  createDefaultProgram,
-} from "../ProgramControl";
+import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
 import { ProgramState } from "../ProgramState";
+import { ScreenTransform } from "../../types";
 
 class SimpleGradientControl extends ProgramControl2D {
   constructor(
-    public canvas: HTMLCanvasElement,
-    public sharedState: ProgramState,
-    public transform: ScreenTransform
+    protected canvas: HTMLCanvasElement,
+    protected sharedState: ProgramState,
+    protected transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
@@ -34,7 +31,6 @@ class SimpleGradientControl extends ProgramControl2D {
   }
 }
 
-const handle = {
-  create: () => createDefaultProgram(SimpleGradientControl),
+export const SimpleGradient = {
+  create: createDefaultProgram(SimpleGradientControl),
 };
-export default handle;

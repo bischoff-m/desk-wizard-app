@@ -1,10 +1,6 @@
-import { Dimensions } from "@/app/testing/types";
+import { Dimensions, ScreenLayout, ScreenTransform } from "@/app/testing/types";
 import { mat4 } from "gl-matrix";
-import {
-  ScreenTransform,
-  WebGLControl,
-  createDefaultProgram,
-} from "../../ProgramControl";
+import { WebGLControl, createDefaultProgram } from "../../ProgramControl";
 import { ProgramState } from "../../ProgramState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
@@ -82,7 +78,7 @@ function initPositionBuffer(gl: WebGLRenderingContext) {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
   // Now create an array of positions for the square.
-  const positions = [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0];
+  const positions = [1, 1, -1, 1, 1, -1, -1, -1];
 
   // Now pass the list of positions into WebGL to build the
   // shape. We do this by creating a Float32Array from the
@@ -93,8 +89,8 @@ function initPositionBuffer(gl: WebGLRenderingContext) {
 }
 
 function drawScene(gl: WebGLRenderingContext, programInfo: any, buffers: any) {
-  gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
-  gl.clearDepth(1.0); // Clear everything
+  gl.clearColor(0, 0, 0, 1); // Clear to black, fully opaque
+  gl.clearDepth(1); // Clear everything
   gl.enable(gl.DEPTH_TEST); // Enable depth testing
   gl.depthFunc(gl.LEQUAL); // Near things obscure far things
 
@@ -112,7 +108,7 @@ function drawScene(gl: WebGLRenderingContext, programInfo: any, buffers: any) {
   const fieldOfView = (45 * Math.PI) / 180; // in radians
   const aspect = gl.canvas.width / gl.canvas.height;
   const zNear = 0.1;
-  const zFar = 100.0;
+  const zFar = 100;
   const projectionMatrix = mat4.create();
 
   // note: glmatrix.js always has the first argument
@@ -182,16 +178,16 @@ function setPositionAttribute(
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-class WavesState extends ProgramState {
+class ShaderExampleState extends ProgramState {
   constructor(
     public sizeInPixel: Dimensions,
-    public screenLayout: (Dimensions & { x: number; y: number })[]
+    public screenLayout: ScreenLayout
   ) {
     super(sizeInPixel, screenLayout);
   }
 }
 
-class WavesControl extends WebGLControl {
+class ShaderExampleControl extends WebGLControl {
   buffers: { position: WebGLBuffer | null };
   programInfo: {
     program: WebGLProgram;
@@ -204,7 +200,7 @@ class WavesControl extends WebGLControl {
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    protected sharedState: WavesState,
+    protected sharedState: ShaderExampleState,
     protected transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
@@ -246,7 +242,6 @@ class WavesControl extends WebGLControl {
   }
 }
 
-const handle = {
-  create: () => createDefaultProgram(WavesControl, WavesState),
+export const ShaderExample = {
+  create: createDefaultProgram(ShaderExampleControl, ShaderExampleState),
 };
-export default handle;

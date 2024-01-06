@@ -1,20 +1,15 @@
-import Victor from "victor";
-import { Dimensions } from "../types";
+import {
+  AnimationSettings,
+  Dimensions,
+  ScreenLayout,
+  ScreenTransform,
+} from "../types";
 import { ProgramState } from "./ProgramState";
-
-export type AnimationSettings = {
-  fps: number;
-};
-
-export type ScreenTransform = {
-  translate: Victor;
-  scale: Victor;
-};
 
 export type CanvasProgram = {
   createState: (
     sizeInPixel: Dimensions,
-    screenLayout: (Dimensions & { x: number; y: number })[]
+    screenLayout: ScreenLayout
   ) => ProgramState;
   createControl: (
     canvas: HTMLCanvasElement,
@@ -25,16 +20,19 @@ export type CanvasProgram = {
 
 export function createDefaultProgram(
   controlClass: { new (...args: any[]): ProgramControl },
-  stateClass?: { new (...args: any[]): ProgramState }
-): CanvasProgram {
-  return {
-    createControl: (...args) => new controlClass(...args),
-    createState: (...args) => {
-      if (stateClass) return new stateClass(...args);
+  stateClass?: { new (...args: any[]): ProgramState },
+  animationSettings?: AnimationSettings
+): () => CanvasProgram {
+  return () => ({
+    createState: (sizeInPixel, screenLayout) => {
+      if (stateClass) return new stateClass(sizeInPixel, screenLayout);
       // Default to stateless program
-      else return new ProgramState(...args);
+      else
+        return new ProgramState(sizeInPixel, screenLayout, animationSettings);
     },
-  };
+    createControl: (canvas, sharedState, transform) =>
+      new controlClass(canvas, sharedState, transform),
+  });
 }
 
 export abstract class ProgramControl {

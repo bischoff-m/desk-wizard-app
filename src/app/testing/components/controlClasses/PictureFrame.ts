@@ -1,9 +1,5 @@
-import { Dimensions } from "../../types";
-import {
-  CanvasProgram,
-  ProgramControl2D,
-  ScreenTransform,
-} from "../ProgramControl";
+import { Dimensions, ScreenLayout, ScreenTransform } from "../../types";
+import { CanvasProgram, ProgramControl2D } from "../ProgramControl";
 import { ProgramState } from "../ProgramState";
 
 const basePath = "/";
@@ -13,7 +9,7 @@ class PictureFrameState extends ProgramState {
 
   constructor(
     public sizeInPixel: Dimensions,
-    public screenLayout: (Dimensions & { x: number; y: number })[],
+    public screenLayout: ScreenLayout,
     protected imageSrc: string
   ) {
     super(sizeInPixel, screenLayout);
@@ -58,7 +54,7 @@ class PictureFrameControl extends ProgramControl2D {
   }
 }
 
-const handle = {
+export const PictureFrame = {
   create: (imageSrc: string): CanvasProgram => ({
     createState: (sizeInPixel, screenLayout) => {
       return new PictureFrameState(sizeInPixel, screenLayout, imageSrc);
@@ -72,4 +68,3 @@ const handle = {
     },
   }),
 };
-export default handle;
