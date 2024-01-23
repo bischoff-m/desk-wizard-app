@@ -5,8 +5,8 @@ import { ProgramControl } from "../control/ProgramControl";
 import { CanvasProvider } from "./CanvasProvider";
 
 export class PerScreenCanvasProvider extends CanvasProvider {
+  override sharedState: any;
   public controls: ProgramControl<any>[];
-  public sharedState: any;
 
   constructor(
     public program: CanvasProgram<any>,

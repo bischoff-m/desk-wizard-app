@@ -6,7 +6,7 @@ import {
 import { mat4 } from "gl-matrix";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { ProgramState } from "../../ProgramState";
-import { WebGLControl } from "../../control/WebGLControl";
+import { NaiveWebGLControl } from "../../control/WebGLControl";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -183,7 +183,7 @@ function setPositionAttribute(
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-class ShaderExampleControl extends WebGLControl<ProgramState> {
+class ShaderExampleControl extends NaiveWebGLControl<ProgramState> {
   buffers: { position: WebGLBuffer | null };
   programInfo: {
     program: WebGLProgram;
@@ -195,9 +195,9 @@ class ShaderExampleControl extends WebGLControl<ProgramState> {
   };
 
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: ProgramState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: ProgramState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
 
@@ -233,7 +233,7 @@ class ShaderExampleControl extends WebGLControl<ProgramState> {
     this.buffers = initBuffers(this.ctx);
   }
 
-  draw(): void {
+  override draw(): void {
     drawScene(this.ctx, this.programInfo, this.buffers);
   }
 }

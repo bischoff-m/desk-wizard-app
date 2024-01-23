@@ -15,8 +15,8 @@ class NoiseParticlesState extends ProgramState {
   noiseFunction: (x: number, y: number, z: number) => number;
 
   constructor(
-    public screenLayout: ScreenLayout,
-    protected animationSettings: AnimationSettings
+    override screenLayout: ScreenLayout,
+    override animationSettings: AnimationSettings
   ) {
     super(screenLayout, animationSettings);
 
@@ -24,7 +24,7 @@ class NoiseParticlesState extends ProgramState {
     this.noiseFunction = createNoise3D(prng);
   }
 
-  protected updateShared(): void {
+  override updateShared(): void {
     const { w, h } = this.totalSize;
     const numberX = Math.ceil(w / this.gap);
     const numberY = Math.ceil((h / this.gap) * 2);
@@ -48,14 +48,14 @@ class NoiseParticlesState extends ProgramState {
 
 class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: NoiseParticlesState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: NoiseParticlesState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
 
-  draw(): void {
+  override draw(): void {
     const { w, h } = this.sharedState.totalSize;
     const { noise, gap, nodeSize } = this.sharedState;
     // Clear the canvas

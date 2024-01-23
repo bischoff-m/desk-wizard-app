@@ -6,21 +6,15 @@ import { ProgramControl } from "../control/ProgramControl";
 import { CanvasProvider } from "./CanvasProvider";
 
 export class SpanningCanvasProvider extends CanvasProvider {
+  override sharedState: ProgramState;
   public control: ProgramControl<any>;
-  public sharedState: ProgramState;
 
   constructor(
     public program: CanvasProgram<any>,
     public canvas: HTMLCanvasElement
-  ) // private screens: { screen: Screen; element: HTMLElement }[]
-  {
+  ) {
     super(program);
 
-    // Create canvas
-    // const canvas = document.createElement("canvas");
-    // this.root.appendChild(canvas);
-
-    // TODO: Abstract MultiCanvasProvider to get screenLayout
     const screenLayout = [
       {
         x: 0,

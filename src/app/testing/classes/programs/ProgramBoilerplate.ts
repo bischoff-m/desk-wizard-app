@@ -5,27 +5,25 @@ import { ProgramState } from "../ProgramState";
 
 class MyState extends ProgramState {
   constructor(
-    public screenLayout: ScreenLayout,
-    protected animationSettings: AnimationSettings
+    override screenLayout: ScreenLayout,
+    override animationSettings: AnimationSettings
   ) {
     super(screenLayout, animationSettings);
   }
 
-  protected updateShared(): void {}
+  override updateShared(): void {}
 }
 
 class MyControl extends ProgramControl2D<MyState> {
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: MyState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: MyState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
 
-  draw(): void {
-    this.sharedState.requestUpdate();
-  }
+  override draw(): void {}
 }
 
 export const MyProgram = {

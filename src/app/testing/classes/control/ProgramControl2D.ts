@@ -8,23 +8,23 @@ export abstract class ProgramControl2D<
   protected ctx: CanvasRenderingContext2D;
 
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: TState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: TState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
 
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
-  protected beforeDraw(): void {
+  override beforeDraw(): void {
     const { translate, scale } = this.transform;
     this.ctx.save();
     this.ctx.scale(scale.x, scale.y);
     this.ctx.translate(translate.x, translate.y);
   }
 
-  protected afterDraw(): void {
+  override afterDraw(): void {
     this.ctx.restore();
   }
 }

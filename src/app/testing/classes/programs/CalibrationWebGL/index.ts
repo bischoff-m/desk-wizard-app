@@ -7,7 +7,7 @@ import { vec3, vec4 } from "gl-matrix";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { PlaneGeometry } from "../../PlaneGeometry";
 import { ProgramState } from "../../ProgramState";
-import { WebGLControl } from "../../control/WebGLControl";
+import { NaiveWebGLControl } from "../../control/WebGLControl";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -22,8 +22,8 @@ class CalibrationWebGLState extends ProgramState {
   public mesh: { vertices: number[]; triangles: number[]; colors: number[] };
 
   constructor(
-    public screenLayout: ScreenLayout,
-    protected animationSettings: AnimationSettings
+    override screenLayout: ScreenLayout,
+    override animationSettings: AnimationSettings
   ) {
     super(screenLayout, animationSettings);
 
@@ -67,7 +67,7 @@ class CalibrationWebGLState extends ProgramState {
     }
   }
 
-  protected updateShared(): void {
+  override updateShared(): void {
     // this.mesh = {
     //   vertices: this.plane.getVertices(),
     //   triangles: this.plane.getTriangles(),
@@ -77,16 +77,16 @@ class CalibrationWebGLState extends ProgramState {
   }
 }
 
-class CalibrationWebGLControl extends WebGLControl<CalibrationWebGLState> {
+class CalibrationWebGLControl extends NaiveWebGLControl<CalibrationWebGLState> {
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: CalibrationWebGLState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: CalibrationWebGLState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform, vsSource, fsSource);
   }
 
-  draw(): void {
+  override draw(): void {
     const gl = this.ctx;
 
     // Setup canvas

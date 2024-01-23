@@ -18,8 +18,8 @@ class BubblesState extends ProgramState {
   boundingPolygon: Victor[];
 
   constructor(
-    public screenLayout: ScreenLayout,
-    protected animationSettings: AnimationSettings
+    override screenLayout: ScreenLayout,
+    override animationSettings: AnimationSettings
   ) {
     super(screenLayout, animationSettings);
 
@@ -52,7 +52,7 @@ class BubblesState extends ProgramState {
     }));
   }
 
-  updateShared(): void {
+  override updateShared(): void {
     // Update the balls
     for (const ball of this.balls) {
       ball.x += ball.vx * this.timeDelta;
@@ -110,20 +110,20 @@ class BubblesState extends ProgramState {
 
 class BubblesControl extends ProgramControl2D<BubblesState> {
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: BubblesState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: BubblesState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
 
-  beforeDraw(): void {
+  override beforeDraw(): void {
     // Clear the canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     super.beforeDraw();
   }
 
-  draw(): void {
+  override draw(): void {
     // Draw the balls
     const size = this.sharedState.totalSize;
     for (const ball of this.sharedState.balls) {

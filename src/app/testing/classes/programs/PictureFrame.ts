@@ -9,8 +9,8 @@ class PictureFrameState extends ProgramState {
   image: HTMLImageElement;
 
   constructor(
-    screenLayout: ScreenLayout,
-    animationSettings: AnimationSettings,
+    override screenLayout: ScreenLayout,
+    override animationSettings: AnimationSettings,
     imageSrc: string
   ) {
     super(screenLayout, animationSettings);
@@ -25,14 +25,14 @@ class PictureFrameState extends ProgramState {
 
 class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: PictureFrameState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: PictureFrameState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
 
-  draw(): void {
+  override draw(): void {
     const { image } = this.sharedState;
     if (!image.complete) return;
 

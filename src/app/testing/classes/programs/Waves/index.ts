@@ -8,7 +8,7 @@ import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { ProgramState } from "../../ProgramState";
-import { WebGLControl } from "../../control/WebGLControl";
+import { NaiveWebGLControl } from "../../control/WebGLControl";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -32,8 +32,8 @@ class WavesState extends ProgramState {
   mesh: { vertices: number[]; triangles: number[]; colors: number[] };
 
   constructor(
-    public screenLayout: ScreenLayout,
-    protected animationSettings: AnimationSettings
+    override screenLayout: ScreenLayout,
+    override animationSettings: AnimationSettings
   ) {
     super(screenLayout, animationSettings);
 
@@ -98,7 +98,7 @@ class WavesState extends ProgramState {
     this.mesh = { vertices, triangles, colors };
   }
 
-  protected updateShared(): void {
+  override updateShared(): void {
     const timeScale = 0.0002;
     const timeOffset = 0;
 
@@ -116,7 +116,7 @@ class WavesState extends ProgramState {
   }
 }
 
-class WavesControl extends WebGLControl<WavesState> {
+class WavesControl extends NaiveWebGLControl<WavesState> {
   buffers: {
     position: WebGLBuffer | null;
     color: WebGLBuffer | null;
@@ -139,9 +139,9 @@ class WavesControl extends WebGLControl<WavesState> {
   };
 
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: WavesState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: WavesState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
 
@@ -189,7 +189,7 @@ class WavesControl extends WebGLControl<WavesState> {
     };
   }
 
-  draw(): void {
+  override draw(): void {
     const gl = this.ctx;
 
     gl.clearColor(0.13, 0.13, 0.19, 1); // Clear to black, fully opaque

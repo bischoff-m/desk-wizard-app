@@ -8,11 +8,11 @@ export abstract class ProgramControl<TState extends ProgramState> {
     protected transform: ScreenTransform
   ) {}
 
-  abstract draw(): void;
+  protected abstract draw(): void;
 
   protected beforeDraw(): void {}
   protected afterDraw(): void {}
-  fullUpdate(): void {
+  public fullUpdate(): void {
     this.beforeDraw();
     this.draw();
     this.afterDraw();

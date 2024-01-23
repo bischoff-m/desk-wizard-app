@@ -7,14 +7,14 @@ const margin = 50;
 
 class CalibrationGridControl extends ProgramControl2D<ProgramState> {
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: ProgramState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: ProgramState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
   }
 
-  draw(): void {
+  override draw(): void {
     const size = this.sharedState.totalSize;
     const coordinates = this.sharedState.screenLayout;
 

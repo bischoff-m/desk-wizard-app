@@ -1,12 +1,8 @@
-import {
-  AnimationSettings,
-  ScreenLayout,
-  ScreenTransform,
-} from "@/app/testing/types";
+import { ScreenTransform } from "@/app/testing/types";
 import { mat4 } from "gl-matrix";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { ProgramState } from "../../ProgramState";
-import { WebGLControl } from "../../control/WebGLControl";
+import { NaiveWebGLControl } from "../../control/WebGLControl";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -334,7 +330,7 @@ function setColorAttribute(
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
 
-class RotatingBoxControl extends WebGLControl<ProgramState> {
+class RotatingBoxControl extends NaiveWebGLControl<ProgramState> {
   buffers: {
     position: WebGLBuffer | null;
     color: WebGLBuffer | null;
@@ -351,9 +347,9 @@ class RotatingBoxControl extends WebGLControl<ProgramState> {
   cubeRotation = 0;
 
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: ProgramState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: ProgramState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
 
@@ -390,7 +386,7 @@ class RotatingBoxControl extends WebGLControl<ProgramState> {
     this.buffers = initBuffers(this.ctx);
   }
 
-  draw(): void {
+  override draw(): void {
     drawScene(this.ctx, this.programInfo, this.buffers, this.cubeRotation);
     this.cubeRotation += this.sharedState.timeDelta * 0.001;
   }

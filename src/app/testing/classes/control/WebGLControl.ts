@@ -4,6 +4,7 @@ import { mat4 } from "gl-matrix";
 import { ScreenTransform } from "../../types";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramState } from "../ProgramState";
+import { WebGLState } from "../state/WebGLState";
 
 /**
  * TODO: Use twgl
@@ -15,17 +16,32 @@ import { ProgramState } from "../ProgramState";
  * - Goal is to set the camera to fit the screen
  */
 
-// export abstract class WebGLState extends ProgramState {}
+// TODO: Move scaling for webgl from CalibrationWebGL to here
 
-export abstract class WebGLControl<
+export abstract class NaiveWebGLControl<
   TState extends ProgramState
 > extends ProgramControl<TState> {
   protected ctx: WebGLRenderingContext;
 
   constructor(
-    protected canvas: HTMLCanvasElement,
-    protected sharedState: TState,
-    protected transform: ScreenTransform
+    override canvas: HTMLCanvasElement,
+    override sharedState: TState,
+    override transform: ScreenTransform
+  ) {
+    super(canvas, sharedState, transform);
+    this.ctx = this.canvas.getContext("webgl") as WebGLRenderingContext;
+  }
+}
+
+export abstract class WebGLControl<
+  TState extends WebGLState
+> extends ProgramControl<TState> {
+  protected ctx: WebGLRenderingContext;
+
+  constructor(
+    override canvas: HTMLCanvasElement,
+    override sharedState: TState,
+    override transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
     this.ctx = this.canvas.getContext("webgl") as WebGLRenderingContext;
@@ -54,9 +70,9 @@ export abstract class WebGLControl<
 //   };
 
 //   constructor(
-//     protected canvas: HTMLCanvasElement,
-//     protected sharedState: TState,
-//     protected transform: ScreenTransform,
+//     override canvas: HTMLCanvasElement,
+//     override sharedState: TState,
+//     override transform: ScreenTransform,
 //     protected vsSource: string,
 //     protected fsSource: string
 //   ) {
