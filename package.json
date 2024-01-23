@@ -6,15 +6,13 @@
     "dev": "next dev -p 23553",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "cors": "node ./cors_proxy/main.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.9",
     "@fullcalendar/daygrid": "^6.1.9",
     "@fullcalendar/icalendar": "^6.1.9",
     "@fullcalendar/react": "^6.1.9",
-    "cors-anywhere": "^0.4.4",
     "gl-matrix": "^3.4.3",
     "glslify-loader": "^2.0.0",
     "mathjs": "^12.1.0",
