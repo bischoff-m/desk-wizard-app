@@ -3,7 +3,7 @@ import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../ProgramState";
 
-class SimpleGridControl extends ProgramControl2D {
+class SimpleGridControl extends ProgramControl2D<ProgramState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: ProgramState,

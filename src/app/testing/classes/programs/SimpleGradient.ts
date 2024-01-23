@@ -3,7 +3,7 @@ import { ProgramState } from "../ProgramState";
 import { ScreenTransform } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 
-class SimpleGradientControl extends ProgramControl2D {
+class SimpleGradientControl extends ProgramControl2D<ProgramState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: ProgramState,

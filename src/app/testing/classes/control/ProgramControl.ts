@@ -1,9 +1,7 @@
 import { ScreenTransform } from "../../types";
 import { ProgramState } from "../ProgramState";
 
-export abstract class ProgramControl<
-  TState extends ProgramState = ProgramState
-> {
+export abstract class ProgramControl<TState extends ProgramState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: TState,

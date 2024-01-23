@@ -334,16 +334,7 @@ function setColorAttribute(
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
 
-class RotatingBoxState extends ProgramState {
-  constructor(
-    public screenLayout: ScreenLayout,
-    protected animationSettings: AnimationSettings
-  ) {
-    super(screenLayout, animationSettings);
-  }
-}
-
-class RotatingBoxControl extends WebGLControl {
+class RotatingBoxControl extends WebGLControl<ProgramState> {
   buffers: {
     position: WebGLBuffer | null;
     color: WebGLBuffer | null;
@@ -361,7 +352,7 @@ class RotatingBoxControl extends WebGLControl {
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    protected sharedState: RotatingBoxState,
+    protected sharedState: ProgramState,
     protected transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
@@ -409,7 +400,6 @@ export const RotatingBox = {
   create: createDefaultProgram(
     "per-screen",
     { animate: true, fps: 60 },
-    RotatingBoxControl,
-    RotatingBoxState
+    RotatingBoxControl
   ),
 };

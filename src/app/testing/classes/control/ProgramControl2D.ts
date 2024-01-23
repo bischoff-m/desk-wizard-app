@@ -3,7 +3,7 @@ import { ProgramState } from "../ProgramState";
 import { ProgramControl } from "./ProgramControl";
 
 export abstract class ProgramControl2D<
-  TState extends ProgramState = ProgramState
+  TState extends ProgramState
 > extends ProgramControl<TState> {
   protected ctx: CanvasRenderingContext2D;
 

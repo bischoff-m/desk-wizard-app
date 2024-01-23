@@ -18,7 +18,7 @@ import { ProgramState } from "../ProgramState";
 // export abstract class WebGLState extends ProgramState {}
 
 export abstract class WebGLControl<
-  TState extends ProgramState = ProgramState
+  TState extends ProgramState
 > extends ProgramControl<TState> {
   protected ctx: WebGLRenderingContext;
 
@@ -33,7 +33,7 @@ export abstract class WebGLControl<
 }
 
 // export abstract class WebGLControl2<
-//   TState extends ProgramState = ProgramState
+//   TState extends ProgramState
 // > extends ProgramControl<TState> {
 //   protected ctx: WebGLRenderingContext;
 //   private positionBuffer: WebGLBuffer | null;

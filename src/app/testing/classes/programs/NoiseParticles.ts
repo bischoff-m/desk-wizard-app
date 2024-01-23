@@ -46,7 +46,7 @@ class NoiseParticlesState extends ProgramState {
   }
 }
 
-class NoiseParticlesControl extends ProgramControl2D {
+class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: NoiseParticlesState,
@@ -95,6 +95,7 @@ export const NoiseParticles = {
   create: createDefaultProgram(
     "per-screen",
     { animate: true, fps: 60 },
-    NoiseParticlesControl
+    NoiseParticlesControl,
+    NoiseParticlesState
   ),
 };

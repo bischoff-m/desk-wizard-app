@@ -77,7 +77,7 @@ class CalibrationWebGLState extends ProgramState {
   }
 }
 
-class CalibrationWebGLControl extends WebGLControl {
+class CalibrationWebGLControl extends WebGLControl<CalibrationWebGLState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: CalibrationWebGLState,

@@ -183,16 +183,7 @@ function setPositionAttribute(
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
-class ShaderExampleState extends ProgramState {
-  constructor(
-    public screenLayout: ScreenLayout,
-    animationSettings: AnimationSettings
-  ) {
-    super(screenLayout, animationSettings);
-  }
-}
-
-class ShaderExampleControl extends WebGLControl {
+class ShaderExampleControl extends WebGLControl<ProgramState> {
   buffers: { position: WebGLBuffer | null };
   programInfo: {
     program: WebGLProgram;
@@ -205,7 +196,7 @@ class ShaderExampleControl extends WebGLControl {
 
   constructor(
     protected canvas: HTMLCanvasElement,
-    protected sharedState: ShaderExampleState,
+    protected sharedState: ProgramState,
     protected transform: ScreenTransform
   ) {
     super(canvas, sharedState, transform);
@@ -251,7 +242,6 @@ export const ShaderExample = {
   create: createDefaultProgram(
     "per-screen",
     { animate: false },
-    ShaderExampleControl,
-    ShaderExampleState
+    ShaderExampleControl
   ),
 };

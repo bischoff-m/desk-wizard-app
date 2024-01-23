@@ -5,7 +5,7 @@ import { ProgramState } from "../ProgramState";
 
 const margin = 50;
 
-class CalibrationGridControl extends ProgramControl2D {
+class CalibrationGridControl extends ProgramControl2D<ProgramState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: ProgramState,

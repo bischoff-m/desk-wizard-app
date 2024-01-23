@@ -45,6 +45,3 @@ export type ScreenTransform = {
 
 export type ScreenRect = Dimensions & { x: number; y: number };
 export type ScreenLayout = ScreenRect[];
-
-// TODO: Maybe use this to unify with WebGLCanvasProvider
-// export type ScreenLayout = {physical: ScreenRect, emulated: ScreenRect}[];

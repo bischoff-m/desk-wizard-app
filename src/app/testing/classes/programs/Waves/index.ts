@@ -116,7 +116,7 @@ class WavesState extends ProgramState {
   }
 }
 
-class WavesControl extends WebGLControl {
+class WavesControl extends WebGLControl<WavesState> {
   buffers: {
     position: WebGLBuffer | null;
     color: WebGLBuffer | null;
