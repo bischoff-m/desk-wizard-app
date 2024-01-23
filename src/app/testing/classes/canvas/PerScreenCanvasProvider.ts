@@ -4,7 +4,7 @@ import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl } from "../control/ProgramControl";
 import { CanvasProvider } from "./CanvasProvider";
 
-export class MultiCanvasProvider extends CanvasProvider {
+export class PerScreenCanvasProvider extends CanvasProvider {
   public controls: ProgramControl<any>[];
   public sharedState: any;
 
