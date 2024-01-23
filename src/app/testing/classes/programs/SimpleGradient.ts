@@ -1,6 +1,6 @@
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../ProgramState";
-import { ScreenTransform } from "../../../types";
+import { ScreenTransform } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 
 class SimpleGradientControl extends ProgramControl2D {

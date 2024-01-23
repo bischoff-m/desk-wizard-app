@@ -1,4 +1,4 @@
-import { ScreenTransform } from "../../../types";
+import { ScreenTransform } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../ProgramState";

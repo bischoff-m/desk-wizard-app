@@ -1,7 +1,7 @@
 "use client";
 
 import { mat4 } from "gl-matrix";
-import { ScreenTransform } from "../../../types";
+import { ScreenTransform } from "../../types";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramState } from "../ProgramState";
 

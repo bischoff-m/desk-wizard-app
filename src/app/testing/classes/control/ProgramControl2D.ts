@@ -1,4 +1,4 @@
-import { ScreenTransform } from "../../../types";
+import { ScreenTransform } from "../../types";
 import { ProgramState } from "../ProgramState";
 import { ProgramControl } from "./ProgramControl";
 

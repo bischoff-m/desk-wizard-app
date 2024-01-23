@@ -2,7 +2,7 @@
 
 import { useCanvas } from "./components/ControlProvider";
 import { screens } from "./types";
-import { Control } from "./components/classes/programs";
+import { Control } from "./classes/programs";
 
 export default function Page() {
   const { ScreenWrapper } = useCanvas(

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { Screen } from "../types";
-import { CanvasProgram } from "./classes/CanvasProgram";
-import { CanvasProvider } from "./classes/canvas/CanvasProvider";
-import { MultiCanvasProvider } from "./classes/canvas/MultiCanvasProvider";
-import { SingleCanvasProvider } from "./classes/canvas/SingleCanvasProvider";
+import { CanvasProgram } from "../classes/CanvasProgram";
+import { CanvasProvider } from "../classes/canvas/CanvasProvider";
+import { MultiCanvasProvider } from "../classes/canvas/MultiCanvasProvider";
+import { SingleCanvasProvider } from "../classes/canvas/SingleCanvasProvider";
 
 export function useCanvas(
   screens: Screen[],

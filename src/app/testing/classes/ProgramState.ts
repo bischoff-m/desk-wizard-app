@@ -1,4 +1,4 @@
-import { Dimensions, AnimationSettings, ScreenLayout } from "../../types";
+import { Dimensions, AnimationSettings, ScreenLayout } from "../types";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;

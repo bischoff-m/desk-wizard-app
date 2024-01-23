@@ -1,5 +1,5 @@
 import Victor from "victor";
-import { Screen } from "../../../types";
+import { Screen } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl } from "../control/ProgramControl";
 import { CanvasProvider } from "./CanvasProvider";

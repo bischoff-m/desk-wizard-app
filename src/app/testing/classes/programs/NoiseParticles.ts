@@ -2,11 +2,7 @@ import { Matrix, matrix } from "mathjs";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
 import Victor from "victor";
-import {
-  AnimationSettings,
-  ScreenLayout,
-  ScreenTransform,
-} from "../../../types";
+import { AnimationSettings, ScreenLayout, ScreenTransform } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramState } from "../ProgramState";
 import { ProgramControl2D } from "../control/ProgramControl2D";

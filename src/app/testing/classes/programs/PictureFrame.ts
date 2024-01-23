@@ -1,8 +1,4 @@
-import {
-  AnimationSettings,
-  ScreenLayout,
-  ScreenTransform,
-} from "../../../types";
+import { AnimationSettings, ScreenLayout, ScreenTransform } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
 import { ProgramState } from "../ProgramState";
 import { ProgramControl2D } from "../control/ProgramControl2D";
