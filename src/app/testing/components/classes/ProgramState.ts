@@ -1,8 +1,9 @@
-import { Dimensions, AnimationSettings, ScreenLayout } from "../types";
+import { Dimensions, AnimationSettings, ScreenLayout } from "../../types";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;
   public timeDelta: number = 0;
+  public totalSize: Dimensions;
   private updateNextFrameFlag: boolean = false;
   private missedFrameFlag: boolean = false;
   private animationFrame?: number;
@@ -10,10 +11,23 @@ export class ProgramState {
   private updateControl?: (time?: DOMHighResTimeStamp) => void;
 
   constructor(
-    public sizeInPixel: Dimensions,
     public screenLayout: ScreenLayout,
-    protected animationSettings?: AnimationSettings
+    protected animationSettings: AnimationSettings
   ) {
+    const boundingRect = screenLayout.reduce(
+      (acc, screen) => ({
+        minX: Math.min(acc.minX, screen.x),
+        minY: Math.min(acc.minY, screen.y),
+        maxX: Math.max(acc.maxX, screen.x + screen.w),
+        maxY: Math.max(acc.maxY, screen.y + screen.h),
+      }),
+      { minX: 0, minY: 0, maxX: 0, maxY: 0 }
+    );
+    this.totalSize = {
+      w: boundingRect.maxX - boundingRect.minX,
+      h: boundingRect.maxY - boundingRect.minY,
+    };
+
     this.onEveryFrame();
   }
 
@@ -44,11 +58,14 @@ export class ProgramState {
 
   public start(onUpdate: (time?: DOMHighResTimeStamp) => void): void {
     this.updateControl = onUpdate;
-    if (!this.animationSettings) {
+    if (!this.animationSettings.animate) {
       // Do single manual update when animationSettings is undefined
       this.updateShared();
       onUpdate();
     } else {
+      if (!this.animationSettings.fps)
+        throw new Error("Program is animating but fps is undefined");
+
       // Start animation interval
       this.fpsInterval = setInterval(() => {
         if (this.updateNextFrameFlag) this.missedFrameFlag = true;

@@ -1,8 +1,13 @@
 import seedrandom from "seedrandom";
 import Victor from "victor";
-import { Dimensions, ScreenLayout, ScreenTransform } from "../../types";
-import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
+import {
+  AnimationSettings,
+  ScreenLayout,
+  ScreenTransform,
+} from "../../../types";
+import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramState } from "../ProgramState";
+import { ProgramControl2D } from "../control/ProgramControl2D";
 
 class BubblesState extends ProgramState {
   balls: {
@@ -17,10 +22,10 @@ class BubblesState extends ProgramState {
   boundingPolygon: Victor[];
 
   constructor(
-    public sizeInPixel: Dimensions,
-    public screenLayout: ScreenLayout
+    public screenLayout: ScreenLayout,
+    protected animationSettings: AnimationSettings
   ) {
-    super(sizeInPixel, screenLayout, { fps: 60 });
+    super(screenLayout, animationSettings);
 
     // Intialize the bounding polygon
     this.boundingPolygon = [];
@@ -35,8 +40,8 @@ class BubblesState extends ProgramState {
       this.boundingPolygon.push(new Victor(screen.x, screen.y + screen.h));
     }
     for (const point of this.boundingPolygon) {
-      point.x /= sizeInPixel.w;
-      point.y /= sizeInPixel.h;
+      point.x /= this.totalSize.w;
+      point.y /= this.totalSize.h;
     }
 
     // Initialize the balls
@@ -107,7 +112,7 @@ class BubblesState extends ProgramState {
   }
 }
 
-class BubblesControl extends ProgramControl2D {
+class BubblesControl extends ProgramControl2D<BubblesState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: BubblesState,
@@ -124,7 +129,7 @@ class BubblesControl extends ProgramControl2D {
 
   draw(): void {
     // Draw the balls
-    const size = this.sharedState.sizeInPixel;
+    const size = this.sharedState.totalSize;
     for (const ball of this.sharedState.balls) {
       // Fill with a random color
       this.ctx.beginPath();
@@ -143,5 +148,10 @@ class BubblesControl extends ProgramControl2D {
 }
 
 export const Bubbles = {
-  create: createDefaultProgram(BubblesControl, BubblesState),
+  create: createDefaultProgram(
+    "per-screen",
+    { animate: true, fps: 60 },
+    BubblesControl,
+    BubblesState
+  ),
 };

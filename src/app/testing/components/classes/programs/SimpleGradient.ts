@@ -1,6 +1,7 @@
-import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
+import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../ProgramState";
-import { ScreenTransform } from "../../types";
+import { ScreenTransform } from "../../../types";
+import { createDefaultProgram } from "../CanvasProgram";
 
 class SimpleGradientControl extends ProgramControl2D {
   constructor(
@@ -12,7 +13,7 @@ class SimpleGradientControl extends ProgramControl2D {
   }
 
   draw(): void {
-    const size = this.sharedState.sizeInPixel;
+    const size = this.sharedState.totalSize;
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);
 
@@ -32,5 +33,9 @@ class SimpleGradientControl extends ProgramControl2D {
 }
 
 export const SimpleGradient = {
-  create: createDefaultProgram(SimpleGradientControl),
+  create: createDefaultProgram(
+    "per-screen",
+    { animate: false },
+    SimpleGradientControl
+  ),
 };

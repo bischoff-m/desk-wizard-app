@@ -1,11 +1,16 @@
-import { Dimensions, ScreenLayout, ScreenTransform } from "@/app/testing/types";
+import {
+  AnimationSettings,
+  ScreenLayout,
+  ScreenTransform,
+} from "@/app/testing/types";
 import { mat4, vec3 } from "gl-matrix";
-import { WebGLControl, createDefaultProgram } from "../../ProgramControl";
-import { ProgramState } from "../../ProgramState";
-import fsSource from "./fragment.glsl";
-import vsSource from "./vertex.glsl";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
+import { createDefaultProgram } from "../../CanvasProgram";
+import { ProgramState } from "../../ProgramState";
+import { WebGLControl } from "../../control/WebGLControl";
+import fsSource from "./fragment.glsl";
+import vsSource from "./vertex.glsl";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Adding_2D_content_to_a_WebGL_context
 /**
@@ -27,10 +32,10 @@ class WavesState extends ProgramState {
   mesh: { vertices: number[]; triangles: number[]; colors: number[] };
 
   constructor(
-    public sizeInPixel: Dimensions,
-    public screenLayout: ScreenLayout
+    public screenLayout: ScreenLayout,
+    protected animationSettings: AnimationSettings
   ) {
-    super(sizeInPixel, screenLayout, { fps: 30 });
+    super(screenLayout, animationSettings);
 
     const prng = seedrandom("my seed");
     this.noiseFunction = createNoise3D(prng);
@@ -94,9 +99,6 @@ class WavesState extends ProgramState {
   }
 
   protected updateShared(): void {
-    // Update the rotation for the next draw
-    // this.cubeRotation += this.timeDelta * 0.0005;
-
     const timeScale = 0.0002;
     const timeOffset = 0;
 
@@ -491,5 +493,10 @@ class WavesControl extends WebGLControl {
 }
 
 export const Waves = {
-  create: createDefaultProgram(WavesControl, WavesState),
+  create: createDefaultProgram(
+    "per-screen",
+    { animate: true, fps: 60 },
+    WavesControl,
+    WavesState
+  ),
 };

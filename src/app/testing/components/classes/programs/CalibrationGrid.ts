@@ -1,5 +1,6 @@
-import { ScreenTransform } from "../../types";
-import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
+import { ScreenTransform } from "../../../types";
+import { createDefaultProgram } from "../CanvasProgram";
+import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../ProgramState";
 
 const margin = 50;
@@ -14,7 +15,7 @@ class CalibrationGridControl extends ProgramControl2D {
   }
 
   draw(): void {
-    const size = this.sharedState.sizeInPixel;
+    const size = this.sharedState.totalSize;
     const coordinates = this.sharedState.screenLayout;
 
     // Clear the canvas
@@ -56,5 +57,9 @@ class CalibrationGridControl extends ProgramControl2D {
 }
 
 export const CalibrationGrid = {
-  create: createDefaultProgram(CalibrationGridControl),
+  create: createDefaultProgram(
+    "per-screen",
+    { animate: false },
+    CalibrationGridControl
+  ),
 };

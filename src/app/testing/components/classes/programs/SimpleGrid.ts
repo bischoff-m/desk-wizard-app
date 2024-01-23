@@ -1,5 +1,6 @@
-import { ScreenTransform } from "../../types";
-import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
+import { ScreenTransform } from "../../../types";
+import { createDefaultProgram } from "../CanvasProgram";
+import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../ProgramState";
 
 class SimpleGridControl extends ProgramControl2D {
@@ -12,7 +13,7 @@ class SimpleGridControl extends ProgramControl2D {
   }
 
   draw(): void {
-    const size = this.sharedState.sizeInPixel;
+    const size = this.sharedState.totalSize;
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);
 
@@ -75,5 +76,9 @@ class SimpleGridControl extends ProgramControl2D {
 }
 
 export const SimpleGrid = {
-  create: createDefaultProgram(SimpleGridControl),
+  create: createDefaultProgram(
+    "per-screen",
+    { animate: false },
+    SimpleGridControl
+  ),
 };

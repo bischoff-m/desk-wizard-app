@@ -1,5 +1,4 @@
 import Victor from "victor";
-import { ProgramControl } from "./components/ProgramControl";
 
 export type Dimensions = {
   w: number;
@@ -35,7 +34,8 @@ export const screens: Screen[] = [
 ];
 
 export type AnimationSettings = {
-  fps: number;
+  animate: boolean;
+  fps?: number;
 };
 
 export type ScreenTransform = {
@@ -43,4 +43,8 @@ export type ScreenTransform = {
   scale: Victor;
 };
 
-export type ScreenLayout = (Dimensions & { x: number; y: number })[];
+export type ScreenRect = Dimensions & { x: number; y: number };
+export type ScreenLayout = ScreenRect[];
+
+// TODO: Maybe use this to unify with WebGLCanvasProvider
+// export type ScreenLayout = {physical: ScreenRect, emulated: ScreenRect}[];

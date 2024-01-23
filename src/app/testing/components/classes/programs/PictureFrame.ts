@@ -1,6 +1,11 @@
-import { Dimensions, ScreenLayout, ScreenTransform } from "../../types";
-import { CanvasProgram, ProgramControl2D } from "../ProgramControl";
+import {
+  AnimationSettings,
+  ScreenLayout,
+  ScreenTransform,
+} from "../../../types";
+import { CanvasProgram } from "../CanvasProgram";
 import { ProgramState } from "../ProgramState";
+import { ProgramControl2D } from "../control/ProgramControl2D";
 
 const basePath = "/";
 
@@ -8,11 +13,11 @@ class PictureFrameState extends ProgramState {
   image: HTMLImageElement;
 
   constructor(
-    public sizeInPixel: Dimensions,
-    public screenLayout: ScreenLayout,
-    protected imageSrc: string
+    screenLayout: ScreenLayout,
+    animationSettings: AnimationSettings,
+    imageSrc: string
   ) {
-    super(sizeInPixel, screenLayout);
+    super(screenLayout, animationSettings);
 
     this.image = new Image();
     this.image.src = basePath + imageSrc;
@@ -22,7 +27,7 @@ class PictureFrameState extends ProgramState {
   }
 }
 
-class PictureFrameControl extends ProgramControl2D {
+class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
   constructor(
     protected canvas: HTMLCanvasElement,
     protected sharedState: PictureFrameState,
@@ -35,7 +40,7 @@ class PictureFrameControl extends ProgramControl2D {
     const { image } = this.sharedState;
     if (!image.complete) return;
 
-    const { w, h } = this.sharedState.sizeInPixel;
+    const { w, h } = this.sharedState.totalSize;
     // Clear the canvas
     this.ctx.clearRect(0, 0, w, h);
 
@@ -55,9 +60,9 @@ class PictureFrameControl extends ProgramControl2D {
 }
 
 export const PictureFrame = {
-  create: (imageSrc: string): CanvasProgram => ({
-    createState: (sizeInPixel, screenLayout) => {
-      return new PictureFrameState(sizeInPixel, screenLayout, imageSrc);
+  create: (imageSrc: string): CanvasProgram<PictureFrameState> => ({
+    createState: (screenLayout) => {
+      return new PictureFrameState(screenLayout, { animate: false }, imageSrc);
     },
     createControl: (canvas, sharedState, transform) => {
       return new PictureFrameControl(
@@ -66,5 +71,6 @@ export const PictureFrame = {
         transform
       );
     },
+    canvasPlacement: "per-screen",
   }),
 };

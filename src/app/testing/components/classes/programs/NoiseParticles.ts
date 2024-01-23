@@ -2,9 +2,14 @@ import { Matrix, matrix } from "mathjs";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
 import Victor from "victor";
-import { ProgramControl2D, createDefaultProgram } from "../ProgramControl";
+import {
+  AnimationSettings,
+  ScreenLayout,
+  ScreenTransform,
+} from "../../../types";
+import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramState } from "../ProgramState";
-import { Dimensions, ScreenLayout, ScreenTransform } from "../../types";
+import { ProgramControl2D } from "../control/ProgramControl2D";
 
 class NoiseParticlesState extends ProgramState {
   gap: number = 30;
@@ -14,17 +19,17 @@ class NoiseParticlesState extends ProgramState {
   noiseFunction: (x: number, y: number, z: number) => number;
 
   constructor(
-    public sizeInPixel: Dimensions,
-    public screenLayout: ScreenLayout
+    public screenLayout: ScreenLayout,
+    protected animationSettings: AnimationSettings
   ) {
-    super(sizeInPixel, screenLayout, { fps: 60 });
+    super(screenLayout, animationSettings);
 
     const prng = seedrandom("my seed");
     this.noiseFunction = createNoise3D(prng);
   }
 
   protected updateShared(): void {
-    const { w, h } = this.sizeInPixel;
+    const { w, h } = this.totalSize;
     const numberX = Math.ceil(w / this.gap);
     const numberY = Math.ceil((h / this.gap) * 2);
     const timeScale = 0.0001;
@@ -55,7 +60,7 @@ class NoiseParticlesControl extends ProgramControl2D {
   }
 
   draw(): void {
-    const { w, h } = this.sharedState.sizeInPixel;
+    const { w, h } = this.sharedState.totalSize;
     const { noise, gap, nodeSize } = this.sharedState;
     // Clear the canvas
     this.ctx.clearRect(0, 0, w, h);
@@ -91,5 +96,9 @@ class NoiseParticlesControl extends ProgramControl2D {
 }
 
 export const NoiseParticles = {
-  create: createDefaultProgram(NoiseParticlesControl, NoiseParticlesState),
+  create: createDefaultProgram(
+    "per-screen",
+    { animate: true, fps: 60 },
+    NoiseParticlesControl
+  ),
 };

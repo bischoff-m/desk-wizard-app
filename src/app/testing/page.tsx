@@ -1,40 +1,25 @@
 "use client";
 
-import { useRef } from "react";
-import ControlProvider from "./components/ControlProvider";
-import ScreenWrapper from "./components/Screen";
-import ScreenCanvas from "./components/ScreenCanvas";
+import { useCanvas } from "./components/ControlProvider";
 import { screens } from "./types";
+import { Control } from "./components/classes/programs";
 
 export default function Page() {
-  const canvasRefs = useRef<HTMLCanvasElement[]>([]);
+  const { ScreenWrapper } = useCanvas(
+    screens,
+    Control.PictureFrame.create("Panorama Skiurlaub.png")
+  );
 
   return (
     <>
       <div className="flex w-full h-full absolute overflow-hidden">
-        <ControlProvider canvasRefs={canvasRefs}>
-          <ScreenWrapper screen={screens[0]}>
-            <div className="bg-slate-300">{/* Placeholer */}</div>
-            <ScreenCanvas
-              screen={screens[0]}
-              ref={(el) => el && (canvasRefs.current[0] = el)}
-            />
-          </ScreenWrapper>
+        <ScreenWrapper screenId={0}>
+          <div className="bg-slate-300">{/* Placeholer */}</div>
+        </ScreenWrapper>
 
-          <ScreenWrapper screen={screens[1]}>
-            <ScreenCanvas
-              screen={screens[1]}
-              ref={(el) => el && (canvasRefs.current[1] = el)}
-            />
-          </ScreenWrapper>
+        <ScreenWrapper screenId={1}></ScreenWrapper>
 
-          <ScreenWrapper screen={screens[2]}>
-            <ScreenCanvas
-              screen={screens[2]}
-              ref={(el) => el && (canvasRefs.current[2] = el)}
-            />
-          </ScreenWrapper>
-        </ControlProvider>
+        <ScreenWrapper screenId={2}></ScreenWrapper>
       </div>
     </>
   );

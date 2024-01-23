@@ -1,60 +1,17 @@
 import Victor from "victor";
-import { Screen } from "../types";
-import { CanvasProgram, ProgramControl } from "./ProgramControl";
-import { ProgramState } from "./ProgramState";
-
-export abstract class CanvasProvider {
-  public abstract sharedState: ProgramState;
-
-  constructor(public program: CanvasProgram) {}
-
-  public destroy(): void {
-    this.sharedState.stop();
-  }
-}
-
-export class SingleCanvasProvider extends CanvasProvider {
-  public control: ProgramControl;
-  public sharedState: ProgramState;
-
-  constructor(public program: CanvasProgram, public canvas: HTMLCanvasElement) {
-    super(program);
-    const size = {
-      w: canvas.width,
-      h: canvas.height,
-    };
-
-    // Initialize state
-    this.sharedState = program.createState(size, [
-      {
-        x: 0,
-        y: 0,
-        w: size.w,
-        h: size.h,
-      },
-    ]);
-
-    // Initialize control
-    this.control = program.createControl(canvas, this.sharedState, {
-      translate: new Victor(0, 0),
-      scale: new Victor(1, 1),
-    });
-
-    // Start animation
-    this.sharedState.start(() => {
-      this.control.fullUpdate();
-    });
-  }
-}
+import { Screen } from "../../../types";
+import { CanvasProgram } from "../CanvasProgram";
+import { ProgramControl } from "../control/ProgramControl";
+import { CanvasProvider } from "./CanvasProvider";
 
 export class MultiCanvasProvider extends CanvasProvider {
-  public controls: ProgramControl[];
-  public sharedState: ProgramState;
+  public controls: ProgramControl<any>[];
+  public sharedState: any;
 
   constructor(
-    public program: CanvasProgram,
+    public program: CanvasProgram<any>,
     public screens: Screen[],
-    public canvasRefs: React.MutableRefObject<HTMLCanvasElement[]>
+    public canvasElements: HTMLCanvasElement[]
   ) {
     super(program);
 
@@ -105,12 +62,12 @@ export class MultiCanvasProvider extends CanvasProvider {
     }
 
     // Initialize state
-    this.sharedState = program.createState(size, coordinates);
+    this.sharedState = program.createState(coordinates);
 
     // Initialize controls
     this.controls = [];
-    for (let idx = 0; idx < this.canvasRefs.current.length; idx++) {
-      const canvas = this.canvasRefs.current[idx];
+    for (let idx = 0; idx < this.canvasElements.length; idx++) {
+      const canvas = this.canvasElements[idx];
       const screenScale = getScreenScale(screens[idx]);
       const transform = {
         translate: new Victor(-coordinates[idx].x, -coordinates[idx].y),
