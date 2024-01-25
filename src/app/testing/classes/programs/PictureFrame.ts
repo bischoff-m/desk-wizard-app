@@ -1,7 +1,7 @@
-import { AnimationSettings, ScreenLayout, ScreenTransform } from "../../types";
+import { AnimationSettings, ScreenInfo, ScreenLayout } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
-import { ProgramState } from "../ProgramState";
 import { ProgramControl2D } from "../control/ProgramControl2D";
+import { ProgramState } from "../state/ProgramState";
 
 const basePath = "/";
 
@@ -27,9 +27,9 @@ class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: PictureFrameState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
   }
 
   override draw(): void {
@@ -56,7 +56,9 @@ class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
 }
 
 export const PictureFrame = {
-  create: (imageSrc: string): CanvasProgram<PictureFrameState> => ({
+  create: (
+    imageSrc: string
+  ): CanvasProgram<PictureFrameState, "per-screen"> => ({
     createState: (screenLayout) => {
       return new PictureFrameState(screenLayout, { animate: false }, imageSrc);
     },
@@ -67,6 +69,6 @@ export const PictureFrame = {
         transform
       );
     },
-    canvasPlacement: "per-screen",
+    placement: "per-screen",
   }),
 };

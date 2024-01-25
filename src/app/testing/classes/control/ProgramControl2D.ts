@@ -1,27 +1,29 @@
-import { ScreenTransform } from "../../types";
-import { ProgramState } from "../ProgramState";
-import { ProgramControl } from "./ProgramControl";
+import { ScreenInfo } from "../../types";
+import { ProgramState } from "../state/ProgramState";
+import { PerScreenControl } from "./ProgramControl";
 
 export abstract class ProgramControl2D<
   TState extends ProgramState
-> extends ProgramControl<TState> {
+> extends PerScreenControl<TState> {
   protected ctx: CanvasRenderingContext2D;
 
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: TState,
-    override transform: ScreenTransform
+    protected screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
 
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
   }
 
   override beforeDraw(): void {
-    const { translate, scale } = this.transform;
     this.ctx.save();
-    this.ctx.scale(scale.x, scale.y);
-    this.ctx.translate(translate.x, translate.y);
+    this.ctx.scale(
+      1 / this.screen.physicalToVirtualScale,
+      1 / this.screen.physicalToVirtualScale
+    );
+    this.ctx.translate(-this.screen.virtual.x, -this.screen.virtual.y);
   }
 
   override afterDraw(): void {

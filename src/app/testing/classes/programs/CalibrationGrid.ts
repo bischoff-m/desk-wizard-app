@@ -1,7 +1,7 @@
-import { ScreenTransform } from "../../types";
+import { ScreenInfo } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
-import { ProgramState } from "../ProgramState";
+import { ProgramState } from "../state/ProgramState";
 
 const margin = 50;
 
@@ -9,9 +9,9 @@ class CalibrationGridControl extends ProgramControl2D<ProgramState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: ProgramState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
   }
 
   override draw(): void {

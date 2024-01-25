@@ -1,13 +1,13 @@
 "use client";
 
 import { useCanvas } from "./components/ProgramProvider";
-import { screens } from "./types";
 import { Control } from "./classes/programs";
+import { loadScreens } from "./classes/ScreenInfo";
 
 export default function Page() {
   const { ScreenWrapper } = useCanvas(
-    screens,
-    Control.Waves.create()
+    loadScreens(),
+    Control.NoiseParticles.create()
     // Control.PictureFrame.create("Panorama Skiurlaub.png")
   );
 

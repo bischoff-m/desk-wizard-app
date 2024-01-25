@@ -1,9 +1,13 @@
 import seedrandom from "seedrandom";
-import Victor from "victor";
-import { AnimationSettings, ScreenLayout, ScreenTransform } from "../../types";
+import {
+  AnimationSettings,
+  ScreenInfo,
+  ScreenLayout,
+  Vector2D,
+} from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
-import { ProgramState } from "../ProgramState";
 import { ProgramControl2D } from "../control/ProgramControl2D";
+import { ProgramState } from "../state/ProgramState";
 
 class BubblesState extends ProgramState {
   balls: {
@@ -15,7 +19,7 @@ class BubblesState extends ProgramState {
     hue: number;
   }[];
   // All corner points in clockwise order (not normalized)
-  boundingPolygon: Victor[];
+  boundingPolygon: Vector2D[];
 
   constructor(
     override screenLayout: ScreenLayout,
@@ -26,14 +30,15 @@ class BubblesState extends ProgramState {
     // Intialize the bounding polygon
     this.boundingPolygon = [];
     for (const screen of screenLayout) {
-      this.boundingPolygon.push(new Victor(screen.x, screen.y));
-      this.boundingPolygon.push(new Victor(screen.x + screen.w, screen.y));
+      this.boundingPolygon.push({ x: screen.x, y: screen.y });
+      this.boundingPolygon.push({ x: screen.x + screen.w, y: screen.y });
     }
     for (const screen of screenLayout.toReversed()) {
-      this.boundingPolygon.push(
-        new Victor(screen.x + screen.w, screen.y + screen.h)
-      );
-      this.boundingPolygon.push(new Victor(screen.x, screen.y + screen.h));
+      this.boundingPolygon.push({
+        x: screen.x + screen.w,
+        y: screen.y + screen.h,
+      });
+      this.boundingPolygon.push({ x: screen.x, y: screen.y + screen.h });
     }
     for (const point of this.boundingPolygon) {
       point.x /= this.totalSize.w;
@@ -112,9 +117,9 @@ class BubblesControl extends ProgramControl2D<BubblesState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: BubblesState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
   }
 
   override beforeDraw(): void {

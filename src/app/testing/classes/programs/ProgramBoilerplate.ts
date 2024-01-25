@@ -1,7 +1,7 @@
-import { AnimationSettings, ScreenLayout, ScreenTransform } from "../../types";
+import { AnimationSettings, ScreenInfo, ScreenLayout } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
-import { ProgramState } from "../ProgramState";
+import { ProgramState } from "../state/ProgramState";
 
 class MyState extends ProgramState {
   constructor(
@@ -18,9 +18,9 @@ class MyControl extends ProgramControl2D<MyState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: MyState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
   }
 
   override draw(): void {}
@@ -28,14 +28,14 @@ class MyControl extends ProgramControl2D<MyState> {
 
 export const MyProgram = {
   // You can also use `createDefaultProgram` if neither state nor control need parameters
-  create: (): CanvasProgram<MyState> => ({
+  create: (): CanvasProgram<MyState, "per-screen"> => ({
     createState: (screenLayout: ScreenLayout) =>
       new MyState(screenLayout, { animate: false }),
     createControl: (
       canvas: HTMLCanvasElement,
       state: MyState,
-      transform: ScreenTransform
-    ) => new MyControl(canvas, state, transform),
-    canvasPlacement: "per-screen",
+      screen: ScreenInfo
+    ) => new MyControl(canvas, state, screen),
+    placement: "per-screen",
   }),
 };

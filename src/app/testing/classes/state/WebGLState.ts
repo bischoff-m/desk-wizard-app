@@ -1,16 +1,19 @@
 import { ScreenLayout, AnimationSettings } from "../../types";
-import { ProgramState } from "../ProgramState";
+import { ProgramState } from "./ProgramState";
+import * as twgl from "twgl.js";
 
 export abstract class WebGLState extends ProgramState {
-  protected programInfo: any;
-  protected bufferInfo: any[];
+  public meshArrays: twgl.Arrays;
 
   constructor(
     override screenLayout: ScreenLayout,
-    override animationSettings: AnimationSettings
+    override animationSettings: AnimationSettings,
+    public vsSource: string,
+    public fsSource: string
   ) {
     super(screenLayout, animationSettings);
-    this.programInfo = null;
-    this.bufferInfo = [];
+    this.meshArrays = this.getMeshArrays();
   }
+
+  protected abstract getMeshArrays(): twgl.Arrays;
 }

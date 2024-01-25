@@ -1,9 +1,9 @@
-import { Dimensions, AnimationSettings, ScreenLayout } from "../types";
+import { Size, AnimationSettings, ScreenLayout } from "../../types";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;
   public timeDelta: number = 0;
-  public totalSize: Dimensions;
+  public totalSize: Size;
   private updateNextFrameFlag: boolean = false;
   private missedFrameFlag: boolean = false;
   private animationFrame?: number;

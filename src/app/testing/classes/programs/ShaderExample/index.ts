@@ -1,12 +1,8 @@
-import {
-  AnimationSettings,
-  ScreenLayout,
-  ScreenTransform,
-} from "@/app/testing/types";
+import { ScreenInfo } from "@/app/testing/types";
 import { mat4 } from "gl-matrix";
 import { createDefaultProgram } from "../../CanvasProgram";
-import { ProgramState } from "../../ProgramState";
 import { NaiveWebGLControl } from "../../control/WebGLControl";
+import { ProgramState } from "../../state/ProgramState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -197,13 +193,13 @@ class ShaderExampleControl extends NaiveWebGLControl<ProgramState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: ProgramState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
 
     // Initialize a shader program; this is where all the lighting
     // for the vertices and so forth is established.
-    const shaderProgram = initShaderProgram(this.ctx);
+    const shaderProgram = initShaderProgram(this.gl);
     if (!shaderProgram) {
       throw new Error("Failed to initialize shader program");
     }
@@ -213,28 +209,28 @@ class ShaderExampleControl extends NaiveWebGLControl<ProgramState> {
     this.programInfo = {
       program: shaderProgram,
       attribLocations: {
-        vertexPosition: this.ctx.getAttribLocation(
+        vertexPosition: this.gl.getAttribLocation(
           shaderProgram,
           "aVertexPosition"
         ),
       },
       uniformLocations: {
-        projectionMatrix: this.ctx.getUniformLocation(
+        projectionMatrix: this.gl.getUniformLocation(
           shaderProgram,
           "uProjectionMatrix"
         ),
-        modelViewMatrix: this.ctx.getUniformLocation(
+        modelViewMatrix: this.gl.getUniformLocation(
           shaderProgram,
           "uModelViewMatrix"
         ),
       },
     };
 
-    this.buffers = initBuffers(this.ctx);
+    this.buffers = initBuffers(this.gl);
   }
 
   override draw(): void {
-    drawScene(this.ctx, this.programInfo, this.buffers);
+    drawScene(this.gl, this.programInfo, this.buffers);
   }
 }
 

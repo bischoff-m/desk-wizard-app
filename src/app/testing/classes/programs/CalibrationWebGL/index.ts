@@ -1,13 +1,14 @@
 import {
   AnimationSettings,
+  ScreenInfo,
   ScreenLayout,
-  ScreenTransform,
 } from "@/app/testing/types";
 import { vec3, vec4 } from "gl-matrix";
+import * as twgl from "twgl.js";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { PlaneGeometry } from "../../PlaneGeometry";
-import { ProgramState } from "../../ProgramState";
-import { NaiveWebGLControl } from "../../control/WebGLControl";
+import { OrthographicWebGLControl } from "../../control/WebGLControl";
+import { WebGLState } from "../../state/WebGLState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -18,16 +19,20 @@ import vsSource from "./vertex.glsl";
  * z: far to near
  */
 
-class CalibrationWebGLState extends ProgramState {
-  public mesh: { vertices: number[]; triangles: number[]; colors: number[] };
-
+class CalibrationWebGLState extends WebGLState {
   constructor(
     override screenLayout: ScreenLayout,
     override animationSettings: AnimationSettings
   ) {
-    super(screenLayout, animationSettings);
+    super(screenLayout, animationSettings, vsSource, fsSource);
+  }
 
-    this.mesh = {
+  override getMeshArrays(): twgl.Arrays {
+    const mesh: {
+      vertices: number[];
+      triangles: number[];
+      colors: number[];
+    } = {
       vertices: [],
       triangles: [],
       colors: [],
@@ -40,7 +45,7 @@ class CalibrationWebGLState extends ProgramState {
     ];
 
     let prevNumVertices = 0;
-    for (const screen of screenLayout) {
+    for (const screen of this.screenLayout) {
       const center = vec3.fromValues(
         screen.x + screen.w / 2,
         screen.y + screen.h / 2,
@@ -53,85 +58,61 @@ class CalibrationWebGLState extends ProgramState {
         h: screen.h * 1,
       };
       const plane = new PlaneGeometry(mapped.w, mapped.h);
-      plane.setPosition([mapped.x - 2000, -mapped.y + 1000, -1]);
+      plane.setPosition([mapped.x, mapped.y, -1]);
       plane.setColor(screenColors.pop() as vec4);
 
       // Shift indices by the number of vertices in the previous screen
-      this.mesh.triangles.push(
+      mesh.triangles.push(
         ...plane.getTriangles().map((index) => index + prevNumVertices)
       );
       const colors = plane.getColors();
-      this.mesh.vertices.push(...plane.getVertices());
-      this.mesh.colors.push(...colors);
+      mesh.vertices.push(...plane.getVertices());
+      mesh.colors.push(...colors);
       prevNumVertices += colors.length / 4;
     }
-  }
-
-  override updateShared(): void {
-    // this.mesh = {
-    //   vertices: this.plane.getVertices(),
-    //   triangles: this.plane.getTriangles(),
-    //   colors: this.plane.getColors(),
-    // };
-    // console.log(this.mesh.vertices);
+    return {
+      position: { numComponents: 3, data: mesh.vertices },
+      indices: { numComponents: 3, data: mesh.triangles },
+      color: { numComponents: 4, data: mesh.colors },
+    };
   }
 }
 
-class CalibrationWebGLControl extends NaiveWebGLControl<CalibrationWebGLState> {
+class CalibrationWebGLControl extends OrthographicWebGLControl<CalibrationWebGLState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: CalibrationWebGLState,
-    override transform: ScreenTransform
+    override screens: ScreenInfo[]
   ) {
-    super(canvas, sharedState, transform, vsSource, fsSource);
+    super(canvas, sharedState, screens);
   }
 
   override draw(): void {
-    const gl = this.ctx;
-
     // Setup canvas
-    gl.clearColor(0.13, 0.13, 0.19, 1);
-    gl.clearDepth(1);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    this.setColorAttribute();
+    this.gl.clearColor(0.13, 0.13, 0.19, 1);
+    this.gl.clearDepth(1);
+    this.gl.enable(this.gl.DEPTH_TEST);
+    this.gl.depthFunc(this.gl.LEQUAL);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
 
-  // Tell WebGL how to pull out the colors from the color buffer
-  // into the vertexColor attribute.
-  setColorAttribute() {
-    const gl = this.ctx;
-    const numComponents = 4;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.color);
-    gl.vertexAttribPointer(
-      this.programInfo.attribLocations.vertexColor,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset
-    );
-    gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexColor);
-  }
+  override getCustomUniforms() {
+    // const zNear = 0.1;
+    // const zFar = 100;
+    // const projectionMatrix = twgl.m4.ortho(
+    //   -this.canvas.width / 2,
+    //   this.canvas.width / 2,
+    //   -this.canvas.height / 2,
+    //   this.canvas.height / 2,
+    //   zNear,
+    //   zFar
+    // );
 
-  initColorBuffer() {
-    const gl = this.ctx;
-    const colorBuffer = gl.createBuffer();
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(this.sharedState.mesh.colors),
-      gl.STATIC_DRAW
-    );
-
-    return colorBuffer;
+    // return {
+    //   projectionMatrix,
+    //   modelViewMatrix: twgl.m4.identity(),
+    // };
+    return {};
   }
 }
 

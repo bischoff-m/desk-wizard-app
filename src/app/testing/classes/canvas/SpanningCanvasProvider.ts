@@ -1,17 +1,17 @@
-import Victor from "victor";
-import { Screen } from "../../types";
+import { ScreenInfo } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
-import { ProgramState } from "../ProgramState";
-import { ProgramControl } from "../control/ProgramControl";
+import { SpanningControl } from "../control/ProgramControl";
+import { ProgramState } from "../state/ProgramState";
 import { CanvasProvider } from "./CanvasProvider";
 
 export class SpanningCanvasProvider extends CanvasProvider {
   override sharedState: ProgramState;
-  public control: ProgramControl<any>;
+  public control: SpanningControl<any>;
 
   constructor(
-    public program: CanvasProgram<any>,
-    public canvas: HTMLCanvasElement
+    override program: CanvasProgram<any, "spanning">,
+    public canvas: HTMLCanvasElement,
+    public screens: ScreenInfo[]
   ) {
     super(program);
 
@@ -28,10 +28,7 @@ export class SpanningCanvasProvider extends CanvasProvider {
     this.sharedState = program.createState(screenLayout);
 
     // Initialize control
-    this.control = program.createControl(canvas, this.sharedState, {
-      translate: new Victor(0, 0),
-      scale: new Victor(1, 1),
-    });
+    this.control = program.createControl(canvas, this.sharedState, screens);
 
     // Start animation
     this.sharedState.start(() => {

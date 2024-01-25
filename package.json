@@ -22,8 +22,7 @@
     "react-dom": "^18",
     "seedrandom": "^3.0.5",
     "simplex-noise": "^4.0.1",
-    "twgl.js": "^5.5.3",
-    "victor": "^1.1.0"
+    "twgl.js": "^5.5.3"
   },
   "devDependencies": {
     "@types/mathjs": "^9.4.2",

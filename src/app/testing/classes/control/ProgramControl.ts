@@ -1,11 +1,10 @@
-import { ScreenTransform } from "../../types";
-import { ProgramState } from "../ProgramState";
+import { ScreenInfo } from "../../types";
+import { ProgramState } from "../state/ProgramState";
 
 export abstract class ProgramControl<TState extends ProgramState> {
   constructor(
     protected canvas: HTMLCanvasElement,
-    protected sharedState: TState,
-    protected transform: ScreenTransform
+    protected sharedState: TState
   ) {}
 
   protected abstract draw(): void;
@@ -16,5 +15,29 @@ export abstract class ProgramControl<TState extends ProgramState> {
     this.beforeDraw();
     this.draw();
     this.afterDraw();
+  }
+}
+
+export abstract class PerScreenControl<
+  TState extends ProgramState
+> extends ProgramControl<TState> {
+  constructor(
+    override canvas: HTMLCanvasElement,
+    override sharedState: TState,
+    protected screen: ScreenInfo
+  ) {
+    super(canvas, sharedState);
+  }
+}
+
+export abstract class SpanningControl<
+  TState extends ProgramState
+> extends ProgramControl<TState> {
+  constructor(
+    override canvas: HTMLCanvasElement,
+    override sharedState: TState,
+    protected screens: ScreenInfo[]
+  ) {
+    super(canvas, sharedState);
   }
 }

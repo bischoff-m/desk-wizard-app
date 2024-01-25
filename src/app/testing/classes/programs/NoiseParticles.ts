@@ -1,16 +1,15 @@
 import { Matrix, matrix } from "mathjs";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
-import Victor from "victor";
-import { AnimationSettings, ScreenLayout, ScreenTransform } from "../../types";
+import { AnimationSettings, ScreenInfo, ScreenLayout } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
-import { ProgramState } from "../ProgramState";
 import { ProgramControl2D } from "../control/ProgramControl2D";
+import { ProgramState } from "../state/ProgramState";
 
 class NoiseParticlesState extends ProgramState {
   gap: number = 30;
   nodeSize: number = 10;
-  noiseScale: number = 5;
+  noiseScale: number = 6;
   noise: Matrix = matrix();
   noiseFunction: (x: number, y: number, z: number) => number;
 
@@ -36,7 +35,7 @@ class NoiseParticlesState extends ProgramState {
         this.noise.set(
           [i, j],
           this.noiseFunction(
-            (i / numberX) * this.noiseScale,
+            (i / numberX) * this.noiseScale * 2,
             (j / 2 / numberY) * this.noiseScale,
             this.time * timeScale + timeOffset
           )
@@ -50,9 +49,9 @@ class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: NoiseParticlesState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
   }
 
   override draw(): void {
@@ -66,23 +65,31 @@ class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
     // Draw triangle for each node
     for (let i = 0; i < noise.size()[0]; i++) {
       for (let j = 0; j < noise.size()[1]; j++) {
-        const noiseValue = noise.get([i, j]);
-        let node = new Victor(i * gap, j * (gap / 2));
-        const cornerVector = new Victor(0, nodeSize * noiseValue);
-        if (j % 2 === 0) node.addScalarX(gap / 2);
+        const distance = nodeSize * noise.get([i, j]);
+        const node = { x: i * gap, y: j * (gap / 2) };
+        if (j % 2 === 0) node.x += gap / 2;
 
         this.ctx.fillStyle = `rgba(200, 100, 100, 1)`;
         this.ctx.beginPath();
-        const corner1 = node.clone().add(cornerVector);
+        const corner1 = {
+          x: node.x,
+          y: node.y + distance,
+        };
+        const corner2 = {
+          x: node.x + distance,
+          y: node.y,
+        };
+        const corner3 = {
+          x: node.x,
+          y: node.y - distance,
+        };
+        const corner4 = {
+          x: node.x - distance,
+          y: node.y,
+        };
         this.ctx.moveTo(corner1.x, corner1.y);
-        cornerVector.rotateDeg(90);
-        const corner2 = node.clone().add(cornerVector);
         this.ctx.lineTo(corner2.x, corner2.y);
-        cornerVector.rotateDeg(90);
-        const corner3 = node.clone().add(cornerVector);
         this.ctx.lineTo(corner3.x, corner3.y);
-        cornerVector.rotateDeg(90);
-        const corner4 = node.clone().add(cornerVector);
         this.ctx.lineTo(corner4.x, corner4.y);
         this.ctx.closePath();
         this.ctx.fill();

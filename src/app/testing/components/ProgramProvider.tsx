@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { Screen } from "../types";
 import { CanvasProgram } from "../classes/CanvasProgram";
 import { CanvasProvider } from "../classes/canvas/CanvasProvider";
 import { PerScreenCanvasProvider } from "../classes/canvas/PerScreenCanvasProvider";
 import { SpanningCanvasProvider } from "../classes/canvas/SpanningCanvasProvider";
+import { ScreenInfo } from "../types";
 
 function assertNumberOfScreenChildren(number: number, root: Element) {
   const canvasElements = root.querySelectorAll(".screen-canvas");
@@ -15,8 +15,8 @@ function assertNumberOfScreenChildren(number: number, root: Element) {
 }
 
 export function useCanvas(
-  screens: Screen[],
-  program: CanvasProgram<any>,
+  screens: ScreenInfo[],
+  program: CanvasProgram<any, any>,
   root?: HTMLElement
 ): {
   canvasProvider: CanvasProvider | null;
@@ -36,10 +36,10 @@ export function useCanvas(
       <div
         className="absolute"
         style={{
-          left: screens[screenId].pageSize.topLeft.x,
-          top: screens[screenId].pageSize.topLeft.y,
-          width: screens[screenId].pageSize.w,
-          height: screens[screenId].pageSize.h,
+          left: screens[screenId].boundingRect.x,
+          top: screens[screenId].boundingRect.y,
+          width: screens[screenId].boundingRect.w,
+          height: screens[screenId].boundingRect.h,
           backgroundImage: "url('/annapurna-massif.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -47,11 +47,11 @@ export function useCanvas(
       >
         <main className="screen-wrapper flex flex-row justify-center items-center h-full w-full">
           {children}
-          {program.canvasPlacement === "per-screen" && (
+          {program.placement === "per-screen" && (
             <canvas
               className="screen-canvas absolute w-full h-full"
-              width={screens[screenId].screenSize.w}
-              height={screens[screenId].screenSize.h}
+              width={screens[screenId].realSize.w}
+              height={screens[screenId].realSize.h}
             />
           )}
         </main>
@@ -60,7 +60,7 @@ export function useCanvas(
   }
 
   useEffect(() => {
-    const placement = program.canvasPlacement;
+    const placement = program.placement;
     const newRoot = root || document.body;
     const screenElements = newRoot.querySelectorAll(".screen-wrapper");
 
@@ -72,7 +72,7 @@ export function useCanvas(
         `Expected at most ${screens.length} ScreenWrapper, but found ${screenElements.length}`
       );
     if (placement !== "per-screen" && placement !== "spanning")
-      throw new Error("Invalid CanvasProgram.canvasPlacement");
+      throw new Error("Invalid CanvasProgram.placement");
 
     // Initialize canvasRefs
     if (canvasRefs.current.length === 0) {
@@ -88,7 +88,7 @@ export function useCanvas(
           assertNumberOfScreenChildren(0, screenEl);
         // Create canvas
         const canvas = document.createElement("canvas");
-        canvas.classList.add("screen-canvas absolute w-full h-full");
+        canvas.classList.add("screen-canvas", "absolute", "w-full", "h-full");
         canvasRefs.current.push(canvas);
         // Add canvas to root
         newRoot.appendChild(canvas);
@@ -103,13 +103,14 @@ export function useCanvas(
     if (placement === "per-screen") {
       providerRef.current = new PerScreenCanvasProvider(
         program,
-        screens,
-        canvasRefs.current
+        canvasRefs.current,
+        screens
       );
     } else {
       providerRef.current = new SpanningCanvasProvider(
         program,
-        canvasRefs.current[0]
+        canvasRefs.current[0],
+        screens
       );
     }
 

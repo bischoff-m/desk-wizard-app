@@ -1,14 +1,14 @@
 import {
   AnimationSettings,
+  ScreenInfo,
   ScreenLayout,
-  ScreenTransform,
 } from "@/app/testing/types";
 import { mat4, vec3 } from "gl-matrix";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
 import { createDefaultProgram } from "../../CanvasProgram";
-import { ProgramState } from "../../ProgramState";
 import { NaiveWebGLControl } from "../../control/WebGLControl";
+import { ProgramState } from "../../state/ProgramState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
@@ -141,9 +141,9 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: WavesState,
-    override transform: ScreenTransform
+    override screen: ScreenInfo
   ) {
-    super(canvas, sharedState, transform);
+    super(canvas, sharedState, screen);
 
     // Initialize a shader program; this is where all the lighting
     // for the vertices and so forth is established.
@@ -157,23 +157,23 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
     this.programInfo = {
       program: shaderProgram,
       attribLocations: {
-        vertexPosition: this.ctx.getAttribLocation(
+        vertexPosition: this.gl.getAttribLocation(
           shaderProgram,
           "aVertexPosition"
         ),
-        vertexColor: this.ctx.getAttribLocation(shaderProgram, "aVertexColor"),
-        vertexNoise: this.ctx.getAttribLocation(shaderProgram, "aVertexNoise"),
-        vertexNodePosition: this.ctx.getAttribLocation(
+        vertexColor: this.gl.getAttribLocation(shaderProgram, "aVertexColor"),
+        vertexNoise: this.gl.getAttribLocation(shaderProgram, "aVertexNoise"),
+        vertexNodePosition: this.gl.getAttribLocation(
           shaderProgram,
           "aVertexNodePosition"
         ),
       },
       uniformLocations: {
-        projectionMatrix: this.ctx.getUniformLocation(
+        projectionMatrix: this.gl.getUniformLocation(
           shaderProgram,
           "uProjectionMatrix"
         ),
-        modelViewMatrix: this.ctx.getUniformLocation(
+        modelViewMatrix: this.gl.getUniformLocation(
           shaderProgram,
           "uModelViewMatrix"
         ),
@@ -190,7 +190,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   override draw(): void {
-    const gl = this.ctx;
+    const gl = this.gl;
 
     gl.clearColor(0.13, 0.13, 0.19, 1); // Clear to black, fully opaque
     gl.clearDepth(1); // Clear everything
@@ -281,7 +281,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   // Tell WebGL how to pull out the positions from the position
   // buffer into the vertexPosition attribute.
   setPositionAttribute() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const numComponents = 3; // pull out 3 values per iteration
     const type = gl.FLOAT; // the data in the buffer is 32bit floats
     const normalize = false; // don't normalize
@@ -303,7 +303,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   // Tell WebGL how to pull out the colors from the color buffer
   // into the vertexColor attribute.
   setColorAttribute() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const numComponents = 4;
     const type = gl.FLOAT;
     const normalize = false;
@@ -322,7 +322,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   setNoiseAttribute() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const numComponents = 1;
     const type = gl.FLOAT;
     const normalize = false;
@@ -342,7 +342,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   setNodePositionAttribute() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const numComponents = 3;
     const type = gl.FLOAT;
     const normalize = false;
@@ -364,7 +364,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
 
   // Initialize a shader program, so WebGL knows how to draw our data
   initShaderProgram() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const vertexShader = this.loadShader(
       gl.VERTEX_SHADER,
       vsSource
@@ -395,7 +395,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
 
   // Creates a shader of the given type, uploads the source and compiles it.
   loadShader(type: number, source: string) {
-    const gl = this.ctx;
+    const gl = this.gl;
     const shader = gl.createShader(type) as WebGLShader;
 
     // Send the source to the shader object
@@ -419,7 +419,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   initPositionBuffer() {
-    const gl = this.ctx;
+    const gl = this.gl;
     // Create a buffer for the square's positions.
     const positionBuffer = gl.createBuffer();
 
@@ -435,7 +435,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   initColorBuffer() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const colorBuffer = gl.createBuffer();
 
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -449,7 +449,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   initIndexBuffer() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
@@ -463,7 +463,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   initNoiseBuffer() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const noiseBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, noiseBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.sharedState.noise, gl.STATIC_DRAW);
@@ -472,7 +472,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 
   initNodePositionBuffer() {
-    const gl = this.ctx;
+    const gl = this.gl;
     const nodeBuffer = gl.createBuffer();
 
     // Flatten the array of nodes

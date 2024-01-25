@@ -1,7 +1,7 @@
 #define GLSLIFY 1
 
-varying lowp vec4 vColor;
+varying lowp vec4 v_color;
 
 void main() {
-    gl_FragColor = vColor;
+    gl_FragColor = v_color;
 }
