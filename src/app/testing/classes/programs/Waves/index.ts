@@ -1,8 +1,4 @@
-import {
-  AnimationSettings,
-  ScreenInfo,
-  ScreenLayout,
-} from "@/app/testing/types";
+import { AnimationSettings, ScreenInfo } from "@/app/testing/types";
 import { mat4, vec3 } from "gl-matrix";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
@@ -32,10 +28,10 @@ class WavesState extends ProgramState {
   mesh: { vertices: number[]; triangles: number[]; colors: number[] };
 
   constructor(
-    override screenLayout: ScreenLayout,
+    override screens: ScreenInfo[],
     override animationSettings: AnimationSettings
   ) {
-    super(screenLayout, animationSettings);
+    super(screens, animationSettings);
 
     const prng = seedrandom("my seed");
     this.noiseFunction = createNoise3D(prng);
@@ -141,9 +137,9 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: WavesState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
 
     // Initialize a shader program; this is where all the lighting
     // for the vertices and so forth is established.

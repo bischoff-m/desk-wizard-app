@@ -1,4 +1,3 @@
-import { ScreenInfo } from "@/app/testing/types";
 import { mat4 } from "gl-matrix";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { NaiveWebGLControl } from "../../control/WebGLControl";
@@ -193,9 +192,9 @@ class ShaderExampleControl extends NaiveWebGLControl<ProgramState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: ProgramState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
 
     // Initialize a shader program; this is where all the lighting
     // for the vertices and so forth is established.

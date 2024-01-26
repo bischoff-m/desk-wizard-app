@@ -15,20 +15,11 @@ export class SpanningCanvasProvider extends CanvasProvider {
   ) {
     super(program);
 
-    const screenLayout = [
-      {
-        x: 0,
-        y: 0,
-        w: canvas.width,
-        h: canvas.height,
-      },
-    ];
-
     // Initialize state
-    this.sharedState = program.createState(screenLayout);
+    this.sharedState = program.createState(screens);
 
     // Initialize control
-    this.control = program.createControl(canvas, this.sharedState, screens);
+    this.control = program.createControl(canvas, this.sharedState);
 
     // Start animation
     this.sharedState.start(() => {

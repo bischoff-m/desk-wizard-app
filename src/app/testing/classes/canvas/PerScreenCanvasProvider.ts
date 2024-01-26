@@ -18,13 +18,11 @@ export class PerScreenCanvasProvider extends CanvasProvider {
       throw new Error("screens and canvasElements must have the same length");
 
     // Initialize state
-    this.sharedState = program.createState(
-      screens.map((screen) => screen.virtual)
-    );
+    this.sharedState = program.createState(screens);
 
     // Initialize controls
     this.controls = screens.map((screen, idx) =>
-      program.createControl(canvasElements[idx], this.sharedState, screen)
+      program.createControl(canvasElements[idx], this.sharedState, idx)
     );
 
     // Start animation

@@ -24,7 +24,7 @@ export abstract class PerScreenControl<
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: TState,
-    protected screen: ScreenInfo
+    protected screenIdx: number
   ) {
     super(canvas, sharedState);
   }
@@ -35,8 +35,7 @@ export abstract class SpanningControl<
 > extends ProgramControl<TState> {
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: TState,
-    protected screens: ScreenInfo[]
+    override sharedState: TState
   ) {
     super(canvas, sharedState);
   }

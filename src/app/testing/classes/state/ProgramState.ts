@@ -1,4 +1,4 @@
-import { Size, AnimationSettings, ScreenLayout } from "../../types";
+import { AnimationSettings, ScreenInfo, Size } from "../../types";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;
@@ -11,15 +11,15 @@ export class ProgramState {
   private updateControl?: (time?: DOMHighResTimeStamp) => void;
 
   constructor(
-    public screenLayout: ScreenLayout,
+    public screens: ScreenInfo[],
     protected animationSettings: AnimationSettings
   ) {
-    const boundingRect = screenLayout.reduce(
+    const boundingRect = screens.reduce(
       (acc, screen) => ({
-        minX: Math.min(acc.minX, screen.x),
-        minY: Math.min(acc.minY, screen.y),
-        maxX: Math.max(acc.maxX, screen.x + screen.w),
-        maxY: Math.max(acc.maxY, screen.y + screen.h),
+        minX: Math.min(acc.minX, screen.virtual.x),
+        minY: Math.min(acc.minY, screen.virtual.y),
+        maxX: Math.max(acc.maxX, screen.virtual.x + screen.virtual.w),
+        maxY: Math.max(acc.maxY, screen.virtual.y + screen.virtual.h),
       }),
       { minX: 0, minY: 0, maxX: 0, maxY: 0 }
     );

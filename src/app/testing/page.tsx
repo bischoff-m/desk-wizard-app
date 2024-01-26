@@ -7,7 +7,7 @@ import { loadScreens } from "./classes/ScreenInfo";
 export default function Page() {
   const { ScreenWrapper } = useCanvas(
     loadScreens(),
-    Control.NoiseParticles.create()
+    Control.CalibrationWebGL.create()
     // Control.PictureFrame.create("Panorama Skiurlaub.png")
   );
 

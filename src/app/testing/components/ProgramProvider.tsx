@@ -40,9 +40,13 @@ export function useCanvas(
           top: screens[screenId].boundingRect.y,
           width: screens[screenId].boundingRect.w,
           height: screens[screenId].boundingRect.h,
-          backgroundImage: "url('/annapurna-massif.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          ...(program.placement === "per-screen"
+            ? {
+                backgroundImage: "url('/annapurna-massif.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }
+            : {}),
         }}
       >
         <main className="screen-wrapper flex flex-row justify-center items-center h-full w-full">
@@ -88,10 +92,25 @@ export function useCanvas(
           assertNumberOfScreenChildren(0, screenEl);
         // Create canvas
         const canvas = document.createElement("canvas");
-        canvas.classList.add("screen-canvas", "absolute", "w-full", "h-full");
+        canvas.classList.add("screen-canvas", "absolute");
         canvasRefs.current.push(canvas);
+
+        // Set canvas size to total size of all screens
+        const minX = Math.min(...screens.map((s) => s.boundingRect.x));
+        const minY = Math.min(...screens.map((s) => s.boundingRect.y));
+        const maxX = Math.max(
+          ...screens.map((s) => s.boundingRect.x + s.boundingRect.w)
+        );
+        const maxY = Math.max(
+          ...screens.map((s) => s.boundingRect.y + s.boundingRect.h)
+        );
+        canvas.style.left = `${minX}px`;
+        canvas.style.top = `${minY}px`;
+        canvas.width = maxX - minX;
+        canvas.height = maxY - minY;
+
         // Add canvas to root
-        newRoot.appendChild(canvas);
+        newRoot.prepend(canvas);
       }
     }
 

@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo, ScreenLayout } from "../../types";
+import { AnimationSettings, ScreenInfo } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
@@ -9,11 +9,11 @@ class PictureFrameState extends ProgramState {
   image: HTMLImageElement;
 
   constructor(
-    override screenLayout: ScreenLayout,
+    override screens: ScreenInfo[],
     override animationSettings: AnimationSettings,
     imageSrc: string
   ) {
-    super(screenLayout, animationSettings);
+    super(screens, animationSettings);
 
     this.image = new Image();
     this.image.src = basePath + imageSrc;
@@ -27,9 +27,9 @@ class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: PictureFrameState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
   }
 
   override draw(): void {

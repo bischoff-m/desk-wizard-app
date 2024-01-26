@@ -14,9 +14,9 @@ export abstract class NaiveWebGLControl<
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: TState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
     this.gl = this.canvas.getContext("webgl") as WebGLRenderingContext;
   }
 }
@@ -30,10 +30,9 @@ export abstract class OrthographicWebGLControl<
 
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: TState,
-    override screens: ScreenInfo[]
+    override sharedState: TState
   ) {
-    super(canvas, sharedState, screens);
+    super(canvas, sharedState);
 
     this.gl = this.canvas.getContext("webgl") as WebGLRenderingContext;
     this.programInfo = twgl.createProgramInfo(this.gl, [
@@ -46,43 +45,55 @@ export abstract class OrthographicWebGLControl<
     );
   }
 
-  protected abstract getCustomUniforms(): object;
+  protected getCustomUniforms(): object {
+    return {};
+  }
+  protected abstract drawScreen(screen: ScreenInfo): void;
 
-  private getUniforms(): { viewProjectionMatrix: twgl.m4.Mat4 } & object {
+  private getUniforms(
+    screen: ScreenInfo
+  ): { viewProjectionMatrix: twgl.m4.Mat4 } & object {
     return {
-      viewProjectionMatrix: this.getViewProjectionMatrix(),
+      viewProjectionMatrix: this.getViewProjectionMatrix(screen),
       ...this.getCustomUniforms(),
     };
   }
 
-  protected getViewProjectionMatrix(): twgl.m4.Mat4 {
-    const screen = this.screens[0]; // TODO: Support multiple screens
-    const { x, y } = screen.virtual;
-    const scale = screen.physicalToVirtualScale;
+  protected getViewProjectionMatrix(screen: ScreenInfo): twgl.m4.Mat4 {
+    const { h: th } = this.sharedState.totalSize;
+    const { x: vx, y: vy, w: vw, h: vh } = screen.virtual;
+    const { x: bx, y: by, w: bw, h: bh } = screen.boundingRect;
+    const { clientWidth: cw, clientHeight: ch } = this.canvas;
+
+    /**
+     * This took some time to figure out. The orthographic projection makes the given
+     * coordinates fit the whole canvas (independent of scissors). To make every screen
+     * fit its element, the canvas size is scaled from bounding to virtual size.
+     *
+     * To get the correct translation, the bounding margin is subtracted from the virtual
+     * margin. Also, WebGL has its origin in the bottom left corner, so the y axis is
+     * flipped. To get the correct y-translation, the margin from the bottom to the screen
+     * is calculated.
+     */
 
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-orthographic.html
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-perspective.html
     // Othographic projection
-    const { width, height } = this.canvas;
     const near = 0.01;
     const far = 1000;
     const projectionMatrix = twgl.m4.ortho(
-      (-width / 2) * scale,
-      (width / 2) * scale,
-      (-height / 2) * scale,
-      (height / 2) * scale,
+      0,
+      cw * (vw / bw),
+      0,
+      ch * (vh / bh),
       near,
       far
     );
 
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-camera.html
-    /**
-     * TODO: Get scissors working
-     */
-    let cameraMatrix = twgl.m4.identity();
-    cameraMatrix = twgl.m4.translate(cameraMatrix, [
-      -x / scale + 1270,
-      -y / scale + 540,
+    const cameraMatrix = twgl.m4.translate(twgl.m4.identity(), [
+      vx - bx * (vw / bw),
+      th - vy - vh - (ch - by - bh) * (vh / bh),
       0,
     ]);
     const viewMatrix = twgl.m4.inverse(cameraMatrix);
@@ -90,12 +101,27 @@ export abstract class OrthographicWebGLControl<
   }
 
   override beforeDraw(): void {
+    this.gl.enable(this.gl.SCISSOR_TEST);
     this.gl.useProgram(this.programInfo.program);
     twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
-    twgl.setUniforms(this.programInfo, this.getUniforms());
   }
 
-  override afterDraw(): void {
-    twgl.drawBufferInfo(this.gl, this.bufferInfo);
+  override draw(): void {
+    for (const screen of this.sharedState.screens) {
+      this.gl.scissor(
+        screen.boundingRect.x,
+        this.canvas.clientHeight -
+          screen.boundingRect.y -
+          screen.boundingRect.h,
+        screen.boundingRect.w,
+        screen.boundingRect.h
+      );
+
+      twgl.setUniforms(this.programInfo, this.getUniforms(screen));
+      this.drawScreen(screen);
+      twgl.drawBufferInfo(this.gl, this.bufferInfo);
+    }
   }
+
+  override afterDraw(): void {}
 }

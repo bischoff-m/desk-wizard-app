@@ -1,10 +1,5 @@
 import seedrandom from "seedrandom";
-import {
-  AnimationSettings,
-  ScreenInfo,
-  ScreenLayout,
-  Vector2D,
-} from "../../types";
+import { AnimationSettings, ScreenInfo, Vector2D } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
@@ -22,23 +17,23 @@ class BubblesState extends ProgramState {
   boundingPolygon: Vector2D[];
 
   constructor(
-    override screenLayout: ScreenLayout,
+    override screens: ScreenInfo[],
     override animationSettings: AnimationSettings
   ) {
-    super(screenLayout, animationSettings);
+    super(screens, animationSettings);
 
     // Intialize the bounding polygon
     this.boundingPolygon = [];
-    for (const screen of screenLayout) {
-      this.boundingPolygon.push({ x: screen.x, y: screen.y });
-      this.boundingPolygon.push({ x: screen.x + screen.w, y: screen.y });
+    for (const { virtual } of screens) {
+      this.boundingPolygon.push({ x: virtual.x, y: virtual.y });
+      this.boundingPolygon.push({ x: virtual.x + virtual.w, y: virtual.y });
     }
-    for (const screen of screenLayout.toReversed()) {
+    for (const { virtual } of screens.toReversed()) {
       this.boundingPolygon.push({
-        x: screen.x + screen.w,
-        y: screen.y + screen.h,
+        x: virtual.x + virtual.w,
+        y: virtual.y + virtual.h,
       });
-      this.boundingPolygon.push({ x: screen.x, y: screen.y + screen.h });
+      this.boundingPolygon.push({ x: virtual.x, y: virtual.y + virtual.h });
     }
     for (const point of this.boundingPolygon) {
       point.x /= this.totalSize.w;
@@ -117,9 +112,9 @@ class BubblesControl extends ProgramControl2D<BubblesState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: BubblesState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
   }
 
   override beforeDraw(): void {

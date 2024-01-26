@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo, ScreenLayout } from "../types";
+import { AnimationSettings, ScreenInfo } from "../types";
 import { PerScreenControl, SpanningControl } from "./control/ProgramControl";
 import { ProgramState } from "./state/ProgramState";
 
@@ -7,11 +7,11 @@ export type CanvasProgram<
   TPlacement extends "per-screen" | "spanning"
 > = {
   placement: TPlacement;
-  createState: (screenLayout: ScreenLayout) => ProgramState;
+  createState: (screens: ScreenInfo[]) => ProgramState;
   createControl: (
     canvas: HTMLCanvasElement,
     sharedState: TState,
-    screens: TPlacement extends "per-screen" ? ScreenInfo : ScreenInfo[]
+    ...screenIdx: TPlacement extends "per-screen" ? [number] : []
   ) => TPlacement extends "per-screen"
     ? PerScreenControl<TState>
     : SpanningControl<TState>;
@@ -30,17 +30,17 @@ export function createDefaultProgram<
   },
   stateClass: {
     new (
-      screenLayout: ScreenLayout,
+      screens: ScreenInfo[],
       animationSettings: AnimationSettings
     ): ProgramState;
   } = ProgramState
 ): () => CanvasProgram<ProgramState, TPlacement> {
   return () => ({
     placement,
-    createState: (screenLayout) => {
-      return new stateClass(screenLayout, animationSettings);
+    createState: (screens) => {
+      return new stateClass(screens, animationSettings);
     },
-    createControl: (canvas, sharedState, screen) =>
-      new controlClass(canvas, sharedState as TState, screen),
+    createControl: (canvas, sharedState, ...args) =>
+      new controlClass(canvas, sharedState as TState, ...args),
   });
 }

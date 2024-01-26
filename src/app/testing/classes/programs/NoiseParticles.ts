@@ -1,7 +1,7 @@
 import { Matrix, matrix } from "mathjs";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
-import { AnimationSettings, ScreenInfo, ScreenLayout } from "../../types";
+import { AnimationSettings, ScreenInfo } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
@@ -14,10 +14,10 @@ class NoiseParticlesState extends ProgramState {
   noiseFunction: (x: number, y: number, z: number) => number;
 
   constructor(
-    override screenLayout: ScreenLayout,
+    override screens: ScreenInfo[],
     override animationSettings: AnimationSettings
   ) {
-    super(screenLayout, animationSettings);
+    super(screens, animationSettings);
 
     const prng = seedrandom("my seed");
     this.noiseFunction = createNoise3D(prng);
@@ -49,9 +49,9 @@ class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: NoiseParticlesState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
   }
 
   override draw(): void {

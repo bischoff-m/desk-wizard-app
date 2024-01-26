@@ -1,4 +1,3 @@
-import { ScreenInfo } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
@@ -9,14 +8,16 @@ class CalibrationGridControl extends ProgramControl2D<ProgramState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: ProgramState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
   }
 
   override draw(): void {
     const size = this.sharedState.totalSize;
-    const coordinates = this.sharedState.screenLayout;
+    const coordinates = this.sharedState.screens.map(
+      (screen) => screen.virtual
+    );
 
     // Clear the canvas
     this.ctx.clearRect(0, 0, size.w, size.h);

@@ -1,4 +1,3 @@
-import { ScreenInfo } from "../../types";
 import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
@@ -7,9 +6,9 @@ class SimpleGridControl extends ProgramControl2D<ProgramState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: ProgramState,
-    override screen: ScreenInfo
+    override screenIdx: number
   ) {
-    super(canvas, sharedState, screen);
+    super(canvas, sharedState, screenIdx);
   }
 
   override draw(): void {

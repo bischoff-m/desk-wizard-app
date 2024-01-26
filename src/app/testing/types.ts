@@ -14,12 +14,11 @@ export type AnimationSettings = {
 };
 
 export type Rect = Size & Vector2D;
-export type ScreenLayout = Rect[];
 
 export type ScreenInfo = {
   realSize: Size;
   virtual: Rect;
   // This is set manually
   boundingRect: Rect;
-  physicalToVirtualScale: number;
+  realToVirtualScale: number;
 };

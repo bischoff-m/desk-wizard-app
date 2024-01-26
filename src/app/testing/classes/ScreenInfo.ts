@@ -46,7 +46,7 @@ export function loadScreens(): ScreenInfo[] {
         h: partialScreen.realSize.h * screenToCanvas,
       },
       boundingRect: partialScreen.boundingRect,
-      physicalToVirtualScale: screenToCanvas,
+      realToVirtualScale: screenToCanvas,
     });
   }
   return screenInfo;
