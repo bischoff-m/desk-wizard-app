@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CanvasProgram } from "../classes/CanvasProgram";
 import { CanvasProvider } from "../classes/canvas/CanvasProvider";
 import { PerScreenCanvasProvider } from "../classes/canvas/PerScreenCanvasProvider";
 import { SpanningCanvasProvider } from "../classes/canvas/SpanningCanvasProvider";
 import { ScreenInfo } from "../types";
+import { ProgramState } from "../classes/state/ProgramState";
+import DebugInfo from "./DebugInfo";
 
 function assertNumberOfScreenChildren(number: number, root: Element) {
   const canvasElements = root.querySelectorAll(".screen-canvas");
@@ -16,7 +18,7 @@ function assertNumberOfScreenChildren(number: number, root: Element) {
 
 export function useCanvas(
   screens: ScreenInfo[],
-  program: CanvasProgram<any, any>,
+  program: CanvasProgram<ProgramState, any>,
   root?: HTMLElement
 ): {
   canvasProvider: CanvasProvider | null;
@@ -24,14 +26,31 @@ export function useCanvas(
 } {
   const providerRef = useRef<CanvasProvider | null>(null);
   const canvasRefs = useRef<HTMLCanvasElement[]>([]);
+  const onLoadListeners = useRef<(() => void)[]>([]);
 
   function ScreenWrapper(props: {
-    screenId: number;
     children?: React.ReactNode;
-  }) {
-    const { screenId, children } = props;
+    screenId: number;
+    showDebug?: boolean;
+  }): JSX.Element {
+    const { children, screenId, showDebug } = props;
     if (screenId < 0 || screenId >= screens.length)
       throw new Error(`Screen ID ${screenId} out of range`);
+
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    useEffect(() => {
+      let onLoad = () => {
+        setIsInitialized(providerRef.current !== null);
+      };
+      onLoadListeners.current.push(onLoad);
+      return () => {
+        const idx = onLoadListeners.current.indexOf(onLoad);
+        if (idx >= 0) onLoadListeners.current.splice(idx, 1);
+        setIsInitialized(false);
+      };
+    }, []);
+
     return (
       <div
         className="absolute"
@@ -50,6 +69,9 @@ export function useCanvas(
         }}
       >
         <main className="screen-wrapper flex flex-row justify-center items-center h-full w-full">
+          {isInitialized && showDebug && (
+            <DebugInfo sharedState={providerRef.current!.sharedState} />
+          )}
           {children}
           {program.placement === "per-screen" && (
             <canvas
@@ -132,6 +154,7 @@ export function useCanvas(
         screens
       );
     }
+    for (const listener of onLoadListeners.current) listener();
 
     return () => {
       if (providerRef.current) {

@@ -22,3 +22,11 @@ export type ScreenInfo = {
   boundingRect: Rect;
   realToVirtualScale: number;
 };
+
+export type DisplayTimings = {
+  timestamp: DOMHighResTimeStamp;
+  fps: number;
+  totalDelta: number;
+  stateDelta: number;
+  controlDelta: number;
+};

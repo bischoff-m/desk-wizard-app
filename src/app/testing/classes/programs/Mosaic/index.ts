@@ -51,6 +51,14 @@ class MosaicControl extends OrthographicWebGLControl<MosaicState> {
   }
 }
 
+/**
+ * Benchmark:
+ * - Total pixel count: 8064000
+ * - FPS: 65
+ * - Total delta time: 16.000 ms
+ * - State delta time: 0.000 ms
+ * - Control delta time: 0.066 ms
+ */
 export const Mosaic = {
   create: createDefaultProgram(
     "spanning",

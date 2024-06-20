@@ -1,4 +1,9 @@
-import { AnimationSettings, ScreenInfo, Size } from "../../types";
+import {
+  AnimationSettings,
+  DisplayTimings,
+  ScreenInfo,
+  Size,
+} from "../../types";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;
@@ -9,10 +14,18 @@ export class ProgramState {
   private animationFrame?: number;
   private fpsInterval?: NodeJS.Timeout;
   private updateControl?: (time?: DOMHighResTimeStamp) => void;
+  private onUpdateListeners: (() => void)[] = [];
+  private timings: DisplayTimings = {
+    timestamp: 0,
+    fps: 0,
+    totalDelta: 0,
+    stateDelta: 0,
+    controlDelta: 0,
+  };
 
   constructor(
     public screens: ScreenInfo[],
-    protected animationSettings: AnimationSettings
+    public animationSettings: AnimationSettings
   ) {
     const boundingRect = screens.reduce(
       (acc, screen) => ({
@@ -28,21 +41,25 @@ export class ProgramState {
       h: boundingRect.maxY - boundingRect.minY,
     };
 
-    this.onEveryFrame();
+    this.requestFrame();
   }
 
   protected updateShared(): void {}
 
-  private onEveryFrame(time?: DOMHighResTimeStamp): void {
-    this.animationFrame = requestAnimationFrame(this.onEveryFrame.bind(this));
+  private requestFrame(time?: DOMHighResTimeStamp): void {
+    this.animationFrame = requestAnimationFrame(this.requestFrame.bind(this));
     if (!time || !this.updateNextFrameFlag) return;
 
     if (this.time === time) return;
 
     if (this.missedFrameFlag) {
-      // Skip to avoid large time deltas
+      // Skip one frame because either the program was paused due to the window
+      // not being visible or the update took longer than the frame time
       this.missedFrameFlag = false;
-      this.time = time;
+      // If the time difference is more than 3 frames, reset the time to avoid
+      // too much state change in one frame
+      if (time - this.time > (1000 / this.animationSettings.fps!) * 3)
+        this.time = time;
       return;
     }
 
@@ -50,18 +67,40 @@ export class ProgramState {
     this.time = time;
 
     // These calls both can be resource intensive
+    let stateStart = performance.now();
     this.updateShared();
+    let stateEnd = performance.now();
     if (this.updateControl) this.updateControl(time);
+    let controlEnd = performance.now();
+    this.timings = {
+      timestamp: time,
+      fps: 1000 / this.timeDelta,
+      totalDelta: this.timeDelta,
+      stateDelta: stateEnd - stateStart,
+      controlDelta: controlEnd - stateEnd,
+    };
 
+    this.onUpdateListeners.forEach((l) => l());
     this.updateNextFrameFlag = false;
+    this.missedFrameFlag = false;
   }
 
   public start(onUpdate: (time?: DOMHighResTimeStamp) => void): void {
     this.updateControl = onUpdate;
     if (!this.animationSettings.animate) {
       // Do single manual update when animationSettings is undefined
+      let stateStart = performance.now();
       this.updateShared();
-      onUpdate();
+      let stateEnd = performance.now();
+      this.updateControl();
+      let controlEnd = performance.now();
+      this.timings = {
+        timestamp: performance.now(),
+        fps: NaN,
+        totalDelta: controlEnd - stateStart,
+        stateDelta: stateEnd - stateStart,
+        controlDelta: controlEnd - stateEnd,
+      };
     } else {
       if (!this.animationSettings.fps)
         throw new Error("Program is animating but fps is undefined");
@@ -82,5 +121,19 @@ export class ProgramState {
 
   public requestUpdate(): void {
     this.updateNextFrameFlag = true;
+  }
+
+  public addUpdateListener(listener: () => void): void {
+    this.onUpdateListeners.push(listener);
+  }
+
+  public removeUpdateListener(listener: () => void): void {
+    this.onUpdateListeners = this.onUpdateListeners.filter(
+      (l) => l !== listener
+    );
+  }
+
+  public getTimings(): DisplayTimings {
+    return this.timings;
   }
 }

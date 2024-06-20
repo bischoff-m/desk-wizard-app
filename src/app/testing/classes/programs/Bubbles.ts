@@ -143,6 +143,14 @@ class BubblesControl extends ProgramControl2D<BubblesState> {
   }
 }
 
+/**
+ * Benchmark:
+ * - Total pixel count: 8064000
+ * - FPS: 65
+ * - Total delta time: 16.000 ms
+ * - State delta time: 0.057 ms
+ * - Control delta time: 1.750 ms
+ */
 export const Bubbles = {
   create: createDefaultProgram(
     "per-screen",

@@ -7,14 +7,14 @@ import { loadScreens } from "./classes/ScreenInfo";
 export default function Page() {
   const { ScreenWrapper } = useCanvas(
     loadScreens(),
-    Control.CalibrationWebGL.create()
+    Control.Mosaic.create()
     // Control.PictureFrame.create("Panorama Skiurlaub.png")
   );
 
   return (
     <>
       <div className="flex w-full h-full absolute overflow-hidden">
-        <ScreenWrapper screenId={0}>
+        <ScreenWrapper screenId={0} showDebug>
           <div className="bg-slate-300">{/* Placeholer */}</div>
         </ScreenWrapper>
 

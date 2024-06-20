@@ -1,14 +1,15 @@
 import { ScreenInfo } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl } from "../control/ProgramControl";
+import { ProgramState } from "../state/ProgramState";
 import { CanvasProvider } from "./CanvasProvider";
 
 export class PerScreenCanvasProvider extends CanvasProvider {
-  override sharedState: any;
-  public controls: ProgramControl<any>[];
+  override sharedState: ProgramState;
+  public controls: ProgramControl<ProgramState>[];
 
   constructor(
-    override program: CanvasProgram<any, "per-screen">,
+    override program: CanvasProgram<ProgramState, "per-screen">,
     public canvasElements: HTMLCanvasElement[],
     public screens: ScreenInfo[]
   ) {

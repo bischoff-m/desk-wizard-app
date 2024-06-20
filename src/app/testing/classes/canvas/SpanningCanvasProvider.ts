@@ -6,10 +6,10 @@ import { CanvasProvider } from "./CanvasProvider";
 
 export class SpanningCanvasProvider extends CanvasProvider {
   override sharedState: ProgramState;
-  public control: SpanningControl<any>;
+  public control: SpanningControl<ProgramState>;
 
   constructor(
-    override program: CanvasProgram<any, "spanning">,
+    override program: CanvasProgram<ProgramState, "spanning">,
     public canvas: HTMLCanvasElement,
     public screens: ScreenInfo[]
   ) {

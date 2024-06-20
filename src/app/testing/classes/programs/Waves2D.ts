@@ -98,6 +98,14 @@ class Waves2DControl extends ProgramControl2D<Waves2DState> {
   }
 }
 
+/**
+ * Benchmark:
+ * - Total pixel count: 8064000
+ * - FPS: 21
+ * - Total delta time: 48.000 ms
+ * - State delta time: 2.600 ms
+ * - Control delta time: 30.500 ms
+ */
 export const Waves2D = {
   create: createDefaultProgram(
     "per-screen",

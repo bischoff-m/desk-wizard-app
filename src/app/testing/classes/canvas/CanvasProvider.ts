@@ -4,7 +4,7 @@ import { CanvasProgram } from "../CanvasProgram";
 export abstract class CanvasProvider {
   public abstract sharedState: ProgramState;
 
-  constructor(public program: CanvasProgram<any, any>) {}
+  constructor(public program: CanvasProgram<ProgramState, any>) {}
 
   public destroy(): void {
     // Stop animation if it's running
