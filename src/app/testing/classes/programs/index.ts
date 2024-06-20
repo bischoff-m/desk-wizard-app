@@ -3,11 +3,11 @@ import { CalibrationGrid } from "./CalibrationGrid";
 import { PictureFrame } from "./PictureFrame";
 import { SimpleGradient } from "./SimpleGradient";
 import { SimpleGrid } from "./SimpleGrid";
-import { NoiseParticles } from "./NoiseParticles";
-import { ShaderExample } from "./ShaderExample";
+import { Waves2D } from "./Waves2D";
 import { RotatingBox } from "./RotatingBox";
 import { CalibrationWebGL } from "./CalibrationWebGL";
-import { Waves } from "./Waves";
+import { WavesWebGL } from "./WavesWebGL";
+import { Mosaic } from "./Mosaic";
 
 export const Control = {
   SimpleGrid,
@@ -15,9 +15,9 @@ export const Control = {
   Bubbles,
   CalibrationGrid,
   PictureFrame,
-  NoiseParticles,
-  ShaderExample,
+  Waves2D,
   RotatingBox,
   CalibrationWebGL,
-  Waves,
+  WavesWebGL,
+  Mosaic,
 };

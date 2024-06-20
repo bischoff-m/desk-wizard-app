@@ -9,7 +9,7 @@ import { PerScreenControl, SpanningControl } from "./ProgramControl";
 export abstract class NaiveWebGLControl<
   TState extends ProgramState
 > extends PerScreenControl<TState> {
-  protected gl: WebGLRenderingContext;
+  protected gl: WebGL2RenderingContext;
 
   constructor(
     override canvas: HTMLCanvasElement,
@@ -17,14 +17,14 @@ export abstract class NaiveWebGLControl<
     override screenIdx: number
   ) {
     super(canvas, sharedState, screenIdx);
-    this.gl = this.canvas.getContext("webgl") as WebGLRenderingContext;
+    this.gl = this.canvas.getContext("webgl2") as WebGL2RenderingContext;
   }
 }
 
 export abstract class OrthographicWebGLControl<
   TState extends WebGLState
 > extends SpanningControl<TState> {
-  protected gl: WebGLRenderingContext;
+  protected gl: WebGL2RenderingContext;
   private programInfo: twgl.ProgramInfo;
   private bufferInfo: twgl.BufferInfo;
 
@@ -34,7 +34,7 @@ export abstract class OrthographicWebGLControl<
   ) {
     super(canvas, sharedState);
 
-    this.gl = this.canvas.getContext("webgl") as WebGLRenderingContext;
+    this.gl = this.canvas.getContext("webgl2") as WebGL2RenderingContext;
     this.programInfo = twgl.createProgramInfo(this.gl, [
       sharedState.vsSource,
       sharedState.fsSource,
@@ -60,11 +60,6 @@ export abstract class OrthographicWebGLControl<
   }
 
   protected getViewProjectionMatrix(screen: ScreenInfo): twgl.m4.Mat4 {
-    const { h: th } = this.sharedState.totalSize;
-    const { x: vx, y: vy, w: vw, h: vh } = screen.virtual;
-    const { x: bx, y: by, w: bw, h: bh } = screen.boundingRect;
-    const { clientWidth: cw, clientHeight: ch } = this.canvas;
-
     /**
      * This took some time to figure out. The orthographic projection makes the given
      * coordinates fit the whole canvas (independent of scissors). To make every screen
@@ -75,6 +70,11 @@ export abstract class OrthographicWebGLControl<
      * flipped. To get the correct y-translation, the margin from the bottom to the screen
      * is calculated.
      */
+
+    const { h: th } = this.sharedState.totalSize;
+    const { x: vx, y: vy, w: vw, h: vh } = screen.virtual;
+    const { x: bx, y: by, w: bw, h: bh } = screen.boundingRect;
+    const { clientWidth: cw, clientHeight: ch } = this.canvas;
 
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-orthographic.html
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-perspective.html

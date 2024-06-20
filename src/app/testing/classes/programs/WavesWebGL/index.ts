@@ -15,7 +15,19 @@ import vsSource from "./vertex.glsl";
  * z: far to near
  */
 
-class WavesState extends ProgramState {
+/**
+ * Cannot set the gap to 0.08 or lower because otherwise, the size of the vertex array
+ * exceeds the maximum allowed size (2^16). This seems to be a limitation of
+ * gl.drawElements compared to gl.drawArrays.
+ * https://stackoverflow.com/questions/4998278/is-there-a-limit-of-vertices-in-webgl
+ *
+ * Here is an example that uses gl.drawArrays
+ * https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+ *
+ * I wanted to do an all-shader implementation regardless, so I'll just leave this here.
+ */
+
+class WavesWebGLState extends ProgramState {
   gap: number = 0.1;
   nodeSize: number = 0.8; // Percentage of gap
   noiseScale: number = 5;
@@ -112,7 +124,7 @@ class WavesState extends ProgramState {
   }
 }
 
-class WavesControl extends NaiveWebGLControl<WavesState> {
+class WavesWebGLControl extends NaiveWebGLControl<WavesWebGLState> {
   buffers: {
     position: WebGLBuffer | null;
     color: WebGLBuffer | null;
@@ -136,7 +148,7 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
 
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: WavesState,
+    override sharedState: WavesWebGLState,
     override screenIdx: number
   ) {
     super(canvas, sharedState, screenIdx);
@@ -488,11 +500,11 @@ class WavesControl extends NaiveWebGLControl<WavesState> {
   }
 }
 
-export const Waves = {
+export const WavesWebGL = {
   create: createDefaultProgram(
     "per-screen",
     { animate: true, fps: 60 },
-    WavesControl,
-    WavesState
+    WavesWebGLControl,
+    WavesWebGLState
   ),
 };

@@ -3,7 +3,7 @@ import { AnimationSettings, ScreenInfo } from "../../types";
 import { ProgramState } from "./ProgramState";
 
 export abstract class WebGLState extends ProgramState {
-  public meshArrays: twgl.Arrays;
+  public abstract meshArrays: twgl.Arrays;
 
   constructor(
     override screens: ScreenInfo[],
@@ -12,8 +12,5 @@ export abstract class WebGLState extends ProgramState {
     public fsSource: string
   ) {
     super(screens, animationSettings);
-    this.meshArrays = this.getMeshArrays();
   }
-
-  protected abstract getMeshArrays(): twgl.Arrays;
 }

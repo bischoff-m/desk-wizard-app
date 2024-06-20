@@ -6,7 +6,7 @@ import { createDefaultProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
 
-class NoiseParticlesState extends ProgramState {
+class Waves2DState extends ProgramState {
   gap: number = 30;
   nodeSize: number = 10;
   noiseScale: number = 6;
@@ -45,10 +45,10 @@ class NoiseParticlesState extends ProgramState {
   }
 }
 
-class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
+class Waves2DControl extends ProgramControl2D<Waves2DState> {
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: NoiseParticlesState,
+    override sharedState: Waves2DState,
     override screenIdx: number
   ) {
     super(canvas, sharedState, screenIdx);
@@ -98,11 +98,11 @@ class NoiseParticlesControl extends ProgramControl2D<NoiseParticlesState> {
   }
 }
 
-export const NoiseParticles = {
+export const Waves2D = {
   create: createDefaultProgram(
     "per-screen",
     { animate: true, fps: 60 },
-    NoiseParticlesControl,
-    NoiseParticlesState
+    Waves2DControl,
+    Waves2DState
   ),
 };

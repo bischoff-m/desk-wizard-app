@@ -8,7 +8,7 @@ import vsSource from "./vertex.glsl";
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Adding_2D_content_to_a_WebGL_context
 
 // Initialize a shader program, so WebGL knows how to draw our data
-function initShaderProgram(gl: WebGLRenderingContext) {
+function initShaderProgram(gl: WebGL2RenderingContext) {
   const vertexShader = loadShader(
     gl,
     gl.VERTEX_SHADER,
@@ -40,7 +40,7 @@ function initShaderProgram(gl: WebGLRenderingContext) {
 }
 
 // Creates a shader of the given type, uploads the source and compiles it.
-function loadShader(gl: WebGLRenderingContext, type: number, source: string) {
+function loadShader(gl: WebGL2RenderingContext, type: number, source: string) {
   const shader = gl.createShader(type) as WebGLShader;
 
   // Send the source to the shader object
@@ -61,7 +61,7 @@ function loadShader(gl: WebGLRenderingContext, type: number, source: string) {
   return shader;
 }
 
-function initBuffers(gl: WebGLRenderingContext) {
+function initBuffers(gl: WebGL2RenderingContext) {
   const positionBuffer = initPositionBuffer(gl);
   const colorBuffer = initColorBuffer(gl);
   const indexBuffer = initIndexBuffer(gl);
@@ -73,7 +73,7 @@ function initBuffers(gl: WebGLRenderingContext) {
   };
 }
 
-function initPositionBuffer(gl: WebGLRenderingContext) {
+function initPositionBuffer(gl: WebGL2RenderingContext) {
   // Create a buffer for the square's positions.
   const positionBuffer = gl.createBuffer();
 
@@ -109,7 +109,7 @@ function initPositionBuffer(gl: WebGLRenderingContext) {
   return positionBuffer;
 }
 
-function initColorBuffer(gl: WebGLRenderingContext) {
+function initColorBuffer(gl: WebGL2RenderingContext) {
   const faceColors = [
     [1, 1, 1, 1], // Front face: white
     [1, 0, 0, 1], // Back face: red
@@ -134,7 +134,7 @@ function initColorBuffer(gl: WebGLRenderingContext) {
   return colorBuffer;
 }
 
-function initIndexBuffer(gl: WebGLRenderingContext) {
+function initIndexBuffer(gl: WebGL2RenderingContext) {
   const indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
@@ -191,7 +191,7 @@ function initIndexBuffer(gl: WebGLRenderingContext) {
 }
 
 function drawScene(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   programInfo: any,
   buffers: any,
   cubeRotation: number
@@ -283,7 +283,7 @@ function drawScene(
 // Tell WebGL how to pull out the positions from the position
 // buffer into the vertexPosition attribute.
 function setPositionAttribute(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   buffers: any,
   programInfo: any
 ) {
@@ -308,7 +308,7 @@ function setPositionAttribute(
 // Tell WebGL how to pull out the colors from the color buffer
 // into the vertexColor attribute.
 function setColorAttribute(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   buffers: any,
   programInfo: any
 ) {

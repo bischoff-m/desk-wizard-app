@@ -39,3 +39,5 @@ next-env.d.ts
 OLD/
 pkg_OLD/
 public/
+.vscode/
+*.local.*

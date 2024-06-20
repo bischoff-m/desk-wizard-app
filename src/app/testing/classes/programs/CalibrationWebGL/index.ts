@@ -14,14 +14,16 @@ import vsSource from "./vertex.glsl";
  */
 
 class CalibrationWebGLState extends WebGLState {
+  override meshArrays: twgl.Arrays;
   constructor(
     override screens: ScreenInfo[],
     override animationSettings: AnimationSettings
   ) {
     super(screens, animationSettings, vsSource, fsSource);
+    this.meshArrays = this.getMeshArrays();
   }
 
-  override getMeshArrays(): twgl.Arrays {
+  private getMeshArrays(): twgl.Arrays {
     const screenColors = [
       [0.39, 0.39, 0.78, 1],
       [0.39, 0.78, 0.39, 1],
