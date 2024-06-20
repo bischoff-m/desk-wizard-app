@@ -4,7 +4,6 @@ precision mediump float;
 
 uniform float u_time;
 
-varying vec4 v_color;
 varying vec4 v_position; // Virtual position
 
 
