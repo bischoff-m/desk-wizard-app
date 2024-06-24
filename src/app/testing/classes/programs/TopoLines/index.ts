@@ -6,7 +6,7 @@ import { WebGLState } from "../../state/WebGLState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
-class MosaicState extends WebGLState {
+class TopoLinesState extends WebGLState {
   override meshArrays: twgl.Arrays;
   constructor(
     override screens: ScreenInfo[],
@@ -30,10 +30,10 @@ class MosaicState extends WebGLState {
   }
 }
 
-class MosaicControl extends OrthographicWebGLControl<MosaicState> {
+class TopoLinesControl extends OrthographicWebGLControl<TopoLinesState> {
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: MosaicState
+    override sharedState: TopoLinesState
   ) {
     super(canvas, sharedState);
   }
@@ -60,13 +60,13 @@ class MosaicControl extends OrthographicWebGLControl<MosaicState> {
  * - Total delta time: 16.000 ms
  * - State delta time: 0.000 ms
  * - Control delta time: 0.066 ms
- * - GPU Usage: 28%
+ * - GPU Usage: 5%
  */
-export const Mosaic = {
+export const TopoLines = {
   create: createDefaultProgram(
     "spanning",
-    { animate: true, fps: 60 },
-    MosaicControl,
-    MosaicState
+    { animate: true, fps: 15 },
+    TopoLinesControl,
+    TopoLinesState
   ),
 };

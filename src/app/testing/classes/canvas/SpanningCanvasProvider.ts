@@ -4,12 +4,14 @@ import { SpanningControl } from "../control/ProgramControl";
 import { ProgramState } from "../state/ProgramState";
 import { CanvasProvider } from "./CanvasProvider";
 
-export class SpanningCanvasProvider extends CanvasProvider {
-  override sharedState: ProgramState;
-  public control: SpanningControl<ProgramState>;
+export class SpanningCanvasProvider<
+  TState extends ProgramState
+> extends CanvasProvider<TState> {
+  override sharedState: TState;
+  public control: SpanningControl<TState>;
 
   constructor(
-    override program: CanvasProgram<ProgramState, "spanning">,
+    override program: CanvasProgram<TState, "spanning">,
     public canvas: HTMLCanvasElement,
     public screens: ScreenInfo[]
   ) {

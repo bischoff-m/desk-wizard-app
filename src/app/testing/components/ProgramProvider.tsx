@@ -6,6 +6,7 @@ import { SpanningCanvasProvider } from "../classes/canvas/SpanningCanvasProvider
 import { ScreenInfo } from "../types";
 import { ProgramState } from "../classes/state/ProgramState";
 import DebugInfo from "./DebugInfo";
+import { mergeRects } from "../classes/ScreenInfo";
 
 function assertNumberOfScreenChildren(number: number, root: Element) {
   const canvasElements = root.querySelectorAll(".screen-canvas");
@@ -16,15 +17,15 @@ function assertNumberOfScreenChildren(number: number, root: Element) {
   }
 }
 
-export function useCanvas(
+export function useCanvas<TState extends ProgramState>(
   screens: ScreenInfo[],
-  program: CanvasProgram<ProgramState, any>,
+  program: CanvasProgram<TState, any>,
   root?: HTMLElement
 ): {
-  canvasProvider: CanvasProvider | null;
+  canvasProvider: CanvasProvider<TState> | null;
   ScreenWrapper: React.FunctionComponent<Parameters<typeof ScreenWrapper>[0]>;
 } {
-  const providerRef = useRef<CanvasProvider | null>(null);
+  const providerRef = useRef<CanvasProvider<TState> | null>(null);
   const canvasRefs = useRef<HTMLCanvasElement[]>([]);
   const onLoadListeners = useRef<(() => void)[]>([]);
 
@@ -118,18 +119,16 @@ export function useCanvas(
         canvasRefs.current.push(canvas);
 
         // Set canvas size to total size of all screens
-        const minX = Math.min(...screens.map((s) => s.boundingRect.x));
-        const minY = Math.min(...screens.map((s) => s.boundingRect.y));
-        const maxX = Math.max(
-          ...screens.map((s) => s.boundingRect.x + s.boundingRect.w)
-        );
-        const maxY = Math.max(
-          ...screens.map((s) => s.boundingRect.y + s.boundingRect.h)
-        );
-        canvas.style.left = `${minX}px`;
-        canvas.style.top = `${minY}px`;
-        canvas.width = maxX - minX;
-        canvas.height = maxY - minY;
+        const totalSize = mergeRects(screens.map((s) => s.boundingRect));
+        const scaledSize = mergeRects(screens.map((s) => s.scaledRect));
+        canvas.width = scaledSize.w;
+        canvas.height = scaledSize.h;
+        canvas.style.left = `${totalSize.x}px`;
+        canvas.style.top = `${totalSize.y}px`;
+        canvas.style.width = `${totalSize.w}px`;
+        canvas.style.height = `${totalSize.h}px`;
+        // Set pixelated rendering
+        canvas.style.imageRendering = "pixelated";
 
         // Add canvas to root
         newRoot.prepend(canvas);

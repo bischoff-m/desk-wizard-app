@@ -1,5 +1,3 @@
-"use client";
-
 import * as twgl from "twgl.js";
 import { ScreenInfo } from "../../types";
 import { ProgramState } from "../state/ProgramState";
@@ -73,8 +71,8 @@ export abstract class OrthographicWebGLControl<
 
     const { h: th } = this.sharedState.totalSize;
     const { x: vx, y: vy, w: vw, h: vh } = screen.virtual;
-    const { x: bx, y: by, w: bw, h: bh } = screen.boundingRect;
-    const { clientWidth: cw, clientHeight: ch } = this.canvas;
+    const { x: bx, y: by, w: bw, h: bh } = screen.scaledRect;
+    const { w: cw, h: ch } = this.sharedState.scaledSize;
 
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-orthographic.html
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-perspective.html
@@ -109,12 +107,12 @@ export abstract class OrthographicWebGLControl<
   override draw(): void {
     for (const screen of this.sharedState.screens) {
       this.gl.scissor(
-        screen.boundingRect.x,
-        this.canvas.clientHeight -
-          screen.boundingRect.y -
-          screen.boundingRect.h,
-        screen.boundingRect.w,
-        screen.boundingRect.h
+        screen.scaledRect.x,
+        this.sharedState.scaledSize.h -
+          screen.scaledRect.y -
+          screen.scaledRect.h,
+        screen.scaledRect.w,
+        screen.scaledRect.h
       );
 
       twgl.setUniforms(this.programInfo, this.getUniforms(screen));

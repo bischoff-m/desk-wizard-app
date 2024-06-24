@@ -8,6 +8,7 @@ import { RotatingBox } from "./RotatingBox";
 import { CalibrationWebGL } from "./CalibrationWebGL";
 import { WavesWebGL } from "./WavesWebGL";
 import { Mosaic } from "./Mosaic";
+import { TopoLines } from "./TopoLines";
 
 export const Control = {
   SimpleGrid,
@@ -20,4 +21,5 @@ export const Control = {
   CalibrationWebGL,
   WavesWebGL,
   Mosaic,
+  TopoLines,
 };

@@ -63,11 +63,7 @@ export const PictureFrame = {
       return new PictureFrameState(screenLayout, { animate: false }, imageSrc);
     },
     createControl: (canvas, sharedState, transform) => {
-      return new PictureFrameControl(
-        canvas,
-        sharedState as PictureFrameState,
-        transform
-      );
+      return new PictureFrameControl(canvas, sharedState, transform);
     },
     placement: "per-screen",
   }),

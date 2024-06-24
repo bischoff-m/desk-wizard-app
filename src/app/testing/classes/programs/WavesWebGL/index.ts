@@ -502,11 +502,14 @@ class WavesWebGLControl extends NaiveWebGLControl<WavesWebGLState> {
 
 /**
  * Benchmark:
+ * - (tested in Vivaldi)
+ * - (60 FPS, full resolution)
  * - Total pixel count: 8064000
  * - FPS: 65
  * - Total delta time: 16.000 ms
  * - State delta time: 0.420 ms
  * - Control delta time: 0.075 ms
+ * - GPU Usage: 11%
  */
 export const WavesWebGL = {
   create: createDefaultProgram(

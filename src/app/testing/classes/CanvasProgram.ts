@@ -7,7 +7,7 @@ export type CanvasProgram<
   TPlacement extends "per-screen" | "spanning"
 > = {
   placement: TPlacement;
-  createState: (screens: ScreenInfo[]) => ProgramState;
+  createState: (screens: ScreenInfo[]) => TState;
   createControl: (
     canvas: HTMLCanvasElement,
     sharedState: TState,

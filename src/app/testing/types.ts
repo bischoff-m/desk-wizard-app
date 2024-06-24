@@ -21,6 +21,8 @@ export type ScreenInfo = {
   // This is set manually
   boundingRect: Rect;
   realToVirtualScale: number;
+  // boundingRect but scaled by the resolution factor
+  scaledRect: Rect;
 };
 
 export type DisplayTimings = {

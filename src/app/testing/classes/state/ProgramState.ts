@@ -4,11 +4,13 @@ import {
   ScreenInfo,
   Size,
 } from "../../types";
+import { mergeRects } from "../ScreenInfo";
 
 export class ProgramState {
   public time: DOMHighResTimeStamp = 0;
   public timeDelta: number = 0;
   public totalSize: Size;
+  public scaledSize: Size;
   private updateNextFrameFlag: boolean = false;
   private missedFrameFlag: boolean = false;
   private animationFrame?: number;
@@ -27,19 +29,8 @@ export class ProgramState {
     public screens: ScreenInfo[],
     public animationSettings: AnimationSettings
   ) {
-    const boundingRect = screens.reduce(
-      (acc, screen) => ({
-        minX: Math.min(acc.minX, screen.virtual.x),
-        minY: Math.min(acc.minY, screen.virtual.y),
-        maxX: Math.max(acc.maxX, screen.virtual.x + screen.virtual.w),
-        maxY: Math.max(acc.maxY, screen.virtual.y + screen.virtual.h),
-      }),
-      { minX: 0, minY: 0, maxX: 0, maxY: 0 }
-    );
-    this.totalSize = {
-      w: boundingRect.maxX - boundingRect.minX,
-      h: boundingRect.maxY - boundingRect.minY,
-    };
+    this.totalSize = mergeRects(screens.map((s) => s.virtual));
+    this.scaledSize = mergeRects(screens.map((s) => s.scaledRect));
 
     this.requestFrame();
   }

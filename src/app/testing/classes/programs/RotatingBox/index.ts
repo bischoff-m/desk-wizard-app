@@ -393,11 +393,14 @@ class RotatingBoxControl extends NaiveWebGLControl<ProgramState> {
 
 /**
  * Benchmark:
+ * - (tested in Vivaldi)
+ * - (60 FPS, full resolution)
  * - Total pixel count: 8064000
  * - FPS: 65
  * - Total delta time: 16.000 ms
  * - State delta time: 0.001 ms
  * - Control delta time: 0.048 ms
+ * - GPU Usage: 9%
  */
 export const RotatingBox = {
   create: createDefaultProgram(

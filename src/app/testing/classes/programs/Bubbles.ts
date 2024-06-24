@@ -145,11 +145,14 @@ class BubblesControl extends ProgramControl2D<BubblesState> {
 
 /**
  * Benchmark:
+ * - (tested in Vivaldi)
+ * - (60 FPS, full resolution)
  * - Total pixel count: 8064000
  * - FPS: 65
  * - Total delta time: 16.000 ms
  * - State delta time: 0.057 ms
  * - Control delta time: 1.750 ms
+ * - GPU Usage: 9%
  */
 export const Bubbles = {
   create: createDefaultProgram(

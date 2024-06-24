@@ -4,12 +4,14 @@ import { ProgramControl } from "../control/ProgramControl";
 import { ProgramState } from "../state/ProgramState";
 import { CanvasProvider } from "./CanvasProvider";
 
-export class PerScreenCanvasProvider extends CanvasProvider {
-  override sharedState: ProgramState;
-  public controls: ProgramControl<ProgramState>[];
+export class PerScreenCanvasProvider<
+  TState extends ProgramState
+> extends CanvasProvider<TState> {
+  override sharedState: TState;
+  public controls: ProgramControl<TState>[];
 
   constructor(
-    override program: CanvasProgram<ProgramState, "per-screen">,
+    override program: CanvasProgram<TState, "per-screen">,
     public canvasElements: HTMLCanvasElement[],
     public screens: ScreenInfo[]
   ) {
