@@ -43,7 +43,7 @@ class BubblesState extends ProgramState {
 
     // Initialize the balls
     const random = seedrandom("bubbles");
-    this.balls = Array.from({ length: bubbleNumber }, () => ({
+    this.balls = Array.from({ length: this.bubbleNumber }, () => ({
       x: random(),
       y: random(),
       r: random() * 0.005 + 0.005,
