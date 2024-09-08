@@ -1,6 +1,6 @@
 import seedrandom from "seedrandom";
 import { AnimationSettings, ScreenInfo, Vector2D } from "../../types";
-import { createDefaultProgram } from "../CanvasProgram";
+import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
 
@@ -18,7 +18,8 @@ class BubblesState extends ProgramState {
 
   constructor(
     override screens: ScreenInfo[],
-    override animationSettings: AnimationSettings
+    override animationSettings: AnimationSettings,
+    private bubbleNumber: number
   ) {
     super(screens, animationSettings);
 
@@ -42,7 +43,7 @@ class BubblesState extends ProgramState {
 
     // Initialize the balls
     const random = seedrandom("bubbles");
-    this.balls = Array.from({ length: 600 }, () => ({
+    this.balls = Array.from({ length: bubbleNumber }, () => ({
       x: random(),
       y: random(),
       r: random() * 0.005 + 0.005,
@@ -155,10 +156,16 @@ class BubblesControl extends ProgramControl2D<BubblesState> {
  * - GPU Usage: 9%
  */
 export const Bubbles = {
-  create: createDefaultProgram(
-    "per-screen",
-    { animate: true, fps: 60 },
-    BubblesControl,
-    BubblesState
-  ),
+  create: (
+    bubbleNumber: number
+  ): CanvasProgram<BubblesState, "per-screen"> => ({
+    createState: (screens: ScreenInfo[]) =>
+      new BubblesState(screens, { animate: true, fps: 60 }, bubbleNumber),
+    createControl: (
+      canvas: HTMLCanvasElement,
+      state: BubblesState,
+      screenIdx: number
+    ) => new BubblesControl(canvas, state, screenIdx),
+    placement: "per-screen",
+  }),
 };
