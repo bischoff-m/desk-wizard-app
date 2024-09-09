@@ -41,14 +41,18 @@ class BubblesState extends ProgramState {
       point.y /= this.totalSize.h;
     }
 
+    // Parameters for the balls (use as sliders)
+    const radius = 1.5;
+    const speed = 0.2;
+
     // Initialize the balls
     const random = seedrandom("bubbles");
     this.balls = Array.from({ length: this.bubbleNumber }, () => ({
       x: random(),
       y: random(),
-      r: random() * 0.005 + 0.005,
-      vx: ((2 * random() - 1) * 0.001) / 20,
-      vy: ((2 * random() - 1) * 0.001) / 20,
+      r: (random() * 0.005 + 0.005) * radius,
+      vx: (((2 * random() - 1) * 0.001) / 20) * speed,
+      vy: (((2 * random() - 1) * 0.001) / 20) * speed,
       hue: random() * 360,
     }));
   }

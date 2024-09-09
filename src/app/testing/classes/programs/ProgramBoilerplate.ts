@@ -26,8 +26,18 @@ class MyControl extends ProgramControl2D<MyState> {
   override draw(): void {}
 }
 
+/**
+ * Benchmark:
+ * - (tested in Vivaldi)
+ * - (60 FPS, full resolution)
+ * - Total pixel count: 8064000
+ * - FPS: ?
+ * - Total delta time: ? ms
+ * - State delta time: ? ms
+ * - Control delta time: ? ms
+ * - GPU Usage: ?%
+ */
 export const MyProgram = {
-  // You can also use `createDefaultProgram` if neither state nor control need parameters
   create: (): CanvasProgram<MyState, "per-screen"> => ({
     createState: (screens: ScreenInfo[]) =>
       new MyState(screens, { animate: false }),
@@ -38,4 +48,12 @@ export const MyProgram = {
     ) => new MyControl(canvas, state, screenIdx),
     placement: "per-screen",
   }),
+  // ALTERANTIVE:
+  // You can also use `createDefaultProgram` if neither state nor control need parameters
+  //   create: createDefaultProgram(
+  //     "per-screen",
+  //     { animate: true, fps: 60 },
+  //     MyControl,
+  //     MyState
+  //   ),
 };

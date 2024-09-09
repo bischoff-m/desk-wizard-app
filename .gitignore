@@ -40,4 +40,4 @@ OLD/
 pkg_OLD/
 public/
 .vscode/
-*.local.*
+*.local*

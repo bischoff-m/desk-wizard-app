@@ -6,7 +6,7 @@ import { WebGLState } from "../../state/WebGLState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
-class TopoLinesState extends WebGLState {
+class GameOfLifeState extends WebGLState {
   override meshArrays: twgl.Arrays;
   constructor(
     override screens: ScreenInfo[],
@@ -30,17 +30,17 @@ class TopoLinesState extends WebGLState {
   }
 }
 
-class TopoLinesControl extends OrthographicWebGLControl<TopoLinesState> {
+class GameOfLifeControl extends OrthographicWebGLControl<GameOfLifeState> {
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: TopoLinesState
+    override sharedState: GameOfLifeState
   ) {
     super(canvas, sharedState);
   }
 
   override drawScreen(): void {
     // Setup canvas
-    this.gl.clearColor(11 / 255, 11 / 255, 20 / 255, 1);
+    this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
 
@@ -56,17 +56,12 @@ class TopoLinesControl extends OrthographicWebGLControl<TopoLinesState> {
  * - (tested in Vivaldi)
  * - (60 FPS, full resolution)
  * - Total pixel count: 8064000
- * - FPS: 65
- * - Total delta time: 16.000 ms
- * - State delta time: 0.000 ms
- * - Control delta time: 0.066 ms
- * - GPU Usage: 5%
  */
-export const TopoLines = {
+export const GameOfLife = {
   create: createDefaultProgram(
     "spanning",
-    { animate: true, fps: 15 },
-    TopoLinesControl,
-    TopoLinesState
+    { animate: true, fps: 60 },
+    GameOfLifeControl,
+    GameOfLifeState
   ),
 };

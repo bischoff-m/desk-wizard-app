@@ -59,8 +59,8 @@ class MosaicControl extends OrthographicWebGLControl<MosaicState> {
  * - FPS: 65
  * - Total delta time: 16.000 ms
  * - State delta time: 0.000 ms
- * - Control delta time: 0.066 ms
- * - GPU Usage: 28%
+ * - Control delta time: 0.030 ms
+ * - GPU Usage: 12%
  */
 export const Mosaic = {
   create: createDefaultProgram(

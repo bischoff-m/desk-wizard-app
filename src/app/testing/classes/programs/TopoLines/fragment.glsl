@@ -172,11 +172,11 @@ vec3 snoise3( vec4 x ){
     return vec3( s , s1 , s2 );
 }
 
-float SIZE = 0.5;
+float SIZE = 2.0;
 
 void main() {
     // Get noise value between 0 and 100
-    float noise = snoise(vec3(v_position.xy, u_time * 0.01 * SIZE) * 0.0025 / SIZE) * 50.0 + 50.0;
+    float noise = snoise(vec3(v_position.xy, u_time * 0.005 * SIZE) * 0.0025 / SIZE) * 50.0 + 50.0;
     if (mod(noise, 10.0) < 0.5)
         gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
     else
