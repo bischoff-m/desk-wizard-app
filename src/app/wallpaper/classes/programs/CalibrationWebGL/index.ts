@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo } from "@/app/testing/types";
+import { AnimationSettings, ScreenInfo } from "@/app/wallpaper/types";
 import * as twgl from "twgl.js";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { OrthographicWebGLControl } from "../../control/WebGLControl";

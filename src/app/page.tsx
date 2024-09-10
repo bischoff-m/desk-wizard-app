@@ -1,17 +1,32 @@
+"use client";
+
+import { Control } from "./wallpaper/classes/programs";
+import { loadScreens } from "./wallpaper/classes/ScreenInfo";
+import { useCanvas } from "./wallpaper/components/ProgramProvider";
+
 export default function Home() {
+  const { ScreenWrapper } = useCanvas(
+    loadScreens(),
+    Control.PictureFrame.create(
+      "pexels-markusspiske-144352.jpg",
+      {
+        x: 0,
+        y: 50,
+      },
+      true
+    )
+  );
   return (
-    <main className="flex flex-row justify-center items-center">
-      <div>
-        <h1>Nothing here yet</h1>
-        <ul>
-          <li>
-            <a href="/testing">testing</a>
-          </li>
-          <li>
-            <a href="/wallpaper">wallpaper</a>
-          </li>
-        </ul>
+    <>
+      <div className="flex w-full h-full absolute overflow-hidden">
+        <ScreenWrapper screenId={0}>
+          <div className="bg-slate-300">{/* Placeholer */}</div>
+        </ScreenWrapper>
+
+        <ScreenWrapper screenId={1}></ScreenWrapper>
+
+        <ScreenWrapper screenId={2}></ScreenWrapper>
       </div>
-    </main>
+    </>
   );
 }

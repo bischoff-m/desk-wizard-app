@@ -1,34 +1,26 @@
 "use client";
 
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import iCalendarPlugin from "@fullcalendar/icalendar";
-
-// https://fullcalendar.io/docs#toc
+import { useCanvas } from "./components/ProgramProvider";
+import { Control } from "./classes/programs";
+import { loadScreens } from "./classes/ScreenInfo";
 
 export default function Page() {
+  const { ScreenWrapper } = useCanvas(
+    loadScreens(),
+    Control.Mosaic.create()
+    // Control.PictureFrame.create("Panorama Skiurlaub.png")
+  );
+
   return (
     <>
-      <div
-        className="flex justify-center items-center w-full h-full px-48 absolute"
-        style={{
-          backgroundImage: "url('/annapurna-massif.jpg')",
-          backgroundSize: "cover",
-        }}
-      >
-        <div className="bg-slate-200 rounded-lg p-10">
-          <FullCalendar
-            plugins={[dayGridPlugin, iCalendarPlugin]}
-            events={{
-              url: process.env.ICS_URL,
-              format: "ics",
-            }}
-            initialView="dayGridMonth"
-            height="auto"
-            aspectRatio={2}
-            firstDay={1}
-          />
-        </div>
+      <div className="flex w-full h-full absolute overflow-hidden">
+        <ScreenWrapper screenId={0} showDebug>
+          <div className="bg-slate-300">{/* Placeholer */}</div>
+        </ScreenWrapper>
+
+        <ScreenWrapper screenId={1}></ScreenWrapper>
+
+        <ScreenWrapper screenId={2}></ScreenWrapper>
       </div>
     </>
   );

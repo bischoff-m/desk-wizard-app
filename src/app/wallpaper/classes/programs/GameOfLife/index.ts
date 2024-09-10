@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo } from "@/app/testing/types";
+import { AnimationSettings, ScreenInfo } from "@/app/wallpaper/types";
 import * as twgl from "twgl.js";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { OrthographicWebGLControl } from "../../control/WebGLControl";
@@ -6,7 +6,7 @@ import { WebGLState } from "../../state/WebGLState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
-class MosaicState extends WebGLState {
+class GameOfLifeState extends WebGLState {
   override meshArrays: twgl.Arrays;
   constructor(
     override screens: ScreenInfo[],
@@ -30,17 +30,17 @@ class MosaicState extends WebGLState {
   }
 }
 
-class MosaicControl extends OrthographicWebGLControl<MosaicState> {
+class GameOfLifeControl extends OrthographicWebGLControl<GameOfLifeState> {
   constructor(
     override canvas: HTMLCanvasElement,
-    override sharedState: MosaicState
+    override sharedState: GameOfLifeState
   ) {
     super(canvas, sharedState);
   }
 
   override drawScreen(): void {
     // Setup canvas
-    this.gl.clearColor(0.13, 0.13, 0.19, 1);
+    this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
 
@@ -56,17 +56,12 @@ class MosaicControl extends OrthographicWebGLControl<MosaicState> {
  * - (tested in Vivaldi)
  * - (60 FPS, full resolution)
  * - Total pixel count: 8064000
- * - FPS: 65
- * - Total delta time: 16.000 ms
- * - State delta time: 0.000 ms
- * - Control delta time: 0.030 ms
- * - GPU Usage: 12%
  */
-export const Mosaic = {
+export const GameOfLife = {
   create: createDefaultProgram(
     "spanning",
     { animate: true, fps: 60 },
-    MosaicControl,
-    MosaicState
+    GameOfLifeControl,
+    GameOfLifeState
   ),
 };

@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo } from "../../types";
+import { AnimationSettings, ScreenInfo, Vector2D } from "../../types";
 import { CanvasProgram } from "../CanvasProgram";
 import { ProgramControl2D } from "../control/ProgramControl2D";
 import { ProgramState } from "../state/ProgramState";
@@ -27,7 +27,9 @@ class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
   constructor(
     override canvas: HTMLCanvasElement,
     override sharedState: PictureFrameState,
-    override screenIdx: number
+    override screenIdx: number,
+    private offset: Vector2D = { x: 0, y: 0 },
+    private mirrorX: boolean = false
   ) {
     super(canvas, sharedState, screenIdx);
   }
@@ -45,25 +47,43 @@ class PictureFrameControl extends ProgramControl2D<PictureFrameState> {
     const scaledWidth = image.width * scale;
     const scaledHeight = image.height * scale;
 
+    if (this.mirrorX) {
+      this.ctx.save();
+      this.ctx.translate(w, 0);
+      this.ctx.scale(-1, 1);
+    }
+
     this.ctx.drawImage(
       image,
-      (w - scaledWidth) / 2,
-      (h - scaledHeight) / 2,
+      (w - scaledWidth) / 2 + this.offset.x,
+      (h - scaledHeight) / 2 + this.offset.y,
       scaledWidth,
       scaledHeight
     );
+
+    if (this.mirrorX) {
+      this.ctx.restore();
+    }
   }
 }
 
 export const PictureFrame = {
   create: (
-    imageSrc: string
+    imageSrc: string,
+    offset: Vector2D = { x: 0, y: 0 },
+    mirrorX: boolean = false
   ): CanvasProgram<PictureFrameState, "per-screen"> => ({
     createState: (screenLayout) => {
       return new PictureFrameState(screenLayout, { animate: false }, imageSrc);
     },
     createControl: (canvas, sharedState, transform) => {
-      return new PictureFrameControl(canvas, sharedState, transform);
+      return new PictureFrameControl(
+        canvas,
+        sharedState,
+        transform,
+        offset,
+        mirrorX
+      );
     },
     placement: "per-screen",
   }),
