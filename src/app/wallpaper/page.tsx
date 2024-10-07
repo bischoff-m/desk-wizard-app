@@ -5,23 +5,23 @@ import { Control } from "./classes/programs";
 import { loadScreens } from "./classes/ScreenInfo";
 
 export default function Page() {
-  const { ScreenWrapper } = useCanvas(
-    loadScreens(),
-    Control.Mosaic.create()
-    // Control.PictureFrame.create("Panorama Skiurlaub.png")
-  );
+    const { ScreenWrapper } = useCanvas(
+        loadScreens(),
+        Control.Mosaic.create()
+        // Control.PictureFrame.create("Panorama Skiurlaub.png")
+    );
 
-  return (
-    <>
-      <div className="flex w-full h-full absolute overflow-hidden">
-        <ScreenWrapper screenId={0} showDebug>
-          <div className="bg-slate-300">{/* Placeholer */}</div>
-        </ScreenWrapper>
+    return (
+        <>
+            <div className="flex w-full h-full absolute overflow-hidden">
+                <ScreenWrapper screenId={0} showDebug>
+                    <div className="bg-slate-300">{/* Placeholer */}</div>
+                </ScreenWrapper>
 
-        <ScreenWrapper screenId={1}></ScreenWrapper>
+                <ScreenWrapper screenId={1}></ScreenWrapper>
 
-        <ScreenWrapper screenId={2}></ScreenWrapper>
-      </div>
-    </>
-  );
+                <ScreenWrapper screenId={2}></ScreenWrapper>
+            </div>
+        </>
+    );
 }
