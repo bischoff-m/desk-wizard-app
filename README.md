@@ -1,12 +1,17 @@
 # DeskWizard
 
-Node.js server that serves as an API to the operating system.
+Low resource dpi-aware interactive wallpaper desktop app.
+
+Built using tauri and nextjs. Needs WallpaperEngine or Lively Wallpaper installed.
 
 ## Setup
 
 - Add .env
 
-Open [http://localhost:23553](http://localhost:23553) with your browser to see the result.
+```bash
+npm install
+npm run tauri dev
+```
 
 ## Features
 
