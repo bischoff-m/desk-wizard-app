@@ -1,4 +1,4 @@
-# local-system-api
+# DeskWizard
 
 Node.js server that serves as an API to the operating system.
 
@@ -16,11 +16,11 @@ Open [http://localhost:23553](http://localhost:23553) with your browser to see t
 
 ### Notes
 
-- Inspiration https://crosswire.unseen.co
-- GLSL Cheatsheet https://shaderific.com/glsl.html
+- Inspiration <https://crosswire.unseen.co>
+- GLSL Cheatsheet <https://shaderific.com/glsl.html>
 - A collection of WebGL and WebGPU frameworks and libraries
-  https://gist.github.com/dmnsgn/76878ba6903cf15789b712464875cfdc
-- This looks nice https://www.istockphoto.com/de/video/abstrakte-gitter-hintergrund-schleife-gm1171924854-324846096
+  <https://gist.github.com/dmnsgn/76878ba6903cf15789b712464875cfdc>
+- This looks nice <https://www.istockphoto.com/de/video/abstrakte-gitter-hintergrund-schleife-gm1171924854-324846096>
 
 ### Optimizations
 
