@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Control } from "./wallpaper/classes/programs";
 import { loadScreens } from "./wallpaper/classes/ScreenInfo";
+import ImageButton from "./wallpaper/components/ImageButton";
 import { useCanvas } from "./wallpaper/components/ProgramProvider";
+import { cn } from "@/lib/utils";
 
 const imgs = [
     { src: "814533.jpg", offset: { x: 0, y: 170 }, mirror: true },
@@ -96,19 +99,46 @@ const imgs = [
 ];
 
 export default function Home() {
-    const img = imgs[3];
+    // const img = imgs[3];
+    const [img, setImg] = useState(imgs[3]);
+    // TODO: Do not generate a component here, need a better way to handle this
     const { ScreenWrapper } = useCanvas(
         loadScreens(),
         Control.PictureFrame.create(img.src, img.offset, img.mirror)
     );
+
     return (
         <>
             <div className="flex w-full h-full absolute overflow-hidden">
-                <ScreenWrapper screenId={0}>
-                    <div className="bg-slate-300">{/* Placeholer */}</div>
-                </ScreenWrapper>
+                <ScreenWrapper screenId={0}></ScreenWrapper>
 
-                <ScreenWrapper screenId={1}></ScreenWrapper>
+                <ScreenWrapper screenId={1}>
+                    <div
+                        className={cn(
+                            "flex",
+                            "bg-background",
+                            "bg-opacity-70",
+                            "max-w-xl",
+                            "p-4",
+                            "rounded-lg",
+                            "text-primary-foreground"
+                        )}
+                    >
+                        <div className="flex flex-col">
+                            {imgs.map((img, idx) => (
+                                <ImageButton
+                                    key={idx}
+                                    src={img.src}
+                                    alt={img.src.substring(0, 2)}
+                                    name={img.src}
+                                    onClick={() => {
+                                        setImg(img);
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </ScreenWrapper>
 
                 <ScreenWrapper screenId={2}></ScreenWrapper>
             </div>

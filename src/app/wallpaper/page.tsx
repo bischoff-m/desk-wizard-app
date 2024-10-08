@@ -14,9 +14,7 @@ export default function Page() {
     return (
         <>
             <div className="flex w-full h-full absolute overflow-hidden">
-                <ScreenWrapper screenId={0} showDebug>
-                    <div className="bg-slate-300">{/* Placeholer */}</div>
-                </ScreenWrapper>
+                <ScreenWrapper screenId={0} showDebug></ScreenWrapper>
 
                 <ScreenWrapper screenId={1}></ScreenWrapper>
 

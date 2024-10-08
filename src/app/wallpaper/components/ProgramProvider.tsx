@@ -60,13 +60,6 @@ export function useCanvas<TState extends ProgramState>(
                     top: screens[screenId].boundingRect.y,
                     width: screens[screenId].boundingRect.w,
                     height: screens[screenId].boundingRect.h,
-                    ...(program.placement === "per-screen"
-                        ? {
-                              backgroundImage: "url('/annapurna-massif.jpg')",
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                          }
-                        : {}),
                 }}
             >
                 <main className="screen-wrapper flex flex-row justify-center items-center h-full w-full">
@@ -76,7 +69,7 @@ export function useCanvas<TState extends ProgramState>(
                     {children}
                     {program.placement === "per-screen" && (
                         <canvas
-                            className="screen-canvas absolute w-full h-full"
+                            className="screen-canvas absolute w-full h-full -z-50"
                             width={screens[screenId].realSize.w}
                             height={screens[screenId].realSize.h}
                         />
