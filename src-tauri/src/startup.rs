@@ -1,15 +1,19 @@
-use std::{ path::Path, process::Command };
+use std::process::Command;
 
-use rocket::fs::relative;
 use tauri::{
     menu::{ Menu, MenuItem },
+    path::BaseDirectory,
     tray::{ MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent },
     Manager,
 };
 
-pub fn reload_lively() -> () {
-    // reload the lively wallpaper
-    let lively_path = Path::new(relative!("../lively/livelycu.exe")).to_path_buf();
+pub fn reload_lively(app: &tauri::App) -> () {
+    let lively_path = app
+        .path()
+        .resolve("resources/Livelycu.exe", BaseDirectory::Resource)
+        .unwrap();
+
+    // Reload the lively wallpaper
     Command::new("cmd")
         .args(["/C", "start", lively_path.to_str().unwrap(), "setwp", "--file", "reload"])
         .spawn()
@@ -21,7 +25,7 @@ pub fn build_tray_icon(app: &tauri::App) -> TrayIconBuilder<tauri::Wry> {
     let show_i = MenuItem::with_id(app, "show", "Show", true, None::<&str>).unwrap();
     let menu = Menu::with_items(app, &[&show_i, &quit_i]).unwrap();
 
-    // build the tray icon
+    // Build the tray icon
     let builder = TrayIconBuilder::new()
         .icon(app.default_window_icon().unwrap().clone())
         .menu(&menu)

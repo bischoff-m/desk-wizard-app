@@ -19,7 +19,7 @@ async fn main() {
                     .launch().await;
             });
 
-            startup::reload_lively();
+            startup::reload_lively(app);
             startup::build_tray_icon(app).build(app)?;
 
             Ok(())

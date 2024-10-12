@@ -7,6 +7,7 @@ import { ScreenInfo } from "../types";
 import { ProgramState } from "../classes/state/ProgramState";
 import DebugInfo from "./DebugInfo";
 import { mergeRects } from "../classes/ScreenInfo";
+import { cn } from "@/lib/utils";
 
 function assertNumberOfScreenChildren(number: number, root: Element) {
     const canvasElements = root.querySelectorAll(".screen-canvas");
@@ -17,69 +18,68 @@ function assertNumberOfScreenChildren(number: number, root: Element) {
     }
 }
 
+export function ScreenWrapper(props: {
+    children?: React.ReactNode;
+    screenId: number;
+    showDebug?: boolean;
+    screens: ScreenInfo[];
+    program: CanvasProgram<ProgramState, any> | null;
+    provider: CanvasProvider<ProgramState> | null;
+}): JSX.Element {
+    const { children, screenId, showDebug } = props;
+    if (screenId < 0 || screenId >= props.screens.length)
+        throw new Error(`Screen ID ${screenId} out of range`);
+
+    return (
+        <div
+            className="absolute"
+            style={{
+                left: props.screens[screenId].boundingRect.x,
+                top: props.screens[screenId].boundingRect.y,
+                width: props.screens[screenId].boundingRect.w,
+                height: props.screens[screenId].boundingRect.h,
+            }}
+        >
+            <main
+                className={cn(
+                    "screen-wrapper",
+                    "flex",
+                    "flex-row",
+                    "justify-center",
+                    "items-center",
+                    "h-full",
+                    "w-full"
+                )}
+            >
+                {showDebug && props.provider && (
+                    <DebugInfo sharedState={props.provider.sharedState} />
+                )}
+                {children}
+                {props.program?.placement === "per-screen" && (
+                    <canvas
+                        className="screen-canvas absolute w-full h-full -z-50"
+                        width={props.screens[screenId].realSize.w}
+                        height={props.screens[screenId].realSize.h}
+                    />
+                )}
+            </main>
+        </div>
+    );
+}
+
 export function useCanvas<TState extends ProgramState>(
     screens: ScreenInfo[],
-    program: CanvasProgram<TState, any>,
+    program?: CanvasProgram<TState, any> | null,
     root?: HTMLElement
 ): {
     canvasProvider: CanvasProvider<TState> | null;
-    ScreenWrapper: React.FunctionComponent<Parameters<typeof ScreenWrapper>[0]>;
 } {
-    const providerRef = useRef<CanvasProvider<TState> | null>(null);
+    const [provider, setProvider] = useState<CanvasProvider<TState> | null>(null);
     const canvasRefs = useRef<HTMLCanvasElement[]>([]);
-    const onLoadListeners = useRef<(() => void)[]>([]);
-
-    function ScreenWrapper(props: {
-        children?: React.ReactNode;
-        screenId: number;
-        showDebug?: boolean;
-    }): JSX.Element {
-        const { children, screenId, showDebug } = props;
-        if (screenId < 0 || screenId >= screens.length)
-            throw new Error(`Screen ID ${screenId} out of range`);
-
-        const [isInitialized, setIsInitialized] = useState(false);
-
-        useEffect(() => {
-            let onLoad = () => {
-                setIsInitialized(providerRef.current !== null);
-            };
-            onLoadListeners.current.push(onLoad);
-            return () => {
-                const idx = onLoadListeners.current.indexOf(onLoad);
-                if (idx >= 0) onLoadListeners.current.splice(idx, 1);
-                setIsInitialized(false);
-            };
-        }, []);
-
-        return (
-            <div
-                className="absolute"
-                style={{
-                    left: screens[screenId].boundingRect.x,
-                    top: screens[screenId].boundingRect.y,
-                    width: screens[screenId].boundingRect.w,
-                    height: screens[screenId].boundingRect.h,
-                }}
-            >
-                <main className="screen-wrapper flex flex-row justify-center items-center h-full w-full">
-                    {isInitialized && showDebug && (
-                        <DebugInfo sharedState={providerRef.current!.sharedState} />
-                    )}
-                    {children}
-                    {program.placement === "per-screen" && (
-                        <canvas
-                            className="screen-canvas absolute w-full h-full -z-50"
-                            width={screens[screenId].realSize.w}
-                            height={screens[screenId].realSize.h}
-                        />
-                    )}
-                </main>
-            </div>
-        );
-    }
 
     useEffect(() => {
+        if (!program) return;
+
         const placement = program.placement;
         const newRoot = root || document.body;
         const screenElements = newRoot.querySelectorAll(".screen-wrapper");
@@ -127,35 +127,26 @@ export function useCanvas<TState extends ProgramState>(
                 newRoot.prepend(canvas);
             }
         }
-
-        // Initialize canvasProvider
-        if (providerRef.current) {
-            providerRef.current.destroy();
-            providerRef.current = null;
+        if (!provider) {
+            if (placement === "per-screen")
+                setProvider(
+                    new PerScreenCanvasProvider(program, canvasRefs.current, screens)
+                );
+            else
+                setProvider(
+                    new SpanningCanvasProvider(program, canvasRefs.current[0], screens)
+                );
         }
-        if (placement === "per-screen") {
-            providerRef.current = new PerScreenCanvasProvider(
-                program,
-                canvasRefs.current,
-                screens
-            );
-        } else {
-            providerRef.current = new SpanningCanvasProvider(
-                program,
-                canvasRefs.current[0],
-                screens
-            );
-        }
-        for (const listener of onLoadListeners.current) listener();
 
         return () => {
-            if (providerRef.current) {
-                providerRef.current.destroy();
-                providerRef.current = null;
+            if (provider) {
+                provider.destroy();
+                setProvider(null);
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [program, screens, root, provider]);
 
-    return { canvasProvider: providerRef.current, ScreenWrapper };
+    return {
+        canvasProvider: provider,
+    };
 }

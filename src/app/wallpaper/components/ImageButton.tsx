@@ -19,7 +19,7 @@ export default function ImageButton({
                 "items-center",
                 "space-x-4",
                 "p-2",
-                "hover:bg-secondary-foreground",
+                "hover:bg-secondary",
                 "rounded-md",
                 "cursor-pointer"
             )}
