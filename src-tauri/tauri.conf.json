@@ -7,11 +7,11 @@
         "devUrl": "http://localhost:23553/native-app"
     },
     "bundle": {
+        "publisher": "Marco Bischoff",
         "active": true,
-        "category": "DeveloperTool",
-        "copyright": "",
+        "category": "Utility",
+        "copyright": "GNU General Public License v3.0",
         "targets": "msi",
-        "externalBin": [],
         "icon": [
             "icons/32x32.png",
             "icons/128x128.png",
@@ -19,34 +19,14 @@
             "icons/icon.icns",
             "icons/icon.ico"
         ],
-        "windows": {
-            "certificateThumbprint": null,
-            "digestAlgorithm": "sha256",
-            "timestampUrl": ""
-        },
-        "longDescription": "",
-        "macOS": {
-            "entitlements": null,
-            "exceptionDomain": "",
-            "frameworks": [],
-            "providerShortName": null,
-            "signingIdentity": null
-        },
         "resources": [
             "resources/**/*"
-        ],
-        "shortDescription": "",
-        "linux": {
-            "deb": {
-                "depends": []
-            }
-        }
+        ]
     },
-    "productName": "desk-wizard",
+    "productName": "Desk Wizard",
     "mainBinaryName": "desk-wizard",
     "version": "0.1.0",
-    "identifier": "com.kolo.desk-wizard",
-    "plugins": {},
+    "identifier": "com.bischoff-m.desk-wizard",
     "app": {
         "windows": [
             {

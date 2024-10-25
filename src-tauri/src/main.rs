@@ -3,6 +3,8 @@
 
 extern crate rocket;
 use rocket::fs::{ relative, FileServer };
+use tauri_plugin_autostart::MacosLauncher;
+use tauri_plugin_autostart::ManagerExt;
 
 mod startup;
 
@@ -11,7 +13,16 @@ async fn main() {
     tauri::Builder
         ::default()
         .setup(|app| {
-            // mount the rocket instance
+            // Enable autostart
+            let _ = app
+                .handle()
+                .plugin(
+                    tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, Some(vec![]))
+                );
+            let autostart_manager = app.autolaunch();
+            let _ = autostart_manager.enable();
+
+            // Mount the rocket instance
             tauri::async_runtime::spawn(async move {
                 let _rocket = rocket
                     ::build()

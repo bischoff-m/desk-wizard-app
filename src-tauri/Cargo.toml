@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "desk-wizard"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
+description = "Desk Wizard"
+authors = ["Marco Bischoff"]
+license = "GNU General Public License v3.0"
 repository = ""
-default-run = "app"
+default-run = "desk-wizard"
 edition = "2021"
 rust-version = "1.81.0"
 
@@ -26,3 +26,6 @@ tauri-plugin-sql = { version = "2.0.1", features = ["sqlite"] }
 # If you use cargo directly instead of tauri's cli you can use this feature flag to switch between tauri's `dev` and `build` modes.
 # DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-autostart = "2.0.0-rc"

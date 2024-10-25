@@ -13,9 +13,8 @@ pub fn reload_lively(app: &tauri::App) -> () {
         .resolve("resources/Livelycu.exe", BaseDirectory::Resource)
         .unwrap();
 
-    // Reload the lively wallpaper
-    Command::new("cmd")
-        .args(["/C", "start", lively_path.to_str().unwrap(), "setwp", "--file", "reload"])
+    Command::new(lively_path.to_str().unwrap())
+        .args(["setwp", "--file", "reload"])
         .spawn()
         .expect("failed to run lively");
 }
