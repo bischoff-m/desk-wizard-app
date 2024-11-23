@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo } from "@/app/wallpaper/types";
+import { AnimationSettings, ScreenInfo } from "@/app/(wallpaper)/types";
 import { mat4, vec3 } from "gl-matrix";
 import seedrandom from "seedrandom";
 import { createNoise3D } from "simplex-noise";
