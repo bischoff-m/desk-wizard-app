@@ -16,22 +16,22 @@ export function loadScreens(): ScreenInfo[] {
             realSize: { w: 1920, h: 1080 },
             diagonalInches: 27,
             virtualOffset: { x: 0, y: 460 },
-            // boundingRect: { x: 0, y: 388 * 1.25, w: 1920, h: 1080 },
-            boundingRect: { x: 0, y: 388, w: 1536, h: 864 },
+            boundingRect: { x: 0, y: 388 * 1.25, w: 1920, h: 1080 },
+            // boundingRect: { x: 0, y: 388, w: 1536, h: 864 },
         },
         {
             realSize: { w: 2560, h: 1440 },
             diagonalInches: 27,
             virtualOffset: { x: 70, y: 450 },
-            // boundingRect: { x: 1536 * 1.25, y: 249 * 1.25, w: 2560, h: 1440 },
-            boundingRect: { x: 1536, y: 249, w: 2048, h: 1152 },
+            boundingRect: { x: 1536 * 1.25, y: 249 * 1.25, w: 2560, h: 1440 },
+            // boundingRect: { x: 1536, y: 249, w: 2048, h: 1152 },
         },
         {
             realSize: { w: 1200, h: 1920 },
             diagonalInches: 24,
             virtualOffset: { x: 70, y: 0 },
-            // boundingRect: { x: 3584 * 1.25, y: 0, w: 1200, h: 1920 },
-            boundingRect: { x: 3584, y: 0, w: 960, h: 1536 },
+            boundingRect: { x: 3584 * 1.25, y: 0, w: 1200, h: 1920 },
+            // boundingRect: { x: 3584, y: 0, w: 960, h: 1536 },
         },
     ];
 

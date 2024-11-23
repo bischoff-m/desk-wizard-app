@@ -4,7 +4,7 @@
         "beforeBuildCommand": "npm run build",
         "beforeDevCommand": "npm run dev",
         "frontendDist": "../out",
-        "devUrl": "http://localhost:23553/native-app"
+        "devUrl": "http://localhost:23553"
     },
     "bundle": {
         "publisher": "Marco Bischoff",
@@ -40,6 +40,7 @@
         ],
         "security": {
             "csp": null
-        }
+        },
+        "withGlobalTauri": true
     }
 }

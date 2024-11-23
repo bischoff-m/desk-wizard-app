@@ -2,11 +2,29 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 extern crate rocket;
+
 use rocket::fs::{ relative, FileServer };
+use tauri::Manager;
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_autostart::ManagerExt;
 
 mod startup;
+
+#[tauri::command]
+async fn redirect(app_handle: tauri::AppHandle) {
+    let mut window = app_handle.get_webview_window("main").unwrap();
+    let mut window_url = window.url().unwrap();
+    let path = window_url.path();
+    if
+        window_url.to_string() == "about:blank" ||
+        !window_url.has_host() ||
+        path == "/native-app"
+    {
+        return;
+    }
+    window_url.set_path("/native-app");
+    window.navigate(window_url).unwrap();
+}
 
 #[rocket::main]
 async fn main() {
@@ -30,7 +48,7 @@ async fn main() {
                     .launch().await;
             });
 
-            startup::reload_lively(app);
+            startup::reload_wallpaper();
             startup::build_tray_icon(app).build(app)?;
 
             Ok(())
@@ -45,6 +63,7 @@ async fn main() {
                 _ => {}
             }
         })
+        .invoke_handler(tauri::generate_handler![redirect])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

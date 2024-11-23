@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Control } from "./wallpaper/classes/programs";
-import { loadScreens } from "./wallpaper/classes/ScreenInfo";
-import { ScreenWrapper, useCanvas } from "./wallpaper/components/ProgramProvider";
-import { CanvasProgram } from "./wallpaper/classes/CanvasProgram";
+import { Control } from "./classes/programs";
+import { loadScreens } from "./classes/ScreenInfo";
+import { ScreenWrapper, useCanvas } from "./components/ProgramProvider";
+import { CanvasProgram } from "./classes/CanvasProgram";
 import { useTheme } from "next-themes";
-import ImagePicker, { imgs } from "./wallpaper/components/ImagePicker";
+import ImagePicker, { imgs } from "./components/ImagePicker";
+import * as tauri from "@tauri-apps/api/core";
 
 const screens = loadScreens();
 
@@ -15,6 +16,11 @@ export default function Home() {
     const [program, setProgram] = useState<CanvasProgram<any, any> | null>(null);
     const { canvasProvider } = useCanvas(screens, program);
     useTheme();
+
+    useEffect(() => {
+        // Redirect to native app if running in Tauri
+        if (tauri.isTauri()) tauri.invoke("redirect");
+    }, []);
 
     useEffect(() => {
         setProgram(Control.PictureFrame.create(img.src, img.offset, img.mirror));

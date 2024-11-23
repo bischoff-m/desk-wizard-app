@@ -2,21 +2,18 @@ use std::process::Command;
 
 use tauri::{
     menu::{ Menu, MenuItem },
-    path::BaseDirectory,
     tray::{ MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent },
     Manager,
 };
 
-pub fn reload_lively(app: &tauri::App) -> () {
-    let lively_path = app
-        .path()
-        .resolve("resources/Livelycu.exe", BaseDirectory::Resource)
-        .unwrap();
+pub fn reload_wallpaper() -> () {
+    let wallpaper_engine_path =
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\wallpaper_engine\\wallpaper64.exe";
 
-    Command::new(lively_path.to_str().unwrap())
-        .args(["setwp", "--file", "reload"])
+    Command::new(wallpaper_engine_path)
+        .args(["-control", "openProfile", "-profile", "Spanning"])
         .spawn()
-        .expect("failed to run lively");
+        .expect("failed to run Wallpaper Engine");
 }
 
 pub fn build_tray_icon(app: &tauri::App) -> TrayIconBuilder<tauri::Wry> {
