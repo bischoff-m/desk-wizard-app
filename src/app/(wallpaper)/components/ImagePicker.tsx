@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import ImageButton from "./ImageButton";
 import { useState } from "react";
+import DeskWindow from "@/components/DeskWindow";
 
 export const imgs = [
     { src: "814533.jpg", offset: { x: 0, y: 170 }, mirror: true },
@@ -121,29 +122,14 @@ export default function ImagePicker(props: {
                 </div>
             )}
             {show && (
-                <div
-                    className={cn(
-                        "flex",
-                        "bg-background",
-                        "bg-opacity-70",
-                        "max-w-xl",
-                        "p-4",
-                        "rounded-lg",
-                        "text-primary"
-                    )}
+                <DeskWindow
+                    x={900}
+                    y={200}
+                    width={700}
+                    height={1000}
+                    onClosed={() => setShow(false)}
                 >
                     <div className="flex flex-col">
-                        <div
-                            className={cn(
-                                "flex-1",
-                                "cursor-pointer",
-                                "p-2",
-                                "text-right"
-                            )}
-                            onClick={() => setShow(false)}
-                        >
-                            Close
-                        </div>
                         {imgs.map((img, idx) => (
                             <ImageButton
                                 key={idx}
@@ -156,7 +142,7 @@ export default function ImagePicker(props: {
                             />
                         ))}
                     </div>
-                </div>
+                </DeskWindow>
             )}
         </>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Control } from "./classes/programs";
 import { loadScreens } from "./classes/ScreenInfo";
 import { ScreenWrapper, useCanvas } from "./components/ProgramProvider";
@@ -17,9 +17,9 @@ export default function Home() {
     const { canvasProvider } = useCanvas(screens, program);
     useTheme();
 
-    useEffect(() => {
-        // Redirect to native app if running in Tauri
-        if (tauri.isTauri()) tauri.invoke("redirect");
+    useLayoutEffect(() => {
+        // Redirect to /native-app if running in Tauri
+        if (tauri.isTauri()) window.location.href = "/native-app";
     }, []);
 
     useEffect(() => {
