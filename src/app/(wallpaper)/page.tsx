@@ -51,6 +51,11 @@ export default function Home() {
                     program={program}
                     provider={canvasProvider}
                 ></ScreenWrapper>
+                <div
+                    id="desk-window-root"
+                    className="absolute overflow-hidden"
+                    style={{ width: "100vw", height: "100vh" }}
+                ></div>
             </div>
         </>
     );

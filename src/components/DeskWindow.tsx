@@ -1,23 +1,62 @@
 import { cn } from "@/lib/utils";
-import { Rnd } from "react-rnd";
+import {
+    ResizeEnable,
+    Rnd,
+    RndDragCallback,
+    RndResizeCallback,
+    RndResizeStartCallback,
+} from "react-rnd";
 import { X } from "lucide-react";
+import { createPortal } from "react-dom";
 
-export default function DeskWindow(props: {
+type Size = {
+    width: string | number;
+    height: string | number;
+};
+
+interface DeskWindowProps {
     children: React.ReactNode;
     onClosed?: () => void;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}) {
-    return (
+    // Forwards all other props to react-rnd
+    default?: {
+        x: number;
+        y: number;
+    } & Size;
+    position?: {
+        x: number;
+        y: number;
+    };
+    size?: Size;
+    onMouseDown?: (e: MouseEvent) => void;
+    onMouseUp?: (e: MouseEvent) => void;
+    onResizeStart?: RndResizeStartCallback;
+    onResize?: RndResizeCallback;
+    onResizeStop?: RndResizeCallback;
+    onDragStart?: RndDragCallback;
+    onDrag?: RndDragCallback;
+    onDragStop?: RndDragCallback;
+    enableResizing?: ResizeEnable;
+    maxHeight?: number | string;
+    maxWidth?: number | string;
+    minHeight?: number | string;
+    minWidth?: number | string;
+    disableDragging?: boolean;
+    allowAnyClick?: boolean;
+}
+
+export default function DeskWindow(props: DeskWindowProps) {
+    const windowRoot = document.getElementById("desk-window-root");
+    // DOM not ready yet (I guess)
+    if (!windowRoot) return <></>;
+
+    // Remove the onClosed prop from the props object
+    const rndProps = { ...props };
+    delete rndProps.onClosed;
+    delete rndProps.children;
+
+    return createPortal(
         <Rnd
-            default={{
-                x: props.x,
-                y: props.y,
-                width: props.width,
-                height: props.height,
-            }}
+            {...rndProps}
             dragHandleClassName="drag-handle"
             className={cn("rounded-lg", "text-primary", "overflow-hidden")}
             style={{
@@ -46,6 +85,7 @@ export default function DeskWindow(props: {
                 </div>
             </div>
             <div className="p-3">{props.children}</div>
-        </Rnd>
+        </Rnd>,
+        windowRoot
     );
 }

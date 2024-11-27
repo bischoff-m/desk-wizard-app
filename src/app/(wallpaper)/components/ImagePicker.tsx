@@ -114,7 +114,8 @@ export default function ImagePicker(props: {
                         "bg-background",
                         "cursor-pointer",
                         "p-2",
-                        "rounded-br-xl"
+                        "rounded-br-xl",
+                        "z-10"
                     )}
                     onClick={() => setShow(true)}
                 >
@@ -123,10 +124,7 @@ export default function ImagePicker(props: {
             )}
             {show && (
                 <DeskWindow
-                    x={900}
-                    y={200}
-                    width={700}
-                    height={1000}
+                    default={{ x: 2700, y: 500, width: 600, height: 1000 }}
                     onClosed={() => setShow(false)}
                 >
                     <div className="flex flex-col">
