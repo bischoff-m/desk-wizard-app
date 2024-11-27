@@ -8,7 +8,8 @@
         "start": "next start",
         "lint": "next lint",
         "tauri": "tauri",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "install:release": "msiexec /passive /i \"src-tauri/target/release/bundle/msi/Desk Wizard_0.1.0_x64_en-US.msi\""
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.15",
