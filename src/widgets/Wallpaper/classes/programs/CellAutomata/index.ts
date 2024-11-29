@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo } from "@/app/(wallpaper)/types";
+import { AnimationSettings, ScreenInfo } from "@/widgets/Wallpaper/types";
 import * as twgl from "twgl.js";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { OrthographicWebGLControl } from "../../control/WebGLControl";
@@ -6,7 +6,7 @@ import { WebGLState } from "../../state/WebGLState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
-class GameOfLifeState extends WebGLState {
+class CellAutomataState extends WebGLState {
     override meshArrays: twgl.Arrays;
     constructor(
         override screens: ScreenInfo[],
@@ -30,10 +30,10 @@ class GameOfLifeState extends WebGLState {
     }
 }
 
-class GameOfLifeControl extends OrthographicWebGLControl<GameOfLifeState> {
+class CellAutomataControl extends OrthographicWebGLControl<CellAutomataState> {
     constructor(
         override canvas: HTMLCanvasElement,
-        override sharedState: GameOfLifeState
+        override sharedState: CellAutomataState
     ) {
         super(canvas, sharedState);
     }
@@ -57,11 +57,11 @@ class GameOfLifeControl extends OrthographicWebGLControl<GameOfLifeState> {
  * - (60 FPS, full resolution)
  * - Total pixel count: 8064000
  */
-export const GameOfLife = {
+export const CellAutomata = {
     create: createDefaultProgram(
         "spanning",
         { animate: true, fps: 60 },
-        GameOfLifeControl,
-        GameOfLifeState
+        CellAutomataControl,
+        CellAutomataState
     ),
 };

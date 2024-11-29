@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { DisplayTimings } from "../types";
-import { ProgramState } from "../classes/state/ProgramState";
+import { DisplayTimings } from "./types";
+import { ProgramState } from "./classes/state/ProgramState";
 
 const MOVING_AVERAGE_MS = 2000;
 const UPDATE_INTERVAL_MS = 100;

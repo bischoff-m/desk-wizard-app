@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CanvasProgram } from "../classes/CanvasProgram";
-import { CanvasProvider } from "../classes/canvas/CanvasProvider";
-import { PerScreenCanvasProvider } from "../classes/canvas/PerScreenCanvasProvider";
-import { SpanningCanvasProvider } from "../classes/canvas/SpanningCanvasProvider";
-import { ScreenInfo } from "../types";
-import { ProgramState } from "../classes/state/ProgramState";
+import { CanvasProgram } from "./classes/CanvasProgram";
+import { CanvasProvider } from "./classes/canvas/CanvasProvider";
+import { PerScreenCanvasProvider } from "./classes/canvas/PerScreenCanvasProvider";
+import { SpanningCanvasProvider } from "./classes/canvas/SpanningCanvasProvider";
+import { ScreenInfo } from "./types";
+import { ProgramState } from "./classes/state/ProgramState";
 import DebugInfo from "./DebugInfo";
-import { mergeRects } from "../classes/ScreenInfo";
+import { mergeRects } from "./classes/ScreenInfo";
 import { cn } from "@/lib/utils";
 
 function assertNumberOfScreenChildren(number: number, root: Element) {
@@ -54,7 +54,6 @@ export function ScreenWrapper(props: {
                 {showDebug && props.provider && (
                     <DebugInfo sharedState={props.provider.sharedState} />
                 )}
-                {children}
                 {props.program?.placement === "per-screen" && (
                     <canvas
                         className="screen-canvas absolute w-full h-full -z-50"
@@ -62,6 +61,7 @@ export function ScreenWrapper(props: {
                         height={props.screens[screenId].realSize.h}
                     />
                 )}
+                {children}
             </main>
         </div>
     );

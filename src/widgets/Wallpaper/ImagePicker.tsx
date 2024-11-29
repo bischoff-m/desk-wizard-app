@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import ImageButton from "./ImageButton";
 import { useState } from "react";
-import DeskWindow from "@/components/DeskWindow";
+import DeskWindow from "@/app/(wallpaper)/DeskWindow";
 
 export const imgs = [
     { src: "814533.jpg", offset: { x: 0, y: 170 }, mirror: true },

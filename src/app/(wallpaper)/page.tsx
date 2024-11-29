@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Control } from "./classes/programs";
-import { loadScreens } from "./classes/ScreenInfo";
-import { ScreenWrapper, useCanvas } from "./components/ProgramProvider";
-import { CanvasProgram } from "./classes/CanvasProgram";
+import { Control } from "@/widgets/Wallpaper/classes/programs";
+import { loadScreens } from "@/widgets/Wallpaper/classes/ScreenInfo";
+import { ScreenWrapper, useCanvas } from "@/widgets/Wallpaper/ProgramProvider";
+import { CanvasProgram } from "@/widgets/Wallpaper/classes/CanvasProgram";
 import { useTheme } from "next-themes";
-import ImagePicker, { imgs } from "./components/ImagePicker";
+import ImagePicker, { imgs } from "../../widgets/Wallpaper/ImagePicker";
 import * as tauri from "@tauri-apps/api/core";
+import CalendarWidget from "@/widgets/Calendar/CalendarWidget";
 
 const screens = loadScreens();
 
@@ -34,7 +35,9 @@ export default function Home() {
                     screens={screens}
                     program={program}
                     provider={canvasProvider}
-                ></ScreenWrapper>
+                >
+                    <CalendarWidget />
+                </ScreenWrapper>
 
                 <ScreenWrapper
                     screenId={1}

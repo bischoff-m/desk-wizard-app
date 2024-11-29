@@ -1,4 +1,4 @@
-import { AnimationSettings, ScreenInfo } from "@/app/(wallpaper)/types";
+import { AnimationSettings, ScreenInfo } from "@/widgets/Wallpaper/types";
 import * as twgl from "twgl.js";
 import { createDefaultProgram } from "../../CanvasProgram";
 import { OrthographicWebGLControl } from "../../control/WebGLControl";
@@ -6,7 +6,7 @@ import { WebGLState } from "../../state/WebGLState";
 import fsSource from "./fragment.glsl";
 import vsSource from "./vertex.glsl";
 
-class TopoLinesState extends WebGLState {
+class MosaicState extends WebGLState {
     override meshArrays: twgl.Arrays;
     constructor(
         override screens: ScreenInfo[],
@@ -30,17 +30,14 @@ class TopoLinesState extends WebGLState {
     }
 }
 
-class TopoLinesControl extends OrthographicWebGLControl<TopoLinesState> {
-    constructor(
-        override canvas: HTMLCanvasElement,
-        override sharedState: TopoLinesState
-    ) {
+class MosaicControl extends OrthographicWebGLControl<MosaicState> {
+    constructor(override canvas: HTMLCanvasElement, override sharedState: MosaicState) {
         super(canvas, sharedState);
     }
 
     override drawScreen(): void {
         // Setup canvas
-        this.gl.clearColor(11 / 255, 11 / 255, 20 / 255, 1);
+        this.gl.clearColor(0.13, 0.13, 0.19, 1);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     }
 
@@ -59,14 +56,14 @@ class TopoLinesControl extends OrthographicWebGLControl<TopoLinesState> {
  * - FPS: 65
  * - Total delta time: 16.000 ms
  * - State delta time: 0.000 ms
- * - Control delta time: 0.066 ms
- * - GPU Usage: 5%
+ * - Control delta time: 0.030 ms
+ * - GPU Usage: 12%
  */
-export const TopoLines = {
+export const Mosaic = {
     create: createDefaultProgram(
         "spanning",
-        { animate: true, fps: 15 },
-        TopoLinesControl,
-        TopoLinesState
+        { animate: true, fps: 60 },
+        MosaicControl,
+        MosaicState
     ),
 };
