@@ -1,4 +1,4 @@
-# DeskWizard
+# Desk Wizard
 
 Low resource dpi-aware interactive wallpaper desktop app.
 

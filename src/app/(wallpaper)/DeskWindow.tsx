@@ -6,7 +6,7 @@ import {
     RndResizeCallback,
     RndResizeStartCallback,
 } from "react-rnd";
-import { X } from "lucide-react";
+import { ChevronUp, X } from "lucide-react";
 import { produce } from "immer";
 import ClientOnlyPortal from "@/components/ClientOnlyPortal";
 import { useEffect, useRef, useState } from "react";
@@ -51,6 +51,7 @@ export default function DeskWindow(props: DeskWindowProps) {
         width: 800,
         height: null,
     });
+    const [showTitleBar, setShowTitleBar] = useState(false);
     const rndRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -115,34 +116,96 @@ export default function DeskWindow(props: DeskWindowProps) {
                 allowAnyClick={props.allowAnyClick}
             >
                 <div className={cn("w-full", "h-full", "flex", "flex-col")}>
-                    <div
-                        ref={rndRef}
-                        className={cn(
-                            "flex-none",
-                            "flex",
-                            "flex-row",
-                            "h-8",
-                            "justify-end",
-                            "items-center",
-                            "hover:bg-black",
-                            "hover:bg-opacity-10"
-                        )}
-                    >
-                        <div className="drag-handle flex-1 h-full" />
+                    {showTitleBar ? (
+                        <div
+                            ref={rndRef}
+                            className={cn(
+                                "flex-none",
+                                "flex",
+                                "flex-row",
+                                "h-8",
+                                "justify-end",
+                                "items-center",
+                                "hover:bg-black",
+                                "hover:bg-opacity-10"
+                            )}
+                        >
+                            <div className="drag-handle flex-1 h-full" />
+                            <div
+                                className={cn(
+                                    "flex",
+                                    "justify-center",
+                                    "items-center",
+                                    "w-12",
+                                    "h-full",
+                                    "hover:bg-slate-600"
+                                )}
+                                onClick={() => {
+                                    setShowTitleBar(false);
+                                }}
+                            >
+                                <ChevronUp />
+                            </div>
+                            <div
+                                className={cn(
+                                    "flex",
+                                    "justify-center",
+                                    "items-center",
+                                    "w-12",
+                                    "h-full",
+                                    "hover:bg-red-600"
+                                )}
+                                onClick={props.onClosed}
+                            >
+                                <X />
+                            </div>
+                        </div>
+                    ) : (
                         <div
                             className={cn(
-                                "flex",
-                                "justify-center",
-                                "items-center",
-                                "w-12",
-                                "h-full",
-                                "hover:bg-red-600"
+                                "absolute",
+                                "top-0",
+                                "left-1/2",
+                                "h-6",
+                                "w-20",
+                                "translate-x-[-50%]"
                             )}
-                            onClick={props.onClosed}
                         >
-                            <X />
+                            <div
+                                className={cn("absolute", "w-20", "h-3", "bg-slate-600")}
+                                style={{
+                                    mask: "radial-gradient(0.75rem at 0 0.75rem, transparent 98%, black) 0/51% 100% no-repeat, radial-gradient(0.75rem at 100% 0.75rem, transparent 98%, black) 100%/51% 100% no-repeat",
+                                }}
+                            />
+                            <div
+                                className={cn(
+                                    "absolute",
+                                    "left-3",
+                                    "h-6",
+                                    "w-14",
+                                    "bg-slate-600",
+                                    "rounded-full"
+                                )}
+                            />
+                            <div
+                                className={cn(
+                                    "absolute",
+                                    "top-1/2",
+                                    "left-1/2",
+                                    "w-8",
+                                    "h-4",
+                                    "bg-slate-500",
+                                    "rounded-full",
+                                    "transform",
+                                    "-translate-x-1/2",
+                                    "-translate-y-1/2",
+                                    "hover:bg-slate-300"
+                                )}
+                                onClick={() => setShowTitleBar(true)}
+                            />
                         </div>
-                    </div>
+                        // <div className="absolute top-0 left-1/2 h-6 w-8 bg-red-600" />
+                    )}
                     <div className="p-3 w-full flex-1" ref={contentRef}>
                         {props.children}
                     </div>

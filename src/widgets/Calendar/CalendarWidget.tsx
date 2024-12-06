@@ -2,9 +2,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import iCalendarPlugin from "@fullcalendar/icalendar";
 import DeskWindow from "@/app/(wallpaper)/DeskWindow";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 // https://fullcalendar.io/docs#toc
+
+// TODO: Use https://www.npmjs.com/package/@googleapis/calendar to fetch events from
+// Google Calendar
 
 interface WindowSize {
     x: number;
@@ -25,6 +28,28 @@ const INITIAL_WINDOW_SIZE: WindowSize = {
 export default function CalendarWidget({}: CalendarWidgetProps) {
     const calendarRef = useRef<FullCalendar | null>(null);
 
+    useEffect(() => {
+        if (!calendarRef.current) return;
+
+        const calendar = calendarRef.current.getApi();
+        const source = calendar.addEventSource({
+            url: "/basic.local.ics",
+            format: "ics",
+            color: "#6e7ab6",
+        });
+        calendar.addEventSource({
+            url: "/uni.local.ics",
+            format: "ics",
+            color: "#f4511e",
+        });
+        calendar.addEventSource({
+            url: "/work.local.ics",
+            format: "ics",
+            color: "#8f609e",
+        });
+        console.log(source);
+    }, [calendarRef.current]);
+
     return (
         <DeskWindow
             default={INITIAL_WINDOW_SIZE}
@@ -42,13 +67,14 @@ export default function CalendarWidget({}: CalendarWidgetProps) {
             <FullCalendar
                 ref={calendarRef}
                 plugins={[dayGridPlugin, iCalendarPlugin]}
-                events={{
-                    url: "/basic.local.ics",
-                    format: "ics",
-                }}
                 initialView="dayGridMonth"
                 firstDay={1}
                 height="100%"
+                eventTimeFormat={{
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                }}
             />
         </DeskWindow>
     );
