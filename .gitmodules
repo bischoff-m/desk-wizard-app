@@ -1,0 +1,3 @@
+[submodule "packages/desk-wizard-sample-plugin"]
+	path = packages/desk-wizard-sample-plugin
+	url = https://github.com/bischoff-m/desk-wizard-sample-plugin.git
