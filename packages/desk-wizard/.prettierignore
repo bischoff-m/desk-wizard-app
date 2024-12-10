@@ -1,0 +1,11 @@
+node_modules/
+
+# Next.js build
+.next/
+
+# Tauri build
+.out/
+
+# Rust build
+gen/
+target/
