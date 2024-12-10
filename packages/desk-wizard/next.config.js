@@ -10,10 +10,6 @@ const nextConfig = {
             exclude: /node_modules/,
             use: ["raw-loader", "glslify-loader"],
         });
-        config.resolve.alias = {
-            ...config.resolve.alias,
-            "remote-component.config.js": __dirname + "/src/remote-component.config.js",
-        };
         return config;
     },
     // https://tauri.app/start/frontend/nextjs/

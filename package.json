@@ -1,0 +1,14 @@
+{
+  "name": "desk-wizard",
+  "version": "1.0.0",
+  "description": "DeskWizard Monorepo",
+  "license": "GPL-3.0",
+  "private": true,
+  "author": "Marco Bischoff <bischoff_m@aim.com>",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
