@@ -9,6 +9,14 @@ Built using tauri and nextjs. Needs WallpaperEngine or Lively Wallpaper installe
 
 - Add .env
 
+Clone the submodules using:
+
+```bash
+git submodule update --init --remote --merge
+```
+
+Link the packages using:
+
 ```bash
 npm link -w desk-wizard
 npm link -w desk-wizard-calendar
@@ -25,6 +33,12 @@ If the types are not found, run `npm run build` in the `desk-wizard` and
 ```bash
 cd packages/desk-wizard-app
 npm run tauri dev
+```
+
+If a submodules is updated, run:
+
+```bash
+git submodule update --remote --merge
 ```
 
 ## Features
