@@ -1,0 +1,9 @@
+[submodule "packages/desk-wizard"]
+	path = packages/desk-wizard
+	url = https://github.com/bischoff-m/desk-wizard.git
+[submodule "packages/desk-wizard-calendar"]
+	path = packages/desk-wizard-calendar
+	url = https://github.com/bischoff-m/desk-wizard-calendar.git
+[submodule "packages/desk-wizard-sample-plugin"]
+	path = packages/desk-wizard-sample-plugin
+	url = https://github.com/bischoff-m/desk-wizard-sample-plugin.git

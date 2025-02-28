@@ -1,5 +1,5 @@
 {
-  "name": "desk-wizard",
+  "name": "desk-wizard-monorepo",
   "version": "1.0.0",
   "description": "DeskWizard Monorepo",
   "license": "GPL-3.0",
@@ -10,5 +10,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "desk-wizard": "^0.1.0"
+  }
 }
