@@ -51,7 +51,7 @@ export default function DeskWindow(props: DeskWindowProps) {
         width: 800,
         height: null,
     });
-    const [showTitleBar, setShowTitleBar] = useState(false);
+    const [showTitleBar, setShowTitleBar] = useState(true);
     const rndRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 

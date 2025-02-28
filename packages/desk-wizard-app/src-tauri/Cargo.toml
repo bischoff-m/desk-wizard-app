@@ -1,11 +1,11 @@
 [package]
-name = "desk-wizard"
+name = "desk-wizard-app"
 version = "0.1.0"
 description = "Desk Wizard"
 authors = ["Marco Bischoff"]
 license = "GNU General Public License v3.0"
 repository = ""
-default-run = "desk-wizard"
+default-run = "desk-wizard-app"
 edition = "2021"
 rust-version = "1.81.0"
 

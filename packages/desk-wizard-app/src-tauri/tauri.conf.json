@@ -1,10 +1,32 @@
 {
-    "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+    "$schema": "../../../node_modules/@tauri-apps/cli/config.schema.json",
+    "productName": "Desk Wizard",
+    "version": "0.1.0",
+    "identifier": "com.bischoff-m.desk-wizard-app",
+    "mainBinaryName": "desk-wizard-app",
     "build": {
-        "beforeBuildCommand": "npm run build",
         "beforeDevCommand": "npm run dev",
-        "frontendDist": "../out",
-        "devUrl": "http://localhost:23553"
+        "devUrl": "http://localhost:23553",
+        "beforeBuildCommand": "npm run build",
+        "frontendDist": "../out"
+    },
+    "app": {
+        "windows": [
+            {
+                "fullscreen": false,
+                "height": 600,
+                "resizable": true,
+                "title": "DeskWizard",
+                "width": 800,
+                "visible": false
+            }
+        ],
+        "security": {
+            "capabilities": [
+                "remote-access-capability"
+            ]
+        },
+        "withGlobalTauri": true
     },
     "bundle": {
         "publisher": "Marco Bischoff",
@@ -22,25 +44,5 @@
         "resources": [
             "resources/**/*"
         ]
-    },
-    "productName": "Desk Wizard",
-    "mainBinaryName": "desk-wizard",
-    "version": "0.1.0",
-    "identifier": "com.bischoff-m.desk-wizard",
-    "app": {
-        "windows": [
-            {
-                "fullscreen": false,
-                "height": 600,
-                "resizable": true,
-                "title": "DeskWizard",
-                "width": 800,
-                "visible": false
-            }
-        ],
-        "security": {
-            "csp": null
-        },
-        "withGlobalTauri": true
     }
 }

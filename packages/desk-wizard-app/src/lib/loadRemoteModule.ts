@@ -8,8 +8,8 @@ export default async function loadRemoteModule(url: string): Promise<any> {
     };
     const data = await fetch(url).then((res) => res.text());
     const exports = {};
-    const module = { exports };
+    const newModule = { exports };
     const func = new Function("require", "module", "exports", data);
-    func(newRequire, module, exports);
-    return module.exports;
+    func(newRequire, newModule, exports);
+    return newModule.exports;
 }
