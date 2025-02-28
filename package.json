@@ -10,8 +10,5 @@
   },
   "workspaces": [
     "packages/*"
-  ],
-  "dependencies": {
-    "desk-wizard": "^0.1.0"
-  }
+  ]
 }
