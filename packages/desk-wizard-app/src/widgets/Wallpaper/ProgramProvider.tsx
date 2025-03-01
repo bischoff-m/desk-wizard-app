@@ -25,7 +25,7 @@ export function ScreenWrapper(props: {
     screens: ScreenInfo[];
     program: CanvasProgram<ProgramState, any> | null;
     provider: CanvasProvider<ProgramState> | null;
-}): JSX.Element {
+}): React.JSX.Element {
     const { children, screenId, showDebug } = props;
     if (screenId < 0 || screenId >= props.screens.length)
         throw new Error(`Screen ID ${screenId} out of range`);

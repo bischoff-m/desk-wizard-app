@@ -19,8 +19,7 @@
             }
         ],
         "paths": {
-            "@/*": ["./src/*"],
-            // "desk-wizard": ["../../node_modules/desk-wizard"]
+            "@/*": ["./src/*"]
         }
     },
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

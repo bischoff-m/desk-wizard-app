@@ -20,8 +20,6 @@ Link the packages using:
 ```bash
 npm link -w desk-wizard
 npm link -w desk-wizard-calendar
-npm link desk-wizard -w desk-wizard-app -w desk-wizard-calendar -w desk-wizard-sample-plugin
-npm link desk-wizard-calendar -w desk-wizard-app
 npm install
 ```
 
@@ -35,7 +33,7 @@ cd packages/desk-wizard-app
 npm run tauri dev
 ```
 
-If a submodules is updated, run:
+If a submodule is updated, run:
 
 ```bash
 git submodule update --remote --merge

@@ -48,7 +48,6 @@ type WrapperComponent = React.FC<{ manager: WindowManager; children?: React.Reac
 class DeskWindowManager extends WindowManager {
     windows: Map<string, WindowBase> = new Map();
     windowRoots: Map<string, Root> = new Map();
-    windowElements: Map<string, React.ReactElement> = new Map();
     wrapperFC: WrapperComponent;
 
     constructor(wrapperComponent: WrapperComponent) {
@@ -63,11 +62,9 @@ class DeskWindowManager extends WindowManager {
         windowRootElement.id = key;
         rootContainer?.appendChild(windowRootElement);
 
-        // Create the window and component
+        // Create the window object
         const window = new windowClass(this);
-        const element = React.createElement(window.render);
         this.windows.set(key, window);
-        this.windowElements.set(key, element);
 
         // Create a new root and wrapper
         const windowRoot = createRoot(windowRootElement);
@@ -77,7 +74,7 @@ class DeskWindowManager extends WindowManager {
             {
                 manager: this,
             },
-            element
+            window.render()
         );
 
         // Render the component
@@ -89,14 +86,12 @@ class DeskWindowManager extends WindowManager {
 
     public destroyWindow(key: string) {
         const window = this.windows.get(key);
-        const component = this.windowElements.get(key);
 
-        if (!window || !component) throw new Error("Window not found");
+        if (!window) throw new Error("Window not found");
         if (!window.attemptClose()) return;
 
         this.windows.delete(key);
         this.windowRoots.delete(key);
-        this.windowElements.delete(key);
     }
 }
 

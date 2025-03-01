@@ -12,7 +12,7 @@ export default function DebugInfo(props: { sharedState: ProgramState }) {
         didDropFrames: false,
     });
     const allTimings = useRef<DisplayTimings[]>([]);
-    const interval = useRef<NodeJS.Timeout>();
+    const interval = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         function updateListener() {
@@ -63,7 +63,7 @@ export default function DebugInfo(props: { sharedState: ProgramState }) {
 
         return () => {
             sharedState.removeUpdateListener(updateListener);
-            clearInterval(interval.current);
+            if (interval.current) clearInterval(interval.current);
         };
     }, [sharedState]);
 
