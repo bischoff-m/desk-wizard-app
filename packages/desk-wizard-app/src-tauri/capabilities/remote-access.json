@@ -1,19 +1,10 @@
 {
-    "$schema": "../gen/schemas/desktop-schema.json",
-    "identifier": "remote-access-capability",
-    "windows": [
-        "*"
-    ],
-    "remote": {
-        "urls": [
-            "http://localhost:23553"
-        ]
-    },
-    "platforms": [
-        "windows"
-    ],
-    "permissions": [
-        "core:default",
-        "core:app:allow-app-show"
-    ]
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "remote-access-capability",
+  "windows": ["*"],
+  "remote": {
+    "urls": ["http://localhost:23553"]
+  },
+  "platforms": ["windows"],
+  "permissions": ["core:default", "core:app:allow-app-show"]
 }

@@ -11,15 +11,15 @@ import { Mosaic } from "./Mosaic";
 import { TopoLines } from "./TopoLines";
 
 export const Control = {
-    SimpleGrid,
-    SimpleGradient,
-    Bubbles,
-    CalibrationGrid,
-    PictureFrame,
-    Waves2D,
-    RotatingBox,
-    CalibrationWebGL,
-    WavesWebGL,
-    Mosaic,
-    TopoLines,
+  SimpleGrid,
+  SimpleGradient,
+  Bubbles,
+  CalibrationGrid,
+  PictureFrame,
+  Waves2D,
+  RotatingBox,
+  CalibrationWebGL,
+  WavesWebGL,
+  Mosaic,
+  TopoLines,
 };

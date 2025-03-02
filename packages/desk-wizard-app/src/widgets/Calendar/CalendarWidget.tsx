@@ -10,72 +10,70 @@ import { useEffect, useRef } from "react";
 // Google Calendar
 
 interface WindowSize {
-    x: number;
-    y: number;
-    width: number;
-    height: number | null;
+  x: number;
+  y: number;
+  width: number;
+  height: number | null;
 }
 
-interface CalendarWidgetProps {}
-
 const INITIAL_WINDOW_SIZE: WindowSize = {
-    x: 400,
-    y: 600,
-    width: 1200,
-    height: 720,
+  x: 400,
+  y: 600,
+  width: 1200,
+  height: 720,
 };
 
-export default function CalendarWidget({}: CalendarWidgetProps) {
-    const calendarRef = useRef<FullCalendar | null>(null);
+export default function CalendarWidget() {
+  const calendarRef = useRef<FullCalendar | null>(null);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (!calendarRef.current) return;
+
+    const calendar = calendarRef.current.getApi();
+    calendar.addEventSource({
+      url: "/basic.local.ics",
+      format: "ics",
+      color: "#6e7ab6",
+    });
+    calendar.addEventSource({
+      url: "/uni.local.ics",
+      format: "ics",
+      color: "#f4511e",
+    });
+    calendar.addEventSource({
+      url: "/work.local.ics",
+      format: "ics",
+      color: "#8f609e",
+    });
+  }, [calendarRef.current]);
+
+  return (
+    <DeskWindow
+      default={INITIAL_WINDOW_SIZE}
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onResizeStop={(_e, _direction, _ref, delta, _position) => {
         if (!calendarRef.current) return;
 
         const calendar = calendarRef.current.getApi();
-        const source = calendar.addEventSource({
-            url: "/basic.local.ics",
-            format: "ics",
-            color: "#6e7ab6",
-        });
-        calendar.addEventSource({
-            url: "/uni.local.ics",
-            format: "ics",
-            color: "#f4511e",
-        });
-        calendar.addEventSource({
-            url: "/work.local.ics",
-            format: "ics",
-            color: "#8f609e",
-        });
-        console.log(source);
-    }, [calendarRef.current]);
+        const heightBefore = calendar.getOption("height");
+        if (typeof heightBefore === "number")
+          calendar.setOption("height", heightBefore + delta.height);
 
-    return (
-        <DeskWindow
-            default={INITIAL_WINDOW_SIZE}
-            onResizeStop={(e, direction, ref, delta, position) => {
-                if (!calendarRef.current) return;
-
-                const calendar = calendarRef.current.getApi();
-                const heightBefore = calendar.getOption("height");
-                if (typeof heightBefore === "number")
-                    calendar.setOption("height", heightBefore + delta.height);
-
-                calendarRef.current.requestResize();
-            }}
-        >
-            <FullCalendar
-                ref={calendarRef}
-                plugins={[dayGridPlugin, iCalendarPlugin]}
-                initialView="dayGridMonth"
-                firstDay={1}
-                height="100%"
-                eventTimeFormat={{
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                }}
-            />
-        </DeskWindow>
-    );
+        calendarRef.current.requestResize();
+      }}
+    >
+      <FullCalendar
+        ref={calendarRef}
+        plugins={[dayGridPlugin, iCalendarPlugin]}
+        initialView="dayGridMonth"
+        firstDay={1}
+        height="100%"
+        eventTimeFormat={{
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }}
+      />
+    </DeskWindow>
+  );
 }

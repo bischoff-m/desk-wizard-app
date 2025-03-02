@@ -46,11 +46,9 @@ here](https://v2.tauri.app/develop/resources/)). The file should be placed at
 
 ```json
 {
-    "bundle": {
-        "resources": [
-            "resources/**/*"
-        ]
-    }
+  "bundle": {
+    "resources": ["resources/**/*"]
+  }
 }
 ```
 
@@ -59,14 +57,14 @@ method:
 
 ```rust
 pub fn reload_lively(app: &tauri::App) -> () {
-    let lively_path = app
-        .path()
-        .resolve("resources/Livelycu.exe", BaseDirectory::Resource)
-        .unwrap();
+  let lively_path = app
+    .path()
+    .resolve("resources/Livelycu.exe", BaseDirectory::Resource)
+    .unwrap();
 
-    Command::new(lively_path.to_str().unwrap())
-        .args(["setwp", "--file", "reload"])
-        .spawn()
-        .expect("failed to run lively");
+  Command::new(lively_path.to_str().unwrap())
+    .args(["setwp", "--file", "reload"])
+    .spawn()
+    .expect("failed to run lively");
 }
 ```

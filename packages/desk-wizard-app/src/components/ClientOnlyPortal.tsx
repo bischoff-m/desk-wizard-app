@@ -5,20 +5,20 @@ import { useRef, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 interface ClientOnlyPortalProps {
-    children: React.ReactNode;
-    selector: string;
+  children: React.ReactNode;
+  selector: string;
 }
 
 export default function ClientOnlyPortal({ children, selector }: ClientOnlyPortalProps) {
-    const ref = useRef<Element | null>(null);
-    const [mounted, setMounted] = useState(false);
+  const ref = useRef<Element | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        const parent = document.querySelector(selector);
-        if (!parent) return;
-        ref.current = parent;
-        setMounted(true);
-    }, [selector]);
+  useEffect(() => {
+    const parent = document.querySelector(selector);
+    if (!parent) return;
+    ref.current = parent;
+    setMounted(true);
+  }, [selector]);
 
-    return mounted && ref.current ? createPortal(children, ref.current) : null;
+  return mounted && ref.current ? createPortal(children, ref.current) : null;
 }

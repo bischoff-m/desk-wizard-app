@@ -27,7 +27,7 @@ async fn main() {
             tauri::async_runtime::spawn(async move {
                 let _rocket = rocket
                     ::build()
-                    .mount("/", FileServer::from(relative!("../out/")))
+                    .mount("/", FileServer::from(relative!("../dist/")))
                     .launch().await;
             });
 

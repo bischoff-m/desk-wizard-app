@@ -1,6 +1,6 @@
 {
   "name": "desk-wizard-monorepo",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "DeskWizard Monorepo",
   "license": "GPL-3.0",
   "private": true,
@@ -12,8 +12,11 @@
     "packages/*"
   ],
   "scripts": {
-    "clean": "lerna clean",
-    "build": "lerna run build"
+    "dev": "lerna run dev",
+    "build": "lerna run build",
+    "format": "lerna run format",
+    "lint": "lerna run lint",
+    "clean": "lerna clean"
   },
   "dependencies": {},
   "devDependencies": {

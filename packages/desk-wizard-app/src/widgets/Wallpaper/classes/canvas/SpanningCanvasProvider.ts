@@ -5,27 +5,27 @@ import { ProgramState } from "../state/ProgramState";
 import { CanvasProvider } from "./CanvasProvider";
 
 export class SpanningCanvasProvider<
-    TState extends ProgramState
+  TState extends ProgramState,
 > extends CanvasProvider<TState> {
-    override sharedState: TState;
-    public control: SpanningControl<TState>;
+  override sharedState: TState;
+  public control: SpanningControl<TState>;
 
-    constructor(
-        override program: CanvasProgram<TState, "spanning">,
-        public canvas: HTMLCanvasElement,
-        public screens: ScreenInfo[]
-    ) {
-        super(program);
+  constructor(
+    override program: CanvasProgram<TState, "spanning">,
+    public canvas: HTMLCanvasElement,
+    public screens: ScreenInfo[],
+  ) {
+    super(program);
 
-        // Initialize state
-        this.sharedState = program.createState(screens);
+    // Initialize state
+    this.sharedState = program.createState(screens);
 
-        // Initialize control
-        this.control = program.createControl(canvas, this.sharedState);
+    // Initialize control
+    this.control = program.createControl(canvas, this.sharedState);
 
-        // Start animation
-        this.sharedState.start(() => {
-            this.control.fullUpdate();
-        });
-    }
+    // Start animation
+    this.sharedState.start(() => {
+      this.control.fullUpdate();
+    });
+  }
 }
