@@ -16,13 +16,10 @@ import { CanvasProgram } from "@/widgets/Wallpaper/classes/CanvasProgram";
 import { useTheme } from "next-themes";
 import ImagePicker, { imgs } from "../../widgets/Wallpaper/ImagePicker";
 import * as tauri from "@tauri-apps/api/core";
-// import PluginTest from "@/components/PluginTest";
-import WindowRoot from "./WindowRoot";
-// import DeskWindow from "./DeskWindow";
 import loadRemoteModule from "@/lib/loadRemoteModule";
-import { PluginBase, WindowManager, WindowBase, type WindowClass } from "desk-wizard";
+import { PluginBase, WidgetManager, WidgetBase, type WidgetClass } from "desk-wizard";
 import { createRoot, Root } from "react-dom/client";
-import DeskWindow from "./DeskWindow";
+import WidgetView from "./WidgetView";
 
 const screens = loadScreens();
 
@@ -40,19 +37,19 @@ const screens = loadScreens();
 //   height: 720,
 // };
 
-function PlaceholderWrapper(props: { manager: WindowManager; children?: ReactNode }) {
-  return <DeskWindow>{props.children}</DeskWindow>;
+function PlaceholderWrapper(props: { manager: WidgetManager; children?: ReactNode }) {
+  return <WidgetView>{props.children}</WidgetView>;
 }
 
 const pluginUrls = {
   calendar: "http://localhost:4173/desk-wizard-calendar.umd.cjs",
 };
 
-type WrapperComponent = FC<{ manager: WindowManager; children?: ReactNode }>;
+type WrapperComponent = FC<{ manager: WidgetManager; children?: ReactNode }>;
 
-class DeskWindowManager extends WindowManager {
-  windows: Map<string, WindowBase> = new Map();
-  windowRoots: Map<string, Root> = new Map();
+class DeskWidgetManager extends WidgetManager {
+  widgets: Map<string, WidgetBase> = new Map();
+  widgetRoots: Map<string, Root> = new Map();
   wrapperFC: WrapperComponent;
 
   constructor(wrapperComponent: WrapperComponent) {
@@ -60,53 +57,53 @@ class DeskWindowManager extends WindowManager {
     this.wrapperFC = wrapperComponent;
   }
 
-  public newWindow(key: string, windowClass: WindowClass) {
-    // Create a new div element for the window
-    const rootContainer = document.getElementById("desk-window-root");
-    const windowRootElement = document.createElement("div");
-    windowRootElement.id = key;
-    rootContainer?.appendChild(windowRootElement);
+  public newWidget(key: string, widgetClass: WidgetClass) {
+    // Create a new div element for the widget
+    const rootContainer = document.getElementById("widget-root");
+    const widgetRootElement = document.createElement("div");
+    widgetRootElement.id = key;
+    rootContainer?.appendChild(widgetRootElement);
 
-    // Create the window object
-    const window = new windowClass(this);
-    this.windows.set(key, window);
+    // Create the widget object
+    const widget = new widgetClass(this);
+    this.widgets.set(key, widget);
 
     // Create a new root and wrapper
-    const windowRoot = createRoot(windowRootElement);
-    this.windowRoots.set(key, windowRoot);
+    const widgetRoot = createRoot(widgetRootElement);
+    this.widgetRoots.set(key, widgetRoot);
     const wrapperElement = createElement(
       this.wrapperFC,
       {
         manager: this,
       },
-      window.render(),
+      widget.render(),
     );
 
     // Render the component
-    windowRootElement.style.opacity = "0";
-    windowRoot.render(wrapperElement);
-    window.onLoad?.();
-    windowRootElement.style.opacity = "1";
+    widgetRootElement.style.opacity = "0";
+    widgetRoot.render(wrapperElement);
+    widget.onLoad?.();
+    widgetRootElement.style.opacity = "1";
   }
 
-  public destroyWindow(key: string) {
-    const window = this.windows.get(key);
+  public destroyWidget(key: string) {
+    const widget = this.widgets.get(key);
 
-    if (!window) throw new Error("Window not found");
-    if (!window.attemptClose()) return;
+    if (!widget) throw new Error("Widget not found");
+    if (!widget.attemptClose()) return;
 
-    this.windows.delete(key);
-    this.windowRoots.delete(key);
+    this.widgets.delete(key);
+    this.widgetRoots.delete(key);
   }
 }
 
-type PluginClass = new (manager: WindowManager) => PluginBase;
+type PluginClass = new (manager: WidgetManager) => PluginBase;
 
 export default function Home() {
   const [img, setImg] = useState(imgs[Math.floor(Math.random() * imgs.length)]);
   const [program, setProgram] = useState<CanvasProgram<any, any> | null>(null);
   const { canvasProvider } = useCanvas(screens, program);
-  const managerRef = useRef<WindowManager>(new DeskWindowManager(PlaceholderWrapper));
+  const managerRef = useRef<WidgetManager>(new DeskWidgetManager(PlaceholderWrapper));
   const pluginsRef = useRef<Record<string, PluginBase | null>>({});
   useTheme();
 
@@ -136,7 +133,7 @@ export default function Home() {
 
   async function pluginFromUrl(url: string) {
     const mod = (await loadRemoteModule(url)) as {
-      Plugin: new (manager: WindowManager) => PluginBase;
+      Plugin: new (manager: WidgetManager) => PluginBase;
     };
     if (!mod.Plugin) throw new Error("Plugin class not found in remote module");
     return mod.Plugin;
@@ -177,36 +174,39 @@ export default function Home() {
           program={program}
           provider={canvasProvider}
         ></ScreenWrapper>
-        <WindowRoot>
-          {/* <CalendarWidget />
-                    {plugins.map((plugin, idxPlugin) =>
-                        plugin.windows.map((window, idxWindow) => (
-                            <div key={idxPlugin + idxWindow}>
-                                <DeskWindow
-                                    default={INITIAL_WINDOW_SIZE}
-                                    onResizeStop={(
-                                        e,
-                                        direction,
-                                        ref,
-                                        delta,
-                                        position
-                                    ) => {
-                                        plugin.onResizeStop &&
-                                            plugin.onResizeStop(
-                                                e,
-                                                direction,
-                                                ref,
-                                                delta,
-                                                position
-                                            );
-                                    }}
-                                >
-                                    {window.render({})}
-                                </DeskWindow>
-                            </div>
-                        ))
-                    )} */}
-        </WindowRoot>
+        <div
+          id="widget-root"
+          className="absolute overflow-hidden"
+          style={{ width: "100vw", height: "100vh" }}
+        />
+        {/* <CalendarWidget />
+                  {plugins.map((plugin, idxPlugin) =>
+                      plugin.windows.map((window, idxWindow) => (
+                          <div key={idxPlugin + idxWindow}>
+                              <WidgetView
+                                  default={INITIAL_WINDOW_SIZE}
+                                  onResizeStop={(
+                                      e,
+                                      direction,
+                                      ref,
+                                      delta,
+                                      position
+                                  ) => {
+                                      plugin.onResizeStop &&
+                                          plugin.onResizeStop(
+                                              e,
+                                              direction,
+                                              ref,
+                                              delta,
+                                              position
+                                          );
+                                  }}
+                              >
+                                  {window.render({})}
+                              </WidgetView>
+                          </div>
+                      ))
+                  )} */}
       </div>
     </>
   );

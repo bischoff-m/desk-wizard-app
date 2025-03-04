@@ -1,7 +1,7 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import iCalendarPlugin from "@fullcalendar/icalendar";
-import DeskWindow from "@/app/(wallpaper)/DeskWindow";
+import WidgetView from "@/app/(wallpaper)/WidgetView";
 import { useEffect, useRef } from "react";
 
 // https://fullcalendar.io/docs#toc
@@ -48,7 +48,7 @@ export default function CalendarWidget() {
   }, [calendarRef.current]);
 
   return (
-    <DeskWindow
+    <WidgetView
       default={INITIAL_WINDOW_SIZE}
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onResizeStop={(_e, _direction, _ref, delta, _position) => {
@@ -74,6 +74,6 @@ export default function CalendarWidget() {
           hour12: false,
         }}
       />
-    </DeskWindow>
+    </WidgetView>
   );
 }

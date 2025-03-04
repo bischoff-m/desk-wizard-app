@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import ImageButton from "./ImageButton";
 import { useState } from "react";
-import DeskWindow from "@/app/(wallpaper)/DeskWindow";
+import WidgetView from "@/app/(wallpaper)/WidgetView";
 
 export const imgs = [
   { src: "814533.jpg", offset: { x: 0, y: 170 }, mirror: true },
@@ -123,7 +123,7 @@ export default function ImagePicker(props: {
         </div>
       )}
       {show && (
-        <DeskWindow
+        <WidgetView
           default={{ x: 2700, y: 500, width: 600, height: 1000 }}
           onClosed={() => setShow(false)}
         >
@@ -140,7 +140,7 @@ export default function ImagePicker(props: {
               />
             ))}
           </div>
-        </DeskWindow>
+        </WidgetView>
       )}
     </>
   );
