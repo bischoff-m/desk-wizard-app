@@ -28,6 +28,7 @@ const config = [
     compat.extends(
       "eslint:recommended",
       "plugin:import/recommended",
+      "plugin:import/typescript",
       "plugin:@typescript-eslint/recommended",
       "next/core-web-vitals",
       "eslint-config-prettier",
@@ -48,7 +49,7 @@ const config = [
     },
     rules: {
       "no-console": "warn",
-      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/exhaustive-deps": "warn",
       "import/no-unresolved": ["error", { ignore: [".glsl$"] }],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "warn",

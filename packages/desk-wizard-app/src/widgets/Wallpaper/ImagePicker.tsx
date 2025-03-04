@@ -105,47 +105,19 @@ export type SetImageFunction = (img: {
 }) => void;
 
 export default function ImagePicker(props: { setImg: SetImageFunction }) {
-  // const [show, setShow] = useState(false);
-
   return (
-    <>
-      {/* {!show && (
-        <div
-          className={cn(
-            "absolute",
-            "top-0",
-            "left-0",
-            "bg-background",
-            "cursor-pointer",
-            "p-2",
-            "rounded-br-xl",
-            "z-10",
-          )}
-          onClick={() => setShow(true)}
-        >
-          Show
-        </div>
-      )} */}
-      {/* {show && (
-        <WidgetView
-          default={{ x: 2700, y: 500, width: 600, height: 1000 }}
-          onClosed={() => setShow(false)}
-        > */}
-      <div className="flex flex-col">
-        {imgs.map((img, idx) => (
-          <ImageButton
-            key={idx}
-            src={img.src}
-            alt={img.src.substring(0, 2)}
-            name={img.src}
-            onClick={() => {
-              props.setImg(img);
-            }}
-          />
-        ))}
-      </div>
-      {/* </WidgetView>
-      )} */}
-    </>
+    <div className="flex flex-col">
+      {imgs.map((img, idx) => (
+        <ImageButton
+          key={idx}
+          src={img.src}
+          alt={img.src.substring(0, 2)}
+          name={img.src}
+          onClick={() => {
+            props.setImg(img);
+          }}
+        />
+      ))}
+    </div>
   );
 }

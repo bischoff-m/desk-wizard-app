@@ -1,14 +1,9 @@
 import { cn } from "@/lib/utils";
-import {
-  type ResizeEnable,
-  Rnd,
-  type RndDragCallback,
-  type RndResizeCallback,
-  type RndResizeStartCallback,
-} from "react-rnd";
+import { Rnd } from "react-rnd";
 import { ChevronUp, X } from "lucide-react";
 import { produce } from "immer";
 import { useEffect, useRef, useState } from "react";
+import type { WidgetView } from "desk-wizard";
 
 interface WidgetState {
   x: number;
@@ -17,33 +12,7 @@ interface WidgetState {
   height: number | null;
 }
 
-interface WidgetViewProps {
-  children: React.ReactNode;
-  onClosed?: () => void;
-  default?: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number | null;
-  };
-  onMouseDown?: (e: MouseEvent) => void;
-  onMouseUp?: (e: MouseEvent) => void;
-  onResizeStart?: RndResizeStartCallback;
-  onResize?: RndResizeCallback;
-  onResizeStop?: RndResizeCallback;
-  onDragStart?: RndDragCallback;
-  onDrag?: RndDragCallback;
-  onDragStop?: RndDragCallback;
-  enableResizing?: ResizeEnable;
-  maxHeight?: number | string;
-  maxWidth?: number | string;
-  minHeight?: number | string;
-  minWidth?: number | string;
-  disableDragging?: boolean;
-  allowAnyClick?: boolean;
-}
-
-export default function WidgetView(props: WidgetViewProps) {
+export default function DeskWidgetView(props: Parameters<WidgetView>[0]) {
   const [widgetState, setWidgetState] = useState<WidgetState>({
     x: 100,
     y: 700,
@@ -86,7 +55,7 @@ export default function WidgetView(props: WidgetViewProps) {
             draft.y = d.y;
           }),
         );
-        props.onDragStop?.(e, d);
+        props.widget.onDragStop?.(e, d);
       }}
       onResize={(e, direction, ref, delta, position) => {
         setWidgetState({
@@ -95,16 +64,16 @@ export default function WidgetView(props: WidgetViewProps) {
           width: ref.offsetWidth,
           height: ref.offsetHeight,
         });
-        props.onResize?.(e, direction, ref, delta, position);
+        props.widget.onResize?.(e, direction, ref, delta, position);
       }}
-      onMouseDown={props.onMouseDown}
-      onMouseUp={props.onMouseUp}
-      onResizeStart={props.onResizeStart}
+      onMouseDown={props.widget.onMouseDown}
+      onMouseUp={props.widget.onMouseUp}
+      onResizeStart={props.widget.onResizeStart}
       onResizeStop={(e, direction, ref, delta, position) => {
-        props.onResizeStop?.(e, direction, ref, delta, position);
+        props.widget.onResizeStop?.(e, direction, ref, delta, position);
       }}
-      onDragStart={props.onDragStart}
-      onDrag={props.onDrag}
+      onDragStart={props.widget.onDragStart}
+      onDrag={props.widget.onDrag}
       enableResizing={props.enableResizing}
       maxHeight={props.maxHeight}
       maxWidth={props.maxWidth}
@@ -153,7 +122,9 @@ export default function WidgetView(props: WidgetViewProps) {
                 "h-full",
                 "hover:bg-red-500",
               )}
-              onClick={props.onClosed}
+              onClick={() => {
+                props.widget.onClose();
+              }}
             >
               <X />
             </div>
