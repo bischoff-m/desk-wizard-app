@@ -46,8 +46,8 @@ interface DeskWindowProps {
 
 export default function DeskWindow(props: DeskWindowProps) {
   const [windowState, setWindowState] = useState<WindowState>({
-    x: 0,
-    y: 0,
+    x: 100,
+    y: 700,
     width: 800,
     height: null,
   });
@@ -73,11 +73,11 @@ export default function DeskWindow(props: DeskWindowProps) {
       <Rnd
         className={cn("rounded-xl", "text-primary", "overflow-hidden")}
         style={{
-          background: "rgba(0, 0, 0, 0.45)",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          backdropFilter: "blur(25px)",
-          WebkitBackdropFilter: "blur(25px)",
-          border: "1px solid rgba(0, 0, 0, 0.3)",
+          background: "rgba(0, 0, 0, 0)",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+          backdropFilter: "blur(42px)",
+          WebkitBackdropFilter: "blur(42px)",
+          border: "1px solid rgba(200, 200, 200, 0.15)",
         }}
         dragHandleClassName="drag-handle"
         size={{ width: windowState.width, height: windowState.height || "auto" }}
@@ -154,7 +154,7 @@ export default function DeskWindow(props: DeskWindowProps) {
                   "items-center",
                   "w-12",
                   "h-full",
-                  "hover:bg-red-600",
+                  "hover:bg-red-500",
                 )}
                 onClick={props.onClosed}
               >

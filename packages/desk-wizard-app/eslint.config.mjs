@@ -49,8 +49,9 @@ const config = [
     rules: {
       "no-console": "warn",
       "react-hooks/exhaustive-deps": "off",
-      "@typescript-eslint/no-explicit-any": "off",
       "import/no-unresolved": ["error", { ignore: [".glsl$"] }],
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
     },
   },
 ];

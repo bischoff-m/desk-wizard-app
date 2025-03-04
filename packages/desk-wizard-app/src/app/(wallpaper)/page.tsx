@@ -22,6 +22,7 @@ import WindowRoot from "./WindowRoot";
 import loadRemoteModule from "@/lib/loadRemoteModule";
 import { PluginBase, WindowManager, WindowBase, type WindowClass } from "desk-wizard";
 import { createRoot, Root } from "react-dom/client";
+import DeskWindow from "./DeskWindow";
 
 const screens = loadScreens();
 
@@ -40,7 +41,7 @@ const screens = loadScreens();
 // };
 
 function PlaceholderWrapper(props: { manager: WindowManager; children?: ReactNode }) {
-  return <div className="flex w-full h-full">{props.children}</div>;
+  return <DeskWindow>{props.children}</DeskWindow>;
 }
 
 const pluginUrls = {
@@ -99,6 +100,8 @@ class DeskWindowManager extends WindowManager {
   }
 }
 
+type PluginClass = new (manager: WindowManager) => PluginBase;
+
 export default function Home() {
   const [img, setImg] = useState(imgs[Math.floor(Math.random() * imgs.length)]);
   const [program, setProgram] = useState<CanvasProgram<any, any> | null>(null);
@@ -125,23 +128,25 @@ export default function Home() {
   //     console.log(Object.hasOwn(window, "__TAURI__") ? "Tauri" : "Web");
   // }, []);
 
-  async function loadPlugin(id: string, url: string) {
+  async function loadPlugin(id: string, pluginClass: PluginClass) {
+    const plugin: PluginBase = new pluginClass(managerRef.current);
+    plugin.onStartup();
+    pluginsRef.current[id] = plugin;
+  }
+
+  async function pluginFromUrl(url: string) {
     const mod = (await loadRemoteModule(url)) as {
       Plugin: new (manager: WindowManager) => PluginBase;
     };
     if (!mod.Plugin) throw new Error("Plugin class not found in remote module");
-
-    const plugin: PluginBase = new mod.Plugin(managerRef.current);
-    plugin.onStartup();
-    pluginsRef.current[id] = plugin;
-    // console.log('Loaded plugin', id);
+    return mod.Plugin;
   }
 
   useEffect(() => {
     for (const [id, url] of Object.entries(pluginUrls)) {
       if (id in pluginsRef.current) continue;
       pluginsRef.current[id] = null;
-      loadPlugin(id, url);
+      pluginFromUrl(url).then((pluginClass) => loadPlugin(id, pluginClass));
     }
   }, []);
 
