@@ -12,7 +12,7 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default [
+const config = [
   {
     ignores: [
       "**/node_modules/",
@@ -35,7 +35,7 @@ export default [
   ),
   {
     languageOptions: {
-      ecmaVersion: 5,
+      ecmaVersion: 6,
       sourceType: "module",
     },
     settings: {
@@ -47,10 +47,12 @@ export default [
       },
     },
     rules: {
-      "no-console": 2,
+      "no-console": "warn",
       "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "import/no-unresolved": ["error", { ignore: [".glsl$"] }],
     },
   },
 ];
+
+export default config;

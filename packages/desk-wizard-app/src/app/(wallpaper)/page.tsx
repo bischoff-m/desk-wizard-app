@@ -44,7 +44,7 @@ function PlaceholderWrapper(props: { manager: WindowManager; children?: ReactNod
 }
 
 const pluginUrls = {
-  calendar: "http://localhost:4173/desk-wizard-calendar.js",
+  calendar: "http://localhost:4173/desk-wizard-calendar.umd.cjs",
 };
 
 type WrapperComponent = FC<{ manager: WindowManager; children?: ReactNode }>;

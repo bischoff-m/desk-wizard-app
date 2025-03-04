@@ -2,12 +2,8 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/packages/desk-wizard-app/src-tauri/target"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/packages/desk-wizard-app/src-tauri/target"]
     }
   }
 }
