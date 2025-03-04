@@ -75,7 +75,6 @@ export default function WidgetView(props: WidgetViewProps) {
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         backdropFilter: "blur(42px)",
         WebkitBackdropFilter: "blur(42px)",
-        border: "1px solid rgba(200, 200, 200, 0.15)",
       }}
       dragHandleClassName="drag-handle"
       size={{ width: widgetState.width, height: widgetState.height || "auto" }}

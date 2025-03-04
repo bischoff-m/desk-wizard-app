@@ -14,10 +14,15 @@ import { loadScreens } from "@/widgets/Wallpaper/classes/ScreenInfo";
 import { ScreenWrapper, useCanvas } from "@/widgets/Wallpaper/ProgramProvider";
 import { CanvasProgram } from "@/widgets/Wallpaper/classes/CanvasProgram";
 import { useTheme } from "next-themes";
-import ImagePicker, { imgs } from "../../widgets/Wallpaper/ImagePicker";
+import ImagePicker, { imgs, SetImageFunction } from "../../widgets/Wallpaper/ImagePicker";
 import * as tauri from "@tauri-apps/api/core";
 import loadRemoteModule from "@/lib/loadRemoteModule";
-import { PluginBase, WidgetManager, WidgetBase, type WidgetClass } from "desk-wizard";
+import {
+  PluginBase,
+  WidgetManager,
+  WidgetBase,
+  type CreateWidgetFunction,
+} from "desk-wizard";
 import { createRoot, Root } from "react-dom/client";
 import WidgetView from "./WidgetView";
 
@@ -57,7 +62,7 @@ class DeskWidgetManager extends WidgetManager {
     this.wrapperFC = wrapperComponent;
   }
 
-  public newWidget(key: string, widgetClass: WidgetClass) {
+  public newWidget(key: string, createWidget: CreateWidgetFunction) {
     // Create a new div element for the widget
     const rootContainer = document.getElementById("widget-root");
     const widgetRootElement = document.createElement("div");
@@ -65,7 +70,7 @@ class DeskWidgetManager extends WidgetManager {
     rootContainer?.appendChild(widgetRootElement);
 
     // Create the widget object
-    const widget = new widgetClass(this);
+    const widget = createWidget(this);
     this.widgets.set(key, widget);
 
     // Create a new root and wrapper
@@ -98,6 +103,27 @@ class DeskWidgetManager extends WidgetManager {
 }
 
 type PluginClass = new (manager: WidgetManager) => PluginBase;
+
+class ImagePickerWidget extends WidgetBase {
+  setImg: SetImageFunction;
+
+  constructor(manager: WidgetManager, setImg: SetImageFunction) {
+    super(manager);
+    this.setImg = setImg;
+  }
+
+  public getTitle(): string {
+    return "Image Picker";
+  }
+
+  public getIcon(): string {
+    return "image";
+  }
+
+  public render() {
+    return <ImagePicker setImg={this.setImg} />;
+  }
+}
 
 export default function Home() {
   const [img, setImg] = useState(imgs[Math.floor(Math.random() * imgs.length)]);
@@ -142,9 +168,17 @@ export default function Home() {
   useEffect(() => {
     for (const [id, url] of Object.entries(pluginUrls)) {
       if (id in pluginsRef.current) continue;
+      if (id === "calendar") continue;
       pluginsRef.current[id] = null;
       pluginFromUrl(url).then((pluginClass) => loadPlugin(id, pluginClass));
     }
+  }, []);
+
+  useEffect(() => {
+    managerRef.current.newWidget(
+      "image-picker",
+      (manager: WidgetManager) => new ImagePickerWidget(manager, setImg),
+    );
   }, []);
 
   return (
@@ -164,9 +198,7 @@ export default function Home() {
           screens={screens}
           program={program}
           provider={canvasProvider}
-        >
-          <ImagePicker setImg={setImg} />
-        </ScreenWrapper>
+        ></ScreenWrapper>
 
         <ScreenWrapper
           screenId={2}
@@ -176,8 +208,8 @@ export default function Home() {
         ></ScreenWrapper>
         <div
           id="widget-root"
-          className="absolute overflow-hidden"
-          style={{ width: "100vw", height: "100vh" }}
+          className="absolute overflow-hidden bg-opacity-0"
+          style={{ width: "100vw", height: "100vh", visibility: "hidden" }}
         />
         {/* <CalendarWidget />
                   {plugins.map((plugin, idxPlugin) =>

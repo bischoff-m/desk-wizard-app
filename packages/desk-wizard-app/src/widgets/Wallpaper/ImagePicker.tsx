@@ -1,7 +1,4 @@
-import { cn } from "@/lib/utils";
 import ImageButton from "./ImageButton";
-import { useState } from "react";
-import WidgetView from "@/app/(wallpaper)/WidgetView";
 
 export const imgs = [
   { src: "814533.jpg", offset: { x: 0, y: 170 }, mirror: true },
@@ -92,20 +89,27 @@ export const imgs = [
     },
     mirror: false,
   },
+  {
+    src: "9w5i20l6m88d1.jpg",
+    offset: {
+      x: 0,
+      y: 0,
+    },
+    mirror: false,
+  },
 ];
+export type SetImageFunction = (img: {
+  src: string;
+  offset: { x: number; y: number };
+  mirror: boolean;
+}) => void;
 
-export default function ImagePicker(props: {
-  setImg: (img: {
-    src: string;
-    offset: { x: number; y: number };
-    mirror: boolean;
-  }) => void;
-}) {
-  const [show, setShow] = useState(false);
+export default function ImagePicker(props: { setImg: SetImageFunction }) {
+  // const [show, setShow] = useState(false);
 
   return (
     <>
-      {!show && (
+      {/* {!show && (
         <div
           className={cn(
             "absolute",
@@ -121,27 +125,27 @@ export default function ImagePicker(props: {
         >
           Show
         </div>
-      )}
-      {show && (
+      )} */}
+      {/* {show && (
         <WidgetView
           default={{ x: 2700, y: 500, width: 600, height: 1000 }}
           onClosed={() => setShow(false)}
-        >
-          <div className="flex flex-col">
-            {imgs.map((img, idx) => (
-              <ImageButton
-                key={idx}
-                src={img.src}
-                alt={img.src.substring(0, 2)}
-                name={img.src}
-                onClick={() => {
-                  props.setImg(img);
-                }}
-              />
-            ))}
-          </div>
-        </WidgetView>
-      )}
+        > */}
+      <div className="flex flex-col">
+        {imgs.map((img, idx) => (
+          <ImageButton
+            key={idx}
+            src={img.src}
+            alt={img.src.substring(0, 2)}
+            name={img.src}
+            onClick={() => {
+              props.setImg(img);
+            }}
+          />
+        ))}
+      </div>
+      {/* </WidgetView>
+      )} */}
     </>
   );
 }

@@ -126,3 +126,8 @@
 * {
   z-index: 0;
 }
+
+/* Needed to allow the layers underneath to be clickable */
+#widget-root > * {
+  visibility: visible;
+}
