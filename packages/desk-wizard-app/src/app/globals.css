@@ -128,9 +128,6 @@
 }
 
 /* Needed to allow the layers underneath to be clickable */
-#wizard-root {
-  visibility: hidden;
-}
 #widget-root > * {
   visibility: visible;
 }

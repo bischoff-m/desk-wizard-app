@@ -9,17 +9,17 @@ import { useTheme } from "next-themes";
 import { imgs } from "../../widgets/Wallpaper/ImagePicker";
 import * as tauri from "@tauri-apps/api/core";
 import loadRemoteModule from "@/lib/loadRemoteModule";
-import { PluginBase, type WidgetManager } from "desk-wizard";
+import { PluginBase, PluginClass, type WidgetManager } from "desk-wizard";
 import { DeskWidgetManager } from "@/lib/DeskWidgetManager";
 import { ImagePickerWidget } from "@/widgets/Wallpaper/ImagePickerWidget";
+import { Wallpaper } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const screens = loadScreens();
 
 const pluginUrls = {
   calendar: "http://localhost:4173/desk-wizard-calendar.umd.cjs",
 };
-
-type PluginClass = new (manager: WidgetManager) => PluginBase;
 
 export default function Home() {
   const [img, setImg] = useState(imgs[Math.floor(Math.random() * imgs.length)]);
@@ -70,11 +70,7 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    managerRef.current.newWidget(
-      new ImagePickerWidget("image-picker-1", managerRef.current, setImg),
-    );
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -90,7 +86,18 @@ export default function Home() {
           screens={screens}
           program={program}
           provider={canvasProvider}
-        />
+        >
+          <Button
+            className="cursor-pointer"
+            onClick={() =>
+              managerRef.current.newWidget(
+                new ImagePickerWidget("image-picker-1", managerRef.current, setImg),
+              )
+            }
+          >
+            <Wallpaper />
+          </Button>
+        </ScreenWrapper>
         <ScreenWrapper
           screenId={2}
           screens={screens}
@@ -101,7 +108,7 @@ export default function Home() {
         <div
           id="widget-root"
           className="absolute overflow-hidden bg-opacity-0"
-          style={{ width: "100vw", height: "100vh" }}
+          style={{ width: "100vw", height: "100vh", visibility: "hidden" }}
         />
       </div>
     </>

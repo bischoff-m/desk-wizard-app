@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Rnd } from "react-rnd";
 import { ChevronUp, X } from "lucide-react";
 import { produce } from "immer";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { WidgetView } from "desk-wizard";
 
 interface WidgetState {
@@ -13,28 +13,16 @@ interface WidgetState {
 }
 
 export default function DeskWidgetView(props: Parameters<WidgetView>[0]) {
+  const initProps = props.widget.getInitialProps();
   const [widgetState, setWidgetState] = useState<WidgetState>({
-    x: 100,
-    y: 700,
-    width: 800,
-    height: null,
+    x: initProps.default?.x || 100,
+    y: initProps.default?.y || 100,
+    width: initProps.default?.width || 800,
+    height: initProps.default?.height || null,
   });
   const [showTitleBar, setShowTitleBar] = useState(true);
   const rndRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    setWidgetState(
-      produce(widgetState, (draft) => {
-        if (!props.default) return draft;
-        draft.x = props.default.x || draft.x;
-        draft.y = props.default!.y || draft.y;
-        draft.width = props.default!.width || draft.width;
-        draft.height = props.default!.height || draft.height;
-        return draft;
-      }),
-    );
-  }, [props.default]);
 
   return (
     <Rnd
@@ -74,13 +62,13 @@ export default function DeskWidgetView(props: Parameters<WidgetView>[0]) {
       }}
       onDragStart={props.widget.onDragStart}
       onDrag={props.widget.onDrag}
-      enableResizing={props.enableResizing}
-      maxHeight={props.maxHeight}
-      maxWidth={props.maxWidth}
-      minHeight={props.minHeight}
-      minWidth={props.minWidth}
-      disableDragging={props.disableDragging}
-      allowAnyClick={props.allowAnyClick}
+      enableResizing={initProps.enableResizing}
+      maxHeight={initProps.maxHeight}
+      maxWidth={initProps.maxWidth}
+      minHeight={initProps.minHeight}
+      minWidth={initProps.minWidth}
+      disableDragging={initProps.disableDragging}
+      allowAnyClick={initProps.allowAnyClick}
     >
       <div className={cn("w-full", "h-full", "flex", "flex-col")}>
         {showTitleBar ? (
@@ -173,7 +161,6 @@ export default function DeskWidgetView(props: Parameters<WidgetView>[0]) {
               onClick={() => setShowTitleBar(true)}
             />
           </div>
-          // <div className="absolute top-0 left-1/2 h-6 w-8 bg-red-600" />
         )}
         <div className="p-3 w-full flex-1" ref={contentRef}>
           {props.children}

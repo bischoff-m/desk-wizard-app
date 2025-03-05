@@ -13,11 +13,18 @@ export class ImagePickerWidget extends Widget {
     return "Image Picker";
   }
 
-  public renderIcon(): React.JSX.Element {
-    return <div>🖼️</div>;
-  }
-
   public render() {
     return <ImagePicker setImg={this.setImg} />;
+  }
+
+  public getInitialProps() {
+    return {
+      default: {
+        x: 2200,
+        y: 600,
+        width: 800,
+        height: null,
+      },
+    };
   }
 }
