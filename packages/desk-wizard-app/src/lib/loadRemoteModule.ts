@@ -1,7 +1,18 @@
+function newRequire(name: string) {
+  switch (name) {
+    case "react":
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      return require("react");
+    case "react-dom":
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      return require("react-dom");
+    default:
+      return undefined;
+  }
+}
+
 export default async function loadRemoteModule(url: string): Promise<unknown> {
-  const data = await fetch(url, { cache: "no-store", }).then((res) => res.text());
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const newRequire = (name: string) => (name === "react" ? require("react") : undefined);
+  const data = await fetch(url, { cache: "no-store" }).then((res) => res.text());
 
   // Reference:
   // https://github.com/Paciolan/remote-module-loader

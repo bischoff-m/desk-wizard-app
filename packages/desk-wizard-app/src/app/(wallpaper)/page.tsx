@@ -101,7 +101,7 @@ export default function Home() {
         <div
           id="widget-root"
           className="absolute overflow-hidden bg-opacity-0"
-          style={{ width: "100vw", height: "100vh", visibility: "hidden" }}
+          style={{ width: "100vw", height: "100vh" }}
         />
       </div>
     </>
